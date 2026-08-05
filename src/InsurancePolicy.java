@@ -23,9 +23,5 @@ abstract class InsurancePolicy {
 
     public abstract double calcPayment(double flatRate);
 
-    public void printTotal(double flatRate) {
-        double total = calcPayment(flatRate);
-        System.out.println("The Totall Amount Is: " + total);
-    }
 
 }
