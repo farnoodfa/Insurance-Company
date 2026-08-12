@@ -4,10 +4,10 @@ public class Car {
         SUV, SED, LUX, HATCH
     }
 
-    protected int manufacturingYear;
-    protected double price;
-    protected String model;
-    protected CarType type;
+    private int manufacturingYear;
+    private double price;
+    private String model;
+    private CarType type;
 
     public Car(int manufacturingYear, double price, String model, CarType type) {
         this.manufacturingYear = manufacturingYear;
@@ -16,11 +16,17 @@ public class Car {
         this.type = type;
     }
 
+    public double getPrice() {
+        return this.price;
+    }
+
     public void print() {
-        System.out.println("Car type: " + type + " Price: " + price + " Model: " + model + " Manufacturanig Year: "  + manufacturingYear);
+        System.out.println("Car type: " + type + " Price: " + price + " Model: " + model + " Manufacturanig Year: "
+                + manufacturingYear);
     }
 
     public String toString() {
-        return "Car type: " + type + " Price: " + price + " Model: " + model + " Manufacturanig Year: " + manufacturingYear;
+        return "Car type: " + type + " Price: " + price + " Model: " + model + " Manufacturanig Year: "
+                + manufacturingYear;
     }
 }

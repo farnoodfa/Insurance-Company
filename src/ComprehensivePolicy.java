@@ -8,15 +8,16 @@ public class ComprehensivePolicy extends InsurancePolicy {
         this.level = level;
 
     }
+
     @Override
-    public void print(){
+    public void print() {
         super.print();
         System.out.println(" Driver Age: " + driveAge + " Level: " + level);
     }
 
     @Override
     public double calcPayment(double flatRate) {
-        double premiumRate = car.price / (50 + numberOfClaims * 200 + flatRate);
+        double premiumRate = car.getPrice() / (50 + numberOfClaims * 200 + flatRate);
         if (driveAge < 30) {
             premiumRate += (30 - driveAge) * 50;
         }

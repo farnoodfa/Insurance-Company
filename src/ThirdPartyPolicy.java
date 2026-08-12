@@ -9,17 +9,17 @@ public class ThirdPartyPolicy extends InsurancePolicy {
     @Override
     public void print() {
         super.print();
-        System.out.println("Commets : " + comments);
+        System.out.println("comments: " + comments);
     }
 
     @Override
     public String toString() {
-        return super.toString() + "Commets : " + comments;
+        return super.toString() + "\ncomments: " + comments;
     }
 
     @Override
     public double calcPayment(double flatRate) {
-        double premiumRate = car.price / (100 + numberOfClaims * 200 + flatRate);
+        double premiumRate = car.getPrice() / (100 + numberOfClaims * 200 + flatRate);
         return premiumRate;
     }
 }
