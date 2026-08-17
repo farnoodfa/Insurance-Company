@@ -30,18 +30,17 @@ public class Car {
     }
 
     public void print() {// printing the object
-        System.out.println("Car type: " + type + " Price: " + price + " Model: " + model + " Manufacturanig Year: "
+        System.out.println("Car type: " + type + " |Price: " + price + " |Model: " + model + " |Manufacturing Year: "
                 + manufacturingYear);
     }
 
     public String toString() {// conveting the objetc to string
-        return "Car type: " + type + " Price: " + price + " Model: " + model + " Manufacturanig Year: "
+        return "Car type: " + type + " |Price: " + price + " |Model: " + model + " |Manufacturing Year: "
                 + manufacturingYear;
     }
 
     // rising the price of the car
-    public double priceRise(double rise) {
-        double risedPrice = price * (1 + rise);
-        return risedPrice;
+    public void priceRise(double risePercent) {
+        this.price = this.price * (1 + risePercent);
     }
 }

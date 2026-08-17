@@ -89,4 +89,11 @@ public class User {
         }
         InsurancePolicy.carPriceRiseAll(policies, risePercent);
     }
+
+    public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
+        if (this.policies == null) {
+            return null;
+        }
+        return InsurancePolicy.filterByCarModel(this.policies, carModel);
+    }
 }

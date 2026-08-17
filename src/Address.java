@@ -10,11 +10,38 @@ public class Address {
         this.suburb = suburb;
         this.city = city;
     }
+
     // getters
+    public int getStreetNum() {
+        return streetNum;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public String getSuburb() {
+        return suburb;
+    }
+
+    public String getCity() {
+        return city;
+    }
 
     // setters
     public void setCity(String city) {
         this.city = city;
+    }
+    public void setStreetNum(int streetNum) {
+        this.streetNum = streetNum;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public void setSuburb(String suburb) {
+        this.suburb = suburb;
     }
 
     public String toString() {

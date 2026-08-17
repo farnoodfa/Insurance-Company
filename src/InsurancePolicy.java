@@ -5,7 +5,7 @@ abstract class InsurancePolicy {
     protected int id;
     protected Car car;
     protected int numberOfClaims;
-    protected MyDate expiaryDate;
+    protected MyDate expiryDate;
 
     public InsurancePolicy(String policyHolderName, int id, Car car, int numberOfClaims) {
         this.policyHolderName = policyHolderName;
@@ -24,7 +24,7 @@ abstract class InsurancePolicy {
         policyHolderName = newName;
     }
 
-    public void SetCarModel(String model) {
+    public void setCarModel(String model) {
         car.setModel(model);
     }
 
