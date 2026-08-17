@@ -15,13 +15,15 @@ public class App {
         // Display user details using print() and toString()
         displayUserInformation(user);
 
-        // Test search behavior with an invalid policy ID
-        testPolicyLookup(user);
+        // 1. Search for invalid ID (shows error message)
+        testPolicyLookup(user, 999);
 
-        // Retrieve an existing policy to test updates
-        InsurancePolicy targetPolicy = user.findPolicy(101);
-        if (targetPolicy != null) {
-            testPolicyModifications(targetPolicy);
+        // 2. Search for valid ID, print it, and save the returned policy object
+        InsurancePolicy validPolicy = testPolicyLookup(user, 101);
+
+        // 3. Perform modifications if found
+        if (validPolicy != null) {
+            testPolicyModifications(validPolicy);
         }
 
         // Test updating user address details
@@ -76,27 +78,35 @@ public class App {
         System.out.println(user.toString());
     }
 
-    // Tests searching for a non-existent policy ID
-    private static void testPolicyLookup(User user) {
-        System.out.println("=== Searching for Invalid Policy ID ===");
-        InsurancePolicy invalidPolicy = user.findPolicy(999);
-        if (invalidPolicy == null) {
+    // Searches for a policy by ID, prints error or policy details, and returns the
+    // policy
+    private static InsurancePolicy testPolicyLookup(User user, int policyID) {
+        System.out.println("\n=== Searching for Policy ID: " + policyID + " ===");
+        InsurancePolicy policy = user.findPolicy(policyID);
+        if (policy == null) {
             System.out.println("Policy has not been found");
+        } else {
+            policy.print();
         }
+        return policy;
     }
 
-    // Tests 10% price rise on single policy, changing name, and changing car model
+    // Applies 10% price rise, updates policy holder name to Robert, and changes car
+    // model
     private static void testPolicyModifications(InsurancePolicy policy) {
+        // Apply 10% price rise and print before and after
         System.out.println("\n=== Policy Price Rise Test ===");
         policy.print();
         policy.carPriceRise(0.1);
         System.out.println("After 10% price rise:");
         policy.print();
 
+        // Change policy holder name to Robert
         System.out.println("\n=== Updating Policy Holder Name ===");
         policy.setPolicyHolderName("Robert");
         policy.print();
 
+        // Change car model to Toyota Camry 2018
         System.out.println("\n=== Updating Car Model ===");
         policy.setCarModel("Toyota Camry 2018");
         policy.print();
