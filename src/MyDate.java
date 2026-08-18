@@ -12,6 +12,7 @@ public class MyDate {
         this.day = day;
     }
 
+    // getters
     public int getYear() {
         return year;
     }
@@ -24,6 +25,7 @@ public class MyDate {
         return day;
     }
 
+    // setters
     public void setYear(int year) {
         if (year > 0) {
             this.year = year;
