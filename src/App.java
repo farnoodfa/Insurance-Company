@@ -48,7 +48,7 @@ public class App {
         InsurancePolicy policy2 = new ComprehensivePolicy("Bob Johnson", 102, car2, 0, 25, 1);
         InsurancePolicy policy3 = new ThirdPartyPolicy("Charlie Brown", 103, car3, 2, "Includes road assistance");
 
-        Address initialAddress = new Address(12, "Crown St", "Gwynneville", "Sydney");
+        Address initialAddress = new Address(12, "Crown", "Gwynneville", "Sydney");
         User user = new User("John Doe", 1001, initialAddress);
 
         System.out.println("=== Adding Policies to User ===");
@@ -156,10 +156,7 @@ public class App {
 
     // Reads full address details from user input and creates an Address object
     private static Address promptForAddress(Scanner inputReader) {
-        System.out.print("Enter Street Number: ");
-        int streetNum = inputReader.nextInt();
-        inputReader.nextLine();
-
+        int streetNum = getUserint(inputReader, "Enter Street number: ");
         String street = getUserString(inputReader, "Enter Street Name: ");
         String suburb = getUserString(inputReader, "Enter Suburb: ");
         String city = getUserString(inputReader, "Enter City: ");
@@ -170,6 +167,13 @@ public class App {
     // Displays prompt and reads a trimmed line of text from console
     private static String getUserString(Scanner inputReader, String promptMessage) {
         System.out.print(promptMessage);
-        return inputReader.nextLine().trim();
+        return inputReader.nextLine();
+    }
+
+    private static int getUserint(Scanner inputReader, String promptMessage) {
+        System.out.println(promptMessage);
+        int userInt = inputReader.nextInt();
+        inputReader.nextLine();
+        return userInt;
     }
 }
