@@ -40,13 +40,15 @@ public class App {
 
     // Creates test vehicles, policies, and a User instance with attached policies
     private static User initializeUserWithPolicies() {
-        Car car1 = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
+        Car car1 = new Car(2020, 25000.0, "benz", Car.CarType.SED);
         Car car2 = new Car(2022, 50000.0, "BMW X5", Car.CarType.SUV);
         Car car3 = new Car(2021, 18000.0, "Honda Civic", Car.CarType.HATCH);
 
         InsurancePolicy policy1 = new ThirdPartyPolicy("Alice Smith", 101, car1, 1, "Standard third-party cover");
         InsurancePolicy policy2 = new ComprehensivePolicy("Bob Johnson", 102, car2, 0, 25, 1);
         InsurancePolicy policy3 = new ThirdPartyPolicy("Charlie Brown", 103, car3, 2, "Includes road assistance");
+         InsurancePolicy policy4 = new ThirdPartyPolicy("Charlie Brown", 103, car3, 2, "Includes road assistance");
+
 
         Address initialAddress = new Address(12, "Crown", "Gwynneville", "Sydney");
         User user = new User("John Doe", 1001, initialAddress);
@@ -55,6 +57,7 @@ public class App {
         addPolicyToUser(user, policy1);
         addPolicyToUser(user, policy2);
         addPolicyToUser(user, policy3);
+        addPolicyToUser(user, policy4);
 
         return user;
     }

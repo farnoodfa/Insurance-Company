@@ -76,10 +76,10 @@ abstract class InsurancePolicy {
     }
 
     // filtering by model
-    public static ArrayList<InsurancePolicy> filterByCarModel(ArrayList<InsurancePolicy> policies, String carModel) {
-        ArrayList<InsurancePolicy> filteredPolicies = new ArrayList<InsurancePolicy>();
+    public static ArrayList<InsurancePolicy> filterByCarModel(ArrayList<InsurancePolicy> policies, String model) {
+        ArrayList<InsurancePolicy> filteredPolicies = new ArrayList<>();
         for (InsurancePolicy insurancePolicy : policies) {
-            if (insurancePolicy.car.getModel().contains(carModel)) {
+            if (insurancePolicy.car.getModel().toLowerCase().contains(model.toLowerCase())) {
                 filteredPolicies.add(insurancePolicy);
             }
         }
