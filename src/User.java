@@ -59,8 +59,8 @@ public class User {
     public String toString() {
         String result = "User: " + name + " |Address:  " + address + " |ID: " + userID + "\nPolicies:\n";
         if (policies != null) {
-            for (InsurancePolicy policy : policies) {
-                result += policy.toString() + "\n";
+            for (int i = 0; i < policies.size(); i++) {
+                result += "Policy" + (i + 1) + ": " + policies.get(i).toString() + "\n";
             }
         } else if (policies == null) {
             result += "You have no Policies!";
@@ -91,9 +91,9 @@ public class User {
     }
 
     public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
-    if (this.policies == null) {
-        return null;
+        if (this.policies == null) {
+            return null;
+        }
+        return InsurancePolicy.filterByCarModel(this.policies, carModel);
     }
-    return InsurancePolicy.filterByCarModel(this.policies, carModel);
-}
 }
