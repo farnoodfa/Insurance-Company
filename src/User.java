@@ -45,7 +45,7 @@ public class User {
     }
 
     public boolean addPolicy(InsurancePolicy policy) {
-        if (findPolicy(policy.getID()) == null) {
+        if (policy != null && findPolicy(policy.getID()) == null) {
             policies.add(policy);
             return true;
         }
@@ -95,5 +95,26 @@ public class User {
             return null;
         }
         return InsurancePolicy.filterByCarModel(this.policies, carModel);
+    }
+
+    public boolean createThirdPartyPolicy(String policyHolderName, int id, Car car, int numberOfClaims,
+            MyDate expiryDate, String comments) {
+        ThirdPartyPolicy policy = new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
+        return addPolicy(policy);
+    }
+
+    public boolean createComprehensivePolicy(String policyHolderName, int id, Car car, int numberOfClaims,
+            MyDate expiryDate, int driverAge, int level) {
+        ComprehensivePolicy policy = new ComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate,
+                driverAge, level);
+        return addPolicy(policy);
+    }
+
+    // Filters policies expired by the given date
+    public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
+        if (this.policies == null) {
+            return null;
+        }
+        return InsurancePolicy.filterByExpiryDate(this.policies, date);
     }
 }

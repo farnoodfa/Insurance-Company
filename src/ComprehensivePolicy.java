@@ -1,25 +1,25 @@
 public class ComprehensivePolicy extends InsurancePolicy {
-    protected int driveAge;
+    protected int driverAge;
     protected int level;
 
-    public ComprehensivePolicy(String policyHolderName, int id, Car car, int numberOfClaims, int driveAge, int level) {
-        super(policyHolderName, id, car, numberOfClaims);
-        this.driveAge = driveAge;
+    public ComprehensivePolicy(String policyHolderName, int id, Car car, int numberOfClaims, MyDate expiryDate,
+            int driverAge, int level) {
+        super(policyHolderName, id, car, numberOfClaims, expiryDate);
+        this.driverAge = driverAge;
         this.level = level;
-
     }
 
     @Override
     public void print() {
         super.print();
-        System.out.println(" Driver Age: " + driveAge + " Level: " + level);
+        System.out.println(" Driver Age: " + driverAge + " Level: " + level);
     }
 
     @Override
     public double calcPayment(double flatRate) {
         double premiumRate = car.getPrice() / (50 + numberOfClaims * 200 + flatRate);
-        if (driveAge < 30) {
-            premiumRate += (30 - driveAge) * 50;
+        if (driverAge < 30) {
+            premiumRate += (30 - driverAge) * 50;
         }
         return premiumRate;
     }
