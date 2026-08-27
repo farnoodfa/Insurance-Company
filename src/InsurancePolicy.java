@@ -19,6 +19,14 @@ abstract class InsurancePolicy {
         return id;
     }
 
+    public MyDate getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(MyDate expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
     // setters
     public void setPolicyHolderName(String newName) {
         policyHolderName = newName;
@@ -84,5 +92,24 @@ abstract class InsurancePolicy {
             }
         }
         return filteredPolicies;
+    }
+
+    // Filters and returns a list of policies expired by the given cutoff date
+    public static ArrayList<InsurancePolicy> filterByExpiryDate(ArrayList<InsurancePolicy> policies, MyDate date) {
+        ArrayList<InsurancePolicy> expiredPolicies = new ArrayList<>();
+
+        if (policies == null || date == null) {
+            return null;
+        }
+
+        for (InsurancePolicy policy : policies) {
+            // Check if the policy has an expiry date and test it against the given check
+            // date
+            if (policy.getExpiryDate() != null && policy.getExpiryDate().isExpired(date)) {
+                expiredPolicies.add(policy);
+            }
+        }
+
+        return expiredPolicies;
     }
 }

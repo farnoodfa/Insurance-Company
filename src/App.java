@@ -1,5 +1,5 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
+
 
 // Driver class to test Insurance Policy system functionality
 public class App {
