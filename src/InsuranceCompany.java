@@ -7,10 +7,12 @@ public class InsuranceCompany {
     private String adminPassword;
     private int flatRate;
 
-    public InsuranceCompany(String name, ArrayList<User> users, String adminUserName, String adminPassword,
-            int flatRate) {
+    public InsuranceCompany(String name, String adminUserName, String adminPassword, int flatRate) {
+        if (flatRate < 1) {
+            throw new IllegalArgumentException("Flat rate must be a positive integer.");
+        }
         this.name = name;
-        this.users = users;
+        this.users = new ArrayList<User>();
         this.adminUsername = adminUserName;
         this.adminPassword = adminPassword;
         this.flatRate = flatRate;
