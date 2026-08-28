@@ -26,6 +26,10 @@ public class User {
         return address;
     }
 
+    public ArrayList<InsurancePolicy> getPolicies() {
+        return policies;
+    }
+
     // setters
     public void setAddress(Address address) {
         this.address = address;
