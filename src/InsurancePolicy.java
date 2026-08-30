@@ -98,19 +98,15 @@ abstract class InsurancePolicy {
     // Filters and returns a list of policies expired by the given cutoff date
     public static ArrayList<InsurancePolicy> filterByExpiryDate(ArrayList<InsurancePolicy> policies, MyDate date) {
         ArrayList<InsurancePolicy> expiredPolicies = new ArrayList<>();
-
         if (policies == null || date == null) {
-            return null;
+            return expiredPolicies;
         }
-
         for (InsurancePolicy policy : policies) {
-            // Check if the policy has an expiry date and test it against the given check
-            // date
-            if (policy.getExpiryDate() != null && policy.getExpiryDate().isExpired(date)) {
+            // Cutoff date tests if policy's expiry date has passed
+            if (policy.getExpiryDate() != null && date.isExpired(policy.getExpiryDate())) {
                 expiredPolicies.add(policy);
             }
         }
-
         return expiredPolicies;
     }
 }

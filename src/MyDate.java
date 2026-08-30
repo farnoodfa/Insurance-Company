@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class MyDate {
     private int year;
     private int month;
@@ -52,43 +50,19 @@ public class MyDate {
             return false;
         }
 
-        // 1. If given date year is strictly after expiry year = expired
-        if (expiryDate.year > this.year) {
+        if (this.year > expiryDate.year) {
             return true;
         }
-        // 2. If given date year is before expiry year =  not expired
-        if (expiryDate.year < this.year) {
+        if (this.year < expiryDate.year) {
             return false;
-        }
-
-        // 3. Years are equal; compare months
-        if (expiryDate.month > this.month) {
+        } // years are equal, compare months
+        if (this.month > expiryDate.month) {
             return true;
         }
-        if (expiryDate.month < this.month) {
+        if (this.month < expiryDate.month) {
             return false;
-        }
-
-        // 4. Years and months are equal; check if given day has reached or passed
-        // expiry day
-        return expiryDate.day >= this.day;
+        } // months are equal, compare days
+        return this.day >= expiryDate.day;
     }
 
-    // Filters and returns all policies that are expired by the given date
-    public static ArrayList<InsurancePolicy> filterByExpiryDate(ArrayList<InsurancePolicy> policies, MyDate date) {
-        ArrayList<InsurancePolicy> expiredPolicies = new ArrayList<>();
-
-        if (policies == null || date == null) {
-            return expiredPolicies;
-        }
-
-        for (InsurancePolicy policy : policies) {
-            // Check if policy has an expiry date and if it is expired relative to 'date'
-            if (policy.getExpiryDate() != null && date.isExpired(policy.getExpiryDate())) {
-                expiredPolicies.add(policy);
-            }
-        }
-
-        return expiredPolicies;
-    }
 }

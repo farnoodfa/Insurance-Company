@@ -176,7 +176,9 @@ public class InsuranceCompany {
     public ArrayList<InsurancePolicy> allPolicies() {
         ArrayList<InsurancePolicy> allPolicies = new ArrayList<InsurancePolicy>();
         for (User user : users) {
-            allPolicies.addAll(user.getPolicies());
+            if (user.getPolicies() != null) {
+                allPolicies.addAll(user.getPolicies());
+            }
         }
         return allPolicies;
     }
@@ -185,7 +187,10 @@ public class InsuranceCompany {
     public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
         ArrayList<InsurancePolicy> filteredList = new ArrayList<InsurancePolicy>();
         for (User user : users) {
-            filteredList.addAll(user.filterByCarModel(carModel));
+            ArrayList<InsurancePolicy> userMatchedPolicies = user.filterByCarModel(carModel);
+            if (userMatchedPolicies != null) {
+                filteredList.addAll(userMatchedPolicies);
+            }
         }
         return filteredList;
     }
@@ -210,9 +215,12 @@ public class InsuranceCompany {
 
     // Filters policies expired by the given date across all users in the company
     public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
-        ArrayList<InsurancePolicy> filteredList = new ArrayList<InsurancePolicy>();
+        ArrayList<InsurancePolicy> filteredList = new ArrayList<>();
         for (User user : users) {
-            filteredList.addAll(user.filterByExpiryDate(date));
+            ArrayList<InsurancePolicy> userExpired = user.filterByExpiryDate(date);
+            if (userExpired != null) {
+                filteredList.addAll(userExpired);
+            }
         }
         return filteredList;
     }
