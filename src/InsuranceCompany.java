@@ -92,6 +92,7 @@ public class InsuranceCompany {
         User user = findUser(userID);
         if (user != null) {
             user.print();
+            System.out.println("====== Policies for " + user.getName() + " ======");
             user.printPolicies(flatRate);
         }
     }
@@ -99,7 +100,9 @@ public class InsuranceCompany {
     // Prints all users and all of their policies with calculated premiums
     public void print() {
         for (User user : users) {
+            System.out.println("====== User: " + user.getName() + " ======");
             user.print();
+            System.out.println("====== Policies for " + user.getName() + " ======");
             user.printPolicies(flatRate);
         }
     }
@@ -171,20 +174,29 @@ public class InsuranceCompany {
 
     // Returns a consolidated list of all policies held across all users
     public ArrayList<InsurancePolicy> allPolicies() {
-        ArrayList<InsurancePolicy> allList = new ArrayList<>();
+        ArrayList<InsurancePolicy> allPolicies = new ArrayList<InsurancePolicy>();
         for (User user : users) {
-            allList.addAll(user.getPolicies());
+            allPolicies.addAll(user.getPolicies());
         }
-        return allList;
+        return allPolicies;
     }
 
-    // Filters policies by car model for a specific user
+    // Filters policies by car model across all users in the company
+    public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
+        ArrayList<InsurancePolicy> filteredList = new ArrayList<InsurancePolicy>();
+        for (User user : users) {
+            filteredList.addAll(user.filterByCarModel(carModel));
+        }
+        return filteredList;
+    }
+
+    // Overloaded method to filter policies by car model for a specific user
     public ArrayList<InsurancePolicy> filterByCarModel(int userID, String carModel) {
         User user = findUser(userID);
         if (user != null) {
             return user.filterByCarModel(carModel);
         }
-        return new ArrayList<>();
+        return null;
     }
 
     // Filters policies by expiry date for a specific user
@@ -193,21 +205,12 @@ public class InsuranceCompany {
         if (user != null) {
             return user.filterByExpiryDate(date);
         }
-        return new ArrayList<>();
-    }
-
-    // Filters policies by car model across all users in the company
-    public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
-        ArrayList<InsurancePolicy> filteredList = new ArrayList<>();
-        for (User user : users) {
-            filteredList.addAll(user.filterByCarModel(carModel));
-        }
-        return filteredList;
+        return null;
     }
 
     // Filters policies expired by the given date across all users in the company
     public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
-        ArrayList<InsurancePolicy> filteredList = new ArrayList<>();
+        ArrayList<InsurancePolicy> filteredList = new ArrayList<InsurancePolicy>();
         for (User user : users) {
             filteredList.addAll(user.filterByExpiryDate(date));
         }
