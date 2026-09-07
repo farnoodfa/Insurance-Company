@@ -92,24 +92,22 @@ public class InsuranceCompany {
         User user = findUser(userID);
         if (user != null) {
             user.print();
-            System.out.println("====== Policies for " + user.getName() + " ======");
-            user.printPolicies(flatRate);
         }
     }
 
     // Prints all users and all of their policies with calculated premiums
     public void print() {
         for (User user : users) {
-            System.out.println("====== User: " + user.getName() + " ======");
-            user.print();
-            System.out.println("====== Policies for " + user.getName() + " ======");
+            System.out.println(
+                    "User: " + user.getName() + " | ID: " + user.getUserID() + " | Address: " + user.getAddress());
             user.printPolicies(flatRate);
+            System.out.println("-----------------------");
         }
     }
 
     // Converts the company details, all users, and their policies to String
     public String toString() {
-        String result = "Insurance Company: " + name + "\nUsers:\n";
+        String result = "===== Insurance Company: " + name + "\nUsers:\n ======";
         for (User user : users) {
             result += user.toString() + "\n";
         }
@@ -215,13 +213,14 @@ public class InsuranceCompany {
 
     // Filters policies expired by the given date across all users in the company
     public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
-        ArrayList<InsurancePolicy> filteredList = new ArrayList<>();
+        ArrayList<InsurancePolicy> filtered = new ArrayList<>();
         for (User user : users) {
-            ArrayList<InsurancePolicy> userExpired = user.filterByExpiryDate(date);
-            if (userExpired != null) {
-                filteredList.addAll(userExpired);
+            ArrayList<InsurancePolicy> expired = user.filterByExpiryDate(date);
+            if (expired != null) {
+                filtered.addAll(expired);
             }
         }
-        return filteredList;
+        return filtered;
+
     }
 }

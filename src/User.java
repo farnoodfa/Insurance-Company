@@ -61,13 +61,14 @@ public class User {
     }
 
     public String toString() {
-        String result = "User: " + name + " |Address:  " + address + " |ID: " + userID + "\nPolicies:\n";
-        if (policies != null) {
+        String result = "User: " + name + " | Address: " + address + " | ID: " + userID + "\n======= Policies: ========\n";
+
+        if (policies == null || policies.isEmpty()) {
+            result += "No policies found.\n";
+        } else {
             for (int i = 0; i < policies.size(); i++) {
-                result += "Policy" + (i + 1) + ": " + policies.get(i).toString() + "\n";
+                result += "Policy " + (i + 1) + ":\n" + policies.get(i).toString() + "\n";
             }
-        } else if (policies == null) {
-            result += "You have no Policies!";
         }
         return result;
     }

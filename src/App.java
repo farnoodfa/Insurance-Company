@@ -401,7 +401,7 @@ public class App {
                 value = Integer.parseInt(input);
                 isValid = true;
             } catch (NumberFormatException e) {
-                System.out.println("Error: Invalid number. Please enter a valid integer.");
+                System.err.println("Error: Invalid number. Please enter a valid integer.");
             }
         }
         return value;
