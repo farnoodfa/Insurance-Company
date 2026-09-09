@@ -48,20 +48,13 @@ public class User {
         return null;
     }
 
-    public boolean addPolicy(InsurancePolicy policy) {
-        if (policy != null && findPolicy(policy.getID()) == null) {
-            policies.add(policy);
-            return true;
-        }
-        return false;
-    }
-
     public void print() {
         System.out.println(this);
     }
 
     public String toString() {
-        String result = "User: " + name + " | Address: " + address + " | ID: " + userID + "\n======= Policies: ========\n";
+        String result = "User: " + name + " | Address: " + address + " | ID: " + userID
+                + "\n======= Policies: ========\n";
 
         if (policies == null || policies.isEmpty()) {
             result += "No policies found.\n";
@@ -79,6 +72,14 @@ public class User {
             return;
         }
         InsurancePolicy.printPolicies(policies, flatRate);
+    }
+
+    public boolean addPolicy(InsurancePolicy policy) {
+        if (policy != null && findPolicy(policy.getID()) == null) {
+            policies.add(policy);
+            return true;
+        }
+        return false;
     }
 
     public double calcTotalPremiums(int flatRate) {
