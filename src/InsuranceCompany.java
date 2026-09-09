@@ -203,7 +203,7 @@ public class InsuranceCompany {
         if (user != null) {
             return user.filterByCarModel(carModel);
         }
-        return null;
+        return new ArrayList<InsurancePolicy>();
     }
 
     // Filters policies by expiry date for a specific user
@@ -212,7 +212,8 @@ public class InsuranceCompany {
         if (user != null) {
             return user.filterByExpiryDate(date);
         }
-        return null;
+        return new ArrayList<InsurancePolicy>();
+        
     }
 
     // Filters policies expired by the given date across all users in the company
