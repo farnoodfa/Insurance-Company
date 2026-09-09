@@ -175,7 +175,9 @@ public class InsuranceCompany {
         ArrayList<InsurancePolicy> allPolicies = new ArrayList<InsurancePolicy>();
         for (User user : users) {
             if (user.getPolicies() != null) {
-                allPolicies.addAll(user.getPolicies());
+                for (InsurancePolicy policy : user.getPolicies()) {
+                    allPolicies.add(policy);
+                }
             }
         }
         return allPolicies;
@@ -187,7 +189,9 @@ public class InsuranceCompany {
         for (User user : users) {
             ArrayList<InsurancePolicy> userMatchedPolicies = user.filterByCarModel(carModel);
             if (userMatchedPolicies != null) {
-                filteredList.addAll(userMatchedPolicies);
+                for (InsurancePolicy policy : userMatchedPolicies) {
+                    filteredList.add(policy);
+                }
             }
         }
         return filteredList;
@@ -217,10 +221,11 @@ public class InsuranceCompany {
         for (User user : users) {
             ArrayList<InsurancePolicy> expired = user.filterByExpiryDate(date);
             if (expired != null) {
-                filtered.addAll(expired);
+                for (InsurancePolicy policy : expired) {
+                    filtered.add(policy);
+                }
             }
         }
         return filtered;
-
     }
 }
