@@ -5,8 +5,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>528</x>
-      <y>582</y>
+      <x>360</x>
+      <y>378</y>
       <w>306</w>
       <h>114</h>
     </coordinates>
@@ -39,8 +39,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>456</x>
-      <y>780</y>
+      <x>288</x>
+      <y>576</y>
       <w>243</w>
       <h>48</h>
     </coordinates>
@@ -57,8 +57,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>726</x>
-      <y>777</y>
+      <x>558</x>
+      <y>573</y>
       <w>261</w>
       <h>51</h>
     </coordinates>
@@ -76,8 +76,8 @@
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>564</x>
-      <y>693</y>
+      <x>396</x>
+      <y>489</y>
       <w>171</w>
       <h>93</h>
     </coordinates>
@@ -88,8 +88,8 @@
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>726</x>
-      <y>756</y>
+      <x>558</x>
+      <y>552</y>
       <w>123</w>
       <h>27</h>
     </coordinates>
@@ -99,8 +99,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>966</x>
-      <y>672</y>
+      <x>798</x>
+      <y>468</y>
       <w>96</w>
       <h>66</h>
     </coordinates>
@@ -123,8 +123,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>963</x>
-      <y>534</y>
+      <x>795</x>
+      <y>330</y>
       <w>153</w>
       <h>90</h>
     </coordinates>
@@ -150,8 +150,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>531</x>
-      <y>408</y>
+      <x>363</x>
+      <y>204</y>
       <w>291</w>
       <h>120</h>
     </coordinates>
@@ -185,8 +185,8 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>252</x>
-      <y>657</y>
+      <x>84</x>
+      <y>453</y>
       <w>168</w>
       <h>96</h>
     </coordinates>
@@ -216,8 +216,8 @@ HATCH</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>507</x>
-      <y>204</y>
+      <x>339</x>
+      <y>0</y>
       <w>318</w>
       <h>162</h>
     </coordinates>
@@ -260,8 +260,8 @@ HATCH</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>657</x>
-      <y>525</y>
+      <x>489</x>
+      <y>321</y>
       <w>21</w>
       <h>63</h>
     </coordinates>
@@ -272,8 +272,8 @@ HATCH</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>819</x>
-      <y>477</y>
+      <x>651</x>
+      <y>273</y>
       <w>225</w>
       <h>63</h>
     </coordinates>
@@ -283,8 +283,8 @@ HATCH</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>336</x>
-      <y>612</y>
+      <x>168</x>
+      <y>408</y>
       <w>198</w>
       <h>54</h>
     </coordinates>
@@ -295,8 +295,8 @@ m1=1..1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>828</x>
-      <y>648</y>
+      <x>660</x>
+      <y>444</y>
       <w>195</w>
       <h>33</h>
     </coordinates>
@@ -307,8 +307,8 @@ m1=1..1</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>669</x>
-      <y>363</y>
+      <x>501</x>
+      <y>159</y>
       <w>9</w>
       <h>51</h>
     </coordinates>

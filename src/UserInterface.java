@@ -77,27 +77,35 @@ public class UserInterface {
             switch (choice) {
                 case 1:
                     runTestCode();
+                    press();
                     break;
                 case 2:
                     createUser();
+                    press();
                     break;
                 case 3:
                     createThirdPartyPolicy();
+                    press();
                     break;
                 case 4:
                     createComprehensivePolicy();
+                    press();
                     break;
                 case 5:
                     printUserInformation();
+                    press();
                     break;
                 case 6:
                     filterByCarModel();
+                    press();
                     break;
                 case 7:
                     filterByExpiryDate();
+                    press();
                     break;
                 case 8:
                     updateAddress();
+                    press();
                     break;
                 case 9:
                     System.out.println(BOLD + "Logging out of Admin portal..." + RESET);

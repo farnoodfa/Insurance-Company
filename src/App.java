@@ -535,8 +535,8 @@ public class App {
     public static void main(String[] args) {
         InsuranceCompany insuranceCompany = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(insuranceCompany);
-        UserInterface UI = new UserInterface(insuranceCompany);
-        UI.mainMenu();
+        // UserInterface UI = new UserInterface(insuranceCompany);
+        // UI.mainMenu();
 
         testCase();
     }
@@ -825,8 +825,81 @@ public class App {
     }
 
     // =================================================================
-    // CORE TEST
+    // CITY AGGREGATION & REPORTING (Standard Level)
     // =================================================================
+
+    /**
+     * populateDistinctCityNames must return unique city names in discovery order.
+     * Order from setup: Alice (Wollongong) -> Bob (Shiraz) -> Charlie (Shiraz) ->
+     * Diana (Wollongong) -> Ethan (Shiraz)
+     * Expected unique list: ["Wollongong", "Shiraz"]
+     */
+    public static void testPopulateDistinctCityNames(InsuranceCompany company) {
+        System.out.println(
+                "TEST [22/26] populateDistinctCityNames - unique cities in order   expected: [Wollongong, Shiraz]");
+
+        ArrayList<String> expected = new ArrayList<>();
+        expected.add("Wollongong");
+        expected.add("Shiraz");
+        testResult(expected, company.populateDistinctCityNames());
+    }
+
+    /**
+     * getTotalPaymentForCity for "Wollongong".
+     * Includes Alice (user1, with 10% price rise applied in test 18) and Diana
+     * (user4, 0 policies).
+     * Expected: ~1003.080
+     */
+    public static void testGetTotalPaymentForCityWollongong(InsuranceCompany company) {
+        System.out.println(
+                "TEST [23/26] getTotalPaymentForCity(\"Wollongong\") - Alice post-rise total   expected: ~1003.080");
+        double newCar1Price = 25000.0 * 1.10;
+        double newCar2Price = 52000.0 * 1.10;
+        double expected = newCar1Price / (100 + 1 * 200 + 20)
+                + newCar2Price / (50 + 0 * 200 + 20) + (30 - 28) * 50;
+        testResult(expected, company.getTotalPaymentForCity("Wollongong"));
+    }
+
+    /**
+     * getTotalPaymentForCity for "Shiraz".
+     * Includes Bob (user2: Civic $18,000 / 520 = ~34.615), Charlie (user3: 0), and
+     * Ethan (user5: 0).
+     * Expected: ~34.615
+     */
+    public static void testGetTotalPaymentForCityShiraz(InsuranceCompany company) {
+        System.out.println("TEST [24/26] getTotalPaymentForCity(\"Shiraz\") - Bob Civic only   expected: ~34.615");
+        double expected = 18000.0 / (100 + 2 * 200 + 20);
+        testResult(expected, company.getTotalPaymentForCity("Shiraz"));
+    }
+
+    /**
+     * getTotalPaymentForCity for a city with no registered users must return 0.0.
+     */
+    public static void testGetTotalPaymentForCityNotFound(InsuranceCompany company) {
+        System.out.println("TEST [25/26] getTotalPaymentForCity(\"Melbourne\") - no registered users   expected: 0.0");
+        testResult(0.0, company.getTotalPaymentForCity("Melbourne"));
+    }
+
+    /**
+     * getTotalPaymentPerCity must return the aggregated sums corresponding
+     * to the order of cities passed in.
+     */
+    public static void testGetTotalPaymentPerCity(InsuranceCompany company) {
+        System.out.println("TEST [26/26] getTotalPaymentPerCity - aggregated payments for [Wollongong, Shiraz]");
+        double wollongongPayment = (25000.0 * 1.10) / (100 + 1 * 200 + 20)
+                + (52000.0 * 1.10) / (50 + 0 * 200 + 20) + (30 - 28) * 50;
+        double shirazPayment = 18000.0 / (100 + 2 * 200 + 20);
+
+        ArrayList<String> cities = new ArrayList<>();
+        cities.add("Wollongong");
+        cities.add("Shiraz");
+
+        ArrayList<Double> expected = new ArrayList<>();
+        expected.add(wollongongPayment);
+        expected.add(shirazPayment);
+
+        testResult(expected, company.getTotalPaymentPerCity(cities));
+    }
 
     public static void testCase() {
         // Build the company and populate it
@@ -883,6 +956,12 @@ public class App {
         testMyDateIsExpiredTrue();
         testMyDateIsExpiredFalse();
         testMyDateIsExpiredSameDay();
+
+        // City aggregation & reporting
+        testPopulateDistinctCityNames(company);
+        testGetTotalPaymentForCityWollongong(company);
+        testGetTotalPaymentForCityShiraz(company);
+        testGetTotalPaymentForCityNotFound(company);
 
         System.out.println("=================================================================");
         System.out.println("                    ALL TESTS COMPLETE                          ");

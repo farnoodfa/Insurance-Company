@@ -213,7 +213,7 @@ public class InsuranceCompany {
             return user.filterByExpiryDate(date);
         }
         return new ArrayList<InsurancePolicy>();
-        
+
     }
 
     // Filters policies expired by the given date across all users in the company
@@ -228,5 +228,62 @@ public class InsuranceCompany {
             }
         }
         return filtered;
+    }
+
+    // Goes through all users and populates a list of distinct city names
+    public ArrayList<String> populateDistinctCityNames() {
+        ArrayList<String> distinctCities = new ArrayList<String>();
+        for (User user : users) {
+            if (user != null && user.getAddress() != null) {
+                String city = user.getAddress().getCity();
+                if (city != null && !city.trim().isEmpty() && !distinctCities.contains(city)) {
+                    distinctCities.add(city);
+                }
+            }
+        }
+        return distinctCities;
+    }
+
+    // Returns the total premium payment for the given city across all users
+    public double getTotalPaymentForCity(String city) {
+        double total = 0.0;
+        if (city == null) {
+            return total;
+        }
+        for (User user : users) {
+            if (user != null && user.getAddress() != null) {
+                if (city.equalsIgnoreCase(user.getAddress().getCity())) {
+                    total += user.calcTotalPremiums(flatRate);
+                }
+            }
+        }
+        return total;
+    }
+
+    // Aggregates total premium payments for each city in the list in matching order
+    public ArrayList<Double> getTotalPaymentPerCity(ArrayList<String> cities) {
+        ArrayList<Double> payments = new ArrayList<Double>();
+        if (cities == null) {
+            return payments;
+        }
+        for (String city : cities) {
+            payments.add(getTotalPaymentForCity(city));
+        }
+        return payments;
+    }
+
+    // Displays the formatted summary report of payments per city
+    public void reportPaymentPerCity(ArrayList<String> cities, ArrayList<Double> payments) {
+        System.out.println("=================================================");
+        System.out.printf("%-20s %-25s%n", "City Name", "Total Premium Payment");
+        System.out.println("-------------------------------------------------");
+
+        if (cities != null && payments != null) {
+            int count = Math.min(cities.size(), payments.size());
+            for (int i = 0; i < count; i++) {
+                System.out.printf("%-20s $%,.2f%n", cities.get(i), payments.get(i));
+            }
+        }
+        System.out.println("=================================================");
     }
 }
