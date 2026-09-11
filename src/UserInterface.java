@@ -83,11 +83,11 @@ public class UserInterface {
         boolean inAdminMenu = true;
         while (inAdminMenu) {
             displayAdminMenu();
-            int choice = getInt("Select an option (1-10): ");
+            int choice = getInt("Select an option (1-14): ");
             switch (choice) {
                 case 1:
                     runTestCode();
-                    break;
+                    break; //
                 case 2:
                     createUser();
                     break;
@@ -113,11 +113,23 @@ public class UserInterface {
                     reportPaymentPerCity();
                     break;
                 case 10:
+                    reportPaymentsPerCarModelCompany();
+                    break;
+                case 11:
+                    removePolicyAdmin();
+                    break;
+                case 12:
+                    removeUser();
+                    break;
+                case 13:
+                    changeAdminPassword();
+                    break;
+                case 14:
                     System.out.println(BOLD + "Logging out of Admin portal..." + RESET);
                     inAdminMenu = false;
                     break;
                 default:
-                    System.out.println(RED + "Invalid choice! Please select an option from 1 to 10." + RESET);
+                    System.out.println(RED + "Invalid choice! Please select an option from 1 to 14." + RESET);
                     break;
             }
             if (inAdminMenu) {
@@ -128,16 +140,20 @@ public class UserInterface {
 
     public static void displayAdminMenu() {
         System.out.println("\n" + BOLD + "================ ADMIN MENU ================" + RESET);
-        System.out.println("1. Run Test Code");
-        System.out.println("2. Create User");
-        System.out.println("3. Create ThirdParty Policy");
-        System.out.println("4. Create Comprehensive Policy");
-        System.out.println("5. Print User Information");
-        System.out.println("6. Filter by Car Model");
-        System.out.println("7. Filter by Expiry Date");
-        System.out.println("8. Update Address");
-        System.out.println("9. City Premium Payments Report");
-        System.out.println("10. Log Out");
+        System.out.println("1.  Run Test Code");
+        System.out.println("2.  Create User (Auto-generated ID)");
+        System.out.println("3.  Create ThirdParty Policy for User");
+        System.out.println("4.  Create Comprehensive Policy for User");
+        System.out.println("5.  Print User Information");
+        System.out.println("6.  Filter Policies by Car Model");
+        System.out.println("7.  Filter Policies by Expiry Date");
+        System.out.println("8.  Update User Address");
+        System.out.println("9.  City Premium Payments Report");
+        System.out.println("10. Car Model Premium Payments Report (Company)");
+        System.out.println("11. Remove a Policy from User");
+        System.out.println("12. Remove a User");
+        System.out.println("13. Change Admin Password");
+        System.out.println("14. Log Out");
         System.out.println(BOLD + "============================================" + RESET);
     }
 
@@ -284,6 +300,65 @@ public class UserInterface {
 
         ArrayList<Double> totalPayments = company.getTotalPaymentPerCity(distinctCities);
         company.reportPaymentPerCity(distinctCities, totalPayments);
+    }
+
+    public void reportPaymentsPerCarModelCompany() {
+        System.out.println(BOLD + "\n--- Company Car Model Payments Report ---" + RESET);
+        ArrayList<String> distinctModels = company.populateDistinctCarModels();
+
+        if (distinctModels == null || distinctModels.isEmpty()) {
+            System.out.println("No car policies found in the system.");
+            return;
+        }
+
+        ArrayList<Integer> counts = company.getTotalCountPerCarModel(distinctModels);
+        ArrayList<Double> payments = company.getTotalPaymentPerCarModel(distinctModels);
+        company.reportPaymentsPerCarModel(distinctModels, counts, payments);
+    }
+
+    public void removePolicyAdmin() {
+        System.out.println(BOLD + "\n--- Remove Policy from User ---" + RESET);
+        int userID = getInt("Enter User ID: ");
+        User user = company.findUser(userID);
+
+        if (user == null) {
+            System.out.println(RED + "Error: User ID " + userID + " not found." + RESET);
+            return;
+        }
+
+        int policyID = getInt("Enter Policy ID to remove: ");
+        boolean removed = company.removePolicy(userID, policyID);
+
+        if (removed) {
+            System.out.println(GREEN + "Policy " + policyID + " successfully removed." + RESET);
+        } else {
+            System.out.println(RED + "Failed: Policy " + policyID + " not found for this user." + RESET);
+        }
+    }
+
+    public void removeUser() {
+        System.out.println(BOLD + "\n--- Remove User ---" + RESET);
+        int userID = getInt("Enter User ID to remove: ");
+        boolean removed = company.removeUser(userID);
+
+        if (removed) {
+            System.out.println(GREEN + "User ID " + userID + " and all associated data successfully removed." + RESET);
+        } else {
+            System.out.println(RED + "Failed: User ID " + userID + " does not exist." + RESET);
+        }
+    }
+
+    public void changeAdminPassword() {
+        System.out.println(BOLD + "\n--- Change Admin Password ---" + RESET);
+        String currentPassword = getString("Enter current password: ");
+        String newPassword = getString("Enter new password: ");
+
+        boolean changed = company.changeAdminPassword(currentPassword, newPassword);
+        if (changed) {
+            System.out.println(GREEN + "Password successfully updated!" + RESET);
+        } else {
+            System.out.println(RED + "Error: Current password does not match. Password unchanged." + RESET);
+        }
     }
 
     // =================================================================

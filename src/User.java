@@ -1,16 +1,36 @@
 import java.util.*;
 
 public class User {
-    private String name; // the name of the account holder
-    private int userID; // the user ID/number
-    private Address address; // you need to define the Address class as described
-    private ArrayList<InsurancePolicy> policies; // list of all the Insurance Policies this user holds
+    private static int count = 1000;
 
+    private String name;
+    private int userID;
+    private Address address;
+    private ArrayList<InsurancePolicy> policies;
+
+    // Auto-generates userID incrementally (overload)
+    
+    public User(String name, Address address) {
+        this.userID = ++count; // Increments count and assigns the new ID
+        this.name = name;
+        this.address = address;
+        this.policies = new ArrayList<InsurancePolicy>();
+    }
+
+    // Existing Constructor: Retained so manual ID assignments still work
     public User(String name, int userID, Address address) {
         this.name = name;
         this.userID = userID;
         this.address = address;
         this.policies = new ArrayList<InsurancePolicy>();
+        // keep count ahead of any manually assigned ID
+        if (userID >= count) {
+            count = userID;
+        }
+    }
+
+    public static void setCount(int newCount) {
+        count = newCount;
     }
 
     // getters
