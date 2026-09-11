@@ -48,8 +48,8 @@ public class UserInterface {
     }
 
     public static void displayMainMenu() {
-        System.out.println("\n\n\n\n\n\n\n\n\\n\n\n\\n\n\n\n");
-        System.out.println(BOLD + "========= Wekcome To Program! ==========");
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        System.out.println(BOLD + "========= Wekcome To Program! ==========" + RESET);
         System.out.println("1. Admin Login");
         System.out.println("2. User Login");
         System.out.println("3. Exit Program");
@@ -84,7 +84,7 @@ public class UserInterface {
         while (!isValid) {
             System.out.print(massage);
             try {
-                String input = scanner.nextLine().trim();
+                String input = scanner.nextLine();
                 value = Integer.parseInt(input);
                 isValid = true;
             } catch (NumberFormatException e) {

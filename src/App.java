@@ -533,66 +533,79 @@ public class App {
      */
 
     public static void main(String[] args) {
-        coreTest();
+        InsuranceCompany insuranceCompany = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
+        fillData(insuranceCompany);
+        // UserInterface UI = new UserInterface(insuranceCompany);
+        // UI.mainMenu();
+
+        testCase();
     }
 
-    // =================================================================
-    // SHARED STATE
-    // =================================================================
-    static InsuranceCompany company;
-    static User user1, user2, user3, user4, user5;
-    static InsurancePolicy policy1, policy2, policy3;
+    public static void fillData(InsuranceCompany insuranceCompany) {
 
-    /** Builds every instance exactly as written by the student. */
-    public static void setup() {
-        company = new InsuranceCompany("SafeGuard Insurance",
-                "admin", "admin123", 20);
-
+        // --- Addresses ---
         Address addr1 = new Address(12, "Crown St", "Gwynneville", "Wollongong");
         Address addr2 = new Address(45, "George St", "Haymarket", "Shiraz");
         Address addr3 = new Address(78, "Bourke St", "Surry Hills", "Shiraz");
         Address addr4 = new Address(90, "King St", "Newtown", "Wollongong");
         Address addr5 = new Address(34, "Pitt St", "CBD", "Shiraz");
 
-        user1 = new User("Alice Smith", 1001, addr1);
-        user2 = new User("Bob Johnson", 1002, addr2);
-        user3 = new User("Charlie Brown", 1003, addr3);
-        user4 = new User("Diana Prince", 1004, addr4);
-        user5 = new User("Ethan Hunt", 1005, addr5);
+        // --- Users ---
+        User user1 = new User("Alice Smith", 1001, addr1);
+        User user2 = new User("Bob Johnson", 1002, addr2);
+        User user3 = new User("Charlie Brown", 1003, addr3);
+        User user4 = new User("Diana Prince", 1004, addr4);
+        User user5 = new User("Ethan Hunt", 1005, addr5);
 
+        insuranceCompany.addUser(user1);
+        insuranceCompany.addUser(user2);
+        insuranceCompany.addUser(user3);
+        insuranceCompany.addUser(user4);
+        insuranceCompany.addUser(user5);
+
+        // --- Cars ---
         Car car1 = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
         Car car2 = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         Car car3 = new Car(2019, 18000.0, "Honda Civic", Car.CarType.HATCH);
         Car car4 = new Car(2023, 45000.0, "Toyota RAV4", Car.CarType.SUV);
         Car car5 = new Car(2021, 30000.0, "Mazda 3", Car.CarType.SED);
 
+        // --- Expiry Dates ---
         MyDate expDate1 = new MyDate(2025, 6, 30);
         MyDate expDate2 = new MyDate(2027, 12, 31);
         MyDate expDate3 = new MyDate(2024, 3, 15);
         MyDate expDate4 = new MyDate(2026, 8, 20);
 
-        policy1 = new ThirdPartyPolicy("Alice Smith", 101, car1, 1,
-                expDate1, "Standard third-party");
-        policy2 = new ComprehensivePolicy("Alice Smith", 102, car2,
-                0, expDate2, 28, 1);
-        policy3 = new ThirdPartyPolicy("Bob Johnson", 201, car3, 2,
-                expDate3, "Roadside assistance");
+        // --- Policies ---
+        InsurancePolicy policy1 = new ThirdPartyPolicy("Alice Smith", 101, car1, 1, expDate1, "Standard third-party");
+        InsurancePolicy policy2 = new ComprehensivePolicy("Alice Smith", 102, car2, 0, expDate2, 28, 1);
+        InsurancePolicy policy3 = new ThirdPartyPolicy("Bob Johnson", 201, car3, 2, expDate3, "Roadside assistance");
+        InsurancePolicy policy4 = new ComprehensivePolicy("Charlie Brown", 301, car4, 0, expDate4, 35, 2);
+        InsurancePolicy policy5 = new ThirdPartyPolicy("Diana Prince", 401, car5, 1, expDate1, "Basic coverage");
 
-        // Register all users with the company
-        company.addUser(user1);
-        company.addUser(user2);
-        company.addUser(user3);
-        company.addUser(user4);
-        company.addUser(user5);
-
-        // Attach policies to their owners
-        company.addPolicy(1001, policy1); // Alice: ThirdParty (Camry)
-        company.addPolicy(1001, policy2); // Alice: Comprehensive (BMW X5)
-        company.addPolicy(1002, policy3); // Bob: ThirdParty (Civic)
+        // --- Attach policies to users ---
+        insuranceCompany.addPolicy(1001, policy1);
+        insuranceCompany.addPolicy(1001, policy2);
+        insuranceCompany.addPolicy(1002, policy3);
+        insuranceCompany.addPolicy(1003, policy4);
+        insuranceCompany.addPolicy(1004, policy5);
+        // user5 (Ethan) intentionally left with no policies
     }
 
     // =================================================================
-    // SHARED HELPER
+    // HELPER METHODS
+    // =================================================================
+
+    public static void addPolicy(User user, InsurancePolicy policy) {
+        user.addPolicy(policy);
+    }
+
+    public static void addPolicy(InsuranceCompany company, int userID, InsurancePolicy policy) {
+        company.addPolicy(userID, policy);
+    }
+
+    // =================================================================
+    // SHARED TEST HELPER
     // =================================================================
 
     public static void testResult(Object expected, Object actual) {
@@ -610,14 +623,12 @@ public class App {
     // ADMIN VALIDATION
     // =================================================================
 
-    /** Correct username + password must return true. */
-    public static void testValidateAdminCorrect() {
+    public static void testValidateAdminCorrect(InsuranceCompany company) {
         System.out.println("TEST [1/21] validateAdmin - correct credentials → expected: true");
         testResult(true, company.validateAdmin("admin", "admin123"));
     }
 
-    /** Wrong password must return false. */
-    public static void testValidateAdminWrong() {
+    public static void testValidateAdminWrong(InsuranceCompany company) {
         System.out.println("TEST [2/21] validateAdmin - wrong password → expected: false");
         testResult(false, company.validateAdmin("admin", "wrongpass"));
     }
@@ -626,24 +637,20 @@ public class App {
     // USER MANAGEMENT
     // =================================================================
 
-    /** Registering a user whose ID already exists must return false. */
-    public static void testAddUserDuplicate() {
+    public static void testAddUserDuplicate(InsuranceCompany company) {
         System.out.println("TEST [3/21] addUser - duplicate ID 1001 → expected: false");
         User duplicate = new User("Alice Clone", 1001,
                 new Address(1, "Fake St", "Nowhere", "Wollongong"));
         testResult(false, company.addUser(duplicate));
     }
 
-    /** findUser must return the exact same object that was added. */
-    public static void testFindUserExists() {
+    public static void testFindUserExists(InsuranceCompany company, User user1) {
         System.out.println("TEST [4/21] findUser - ID 1001 exists → expected: user1 object (true)");
-        // User does not override equals(); same reference is stored and returned.
         testResult(user1, company.findUser(1001));
     }
 
-    /** findUser on an unknown ID must produce null. */
-    public static void testFindUserNotFound() {
-        System.out.println("TEST [5/21] findUser - ID 9999 does not exist → expected: null → (true)");
+    public static void testFindUserNotFound(InsuranceCompany company) {
+        System.out.println("TEST [5/21] findUser - ID 9999 does not exist → expected: null (true)");
         testResult(true, company.findUser(9999) == null);
     }
 
@@ -651,22 +658,17 @@ public class App {
     // POLICY MANAGEMENT
     // =================================================================
 
-    /** A policy that was added must be findable via findPolicy. */
-    public static void testFindPolicyExists() {
+    public static void testFindPolicyExists(InsuranceCompany company) {
         System.out.println("TEST [6/21] findPolicy - policy ID 101 for user 1001 → expected: non-null (true)");
         testResult(true, company.findPolicy(1001, 101) != null);
     }
 
-    /** Searching for a policy ID that was never added must return null. */
-    public static void testFindPolicyNotFound() {
+    public static void testFindPolicyNotFound(InsuranceCompany company) {
         System.out.println("TEST [7/21] findPolicy - policy ID 9999 for user 1001 → expected: null (true)");
         testResult(true, company.findPolicy(1001, 9999) == null);
     }
 
-    /**
-     * Adding a policy whose ID is already registered for a user must return false.
-     */
-    public static void testAddPolicyDuplicate() {
+    public static void testAddPolicyDuplicate(InsuranceCompany company) {
         System.out.println("TEST [8/21] addPolicy - duplicate policy ID 101 for user 1001 → expected: false");
         Car dupCar = new Car(2018, 10000.0, "Kia Rio", Car.CarType.HATCH);
         ThirdPartyPolicy dup = new ThirdPartyPolicy(
@@ -675,12 +677,11 @@ public class App {
     }
 
     // =================================================================
-    // PREMIUM CALCULATION (isolated objects - no shared state)
+    // PREMIUM CALCULATION (isolated objects - no company needed)
     // =================================================================
 
     /**
-     * ThirdParty formula: price / (100 + claims×200 + flatRate)
-     * = 25000 / (100 + 1×200 + 20) = 25000 / 320 = 78.125 (exact)
+     * ThirdParty: 25000 / (100 + 1×200 + 20) = 25000/320 = 78.125 (exact)
      */
     public static void testThirdPartyCalcPayment() {
         System.out
@@ -688,49 +689,43 @@ public class App {
         Car testCar = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
         ThirdPartyPolicy tp = new ThirdPartyPolicy(
                 "Alice Smith", 101, testCar, 1, new MyDate(2025, 6, 30), "test");
-        double expected = 25000.0 / (100 + 1 * 200 + 20); // = 78.125
+        double expected = 25000.0 / (100 + 1 * 200 + 20);
         testResult(expected, tp.calcPayment(20));
     }
 
     /**
-     * Comprehensive - driver age 35 (≥ 30, no age surcharge):
-     * = 52000 / (50 + 0×200 + 20) = 52000 / 70 ≈ 742.857
+     * Comprehensive - age 35 (≥30, no surcharge):
+     * 52000 / (50 + 0×200 + 20) = 52000/70 ≈ 742.857
      */
     public static void testComprehensiveCalcPaymentOlderDriver() {
         System.out.println(
-                "TEST [10/21] ComprehensivePolicy.calcPayment - age 35 (no surcharge), 52000/(50+20) → expected: 52000/70 ≈ 742.857");
+                "TEST [10/21] ComprehensivePolicy.calcPayment - age 35 (no surcharge) → expected: 52000/70 ≈ 742.857");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
                 "Alice Smith", 102, testCar, 0, new MyDate(2027, 12, 31), 35, 1);
-        double expected = 52000.0 / (50 + 0 * 200 + 20); // ≈ 742.857
+        double expected = 52000.0 / (50 + 0 * 200 + 20);
         testResult(expected, cp.calcPayment(20));
     }
 
     /**
-     * Comprehensive - driver age 28 (< 30, age surcharge applies):
-     * base = 52000 / (50 + 0×200 + 20) = 52000 / 70 ≈ 742.857
-     * surcharge = (30 − 28) × 50 = 100
-     * total ≈ 842.857
+     * Comprehensive - age 28 (<30, surcharge applies):
+     * 52000/70 + (30-28)×50 = 52000/70 + 100 ≈ 842.857
      */
     public static void testComprehensiveCalcPaymentYoungDriver() {
         System.out.println(
-                "TEST [11/21] ComprehensivePolicy.calcPayment - age 28 (surcharge +100), 52000/70+100 → expected: ≈ 842.857");
+                "TEST [11/21] ComprehensivePolicy.calcPayment - age 28 (surcharge +100) → expected: 52000/70+100 ≈ 842.857");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
                 "Alice Smith", 102, testCar, 0, new MyDate(2027, 12, 31), 28, 1);
-        double expected = 52000.0 / (50 + 0 * 200 + 20) + (30 - 28) * 50; // ≈ 842.857
+        double expected = 52000.0 / (50 + 0 * 200 + 20) + (30 - 28) * 50;
         testResult(expected, cp.calcPayment(20));
     }
 
     // =================================================================
-    // TOTAL PAYMENTS (uses company state - must run BEFORE price rise)
+    // TOTAL PAYMENTS (must run BEFORE price rise)
     // =================================================================
 
-    /**
-     * Alice (1001) has policy1 + policy2:
-     * 78.125 + 52000/70 + 100 ≈ 920.982
-     */
-    public static void testCalcTotalPaymentsForUser() {
+    public static void testCalcTotalPaymentsForUser(InsuranceCompany company) {
         System.out.println(
                 "TEST [12/21] calcTotalPayments(1001) - policy1(78.125) + policy2(≈842.857) → expected: ≈ 920.982");
         double expected = 25000.0 / (100 + 1 * 200 + 20)
@@ -738,14 +733,14 @@ public class App {
         testResult(expected, company.calcTotalPayments(1001));
     }
 
-    /**
-     * All users: Alice(≈920.982) + Bob(≈34.615) ≈ 955.598
-     */
-    public static void testCalcTotalPaymentsAll() {
-        System.out.println("TEST [13/21] calcTotalPayments() - Alice(≈920.982) + Bob(≈34.615) → expected: ≈ 955.598");
-        double expected = 25000.0 / (100 + 1 * 200 + 20)
-                + 52000.0 / (50 + 0 * 200 + 20) + (30 - 28) * 50
-                + 18000.0 / (100 + 2 * 200 + 20);
+    public static void testCalcTotalPaymentsAll(InsuranceCompany company) {
+        System.out.println(
+                "TEST [13/21] calcTotalPayments() - all 5 policies across Alice/Bob/Charlie/Diana → expected: ≈ 1692.205");
+        double expected = 25000.0 / (100 + 1 * 200 + 20) // policy1 Alice ThirdParty
+                + 52000.0 / (50 + 0 * 200 + 20) + (30 - 28) * 50 // policy2 Alice Comprehensive age 28
+                + 18000.0 / (100 + 2 * 200 + 20) // policy3 Bob ThirdParty
+                + 45000.0 / (50 + 0 * 200 + 20) // policy4 Charlie Comprehensive age 35 (no surcharge)
+                + 30000.0 / (100 + 1 * 200 + 20); // policy5 Diana ThirdParty
         testResult(expected, company.calcTotalPayments());
     }
 
@@ -753,18 +748,13 @@ public class App {
     // FILTERING
     // =================================================================
 
-    /**
-     * "Toyota" appears only in car1 ("Toyota Camry") → 1 match company-wide.
-     * car4 ("Toyota RAV4") is not attached to any policy, so it is not counted.
-     */
-    public static void testFilterByCarModelFound() {
-        System.out
-                .println("TEST [14/21] filterByCarModel(\"Toyota\") - matches policy1 (Camry) only → expected size: 1");
-        testResult(1, company.filterByCarModel("Toyota").size());
+    public static void testFilterByCarModelFound(InsuranceCompany company) {
+        System.out.println(
+                "TEST [14/21] filterByCarModel(\"Toyota\") - matches policy1 (Camry) + policy4 (RAV4) → expected size: 2");
+        testResult(2, company.filterByCarModel("Toyota").size());
     }
 
-    /** "Tesla" matches no car model in any policy → empty list. */
-    public static void testFilterByCarModelNotFound() {
+    public static void testFilterByCarModelNotFound(InsuranceCompany company) {
         System.out.println("TEST [15/21] filterByCarModel(\"Tesla\") - no match → expected size: 0");
         testResult(0, company.filterByCarModel("Tesla").size());
     }
@@ -776,131 +766,120 @@ public class App {
      * policy3 exp 2024-03-15 → year 2025 > 2024 → EXPIRED ✓
      * Expected count: 2
      */
-    public static void testFilterByExpiryDate() {
-        System.out
-                .println("TEST [16/21] filterByExpiryDate(2025-07-01) - policy1 & policy3 expired → expected size: 2");
-        MyDate cutoff = new MyDate(2025, 7, 1);
-        testResult(2, company.filterByExpiryDate(cutoff).size());
+    public static void testFilterByExpiryDate(InsuranceCompany company) {
+        System.out.println(
+                "TEST [16/21] filterByExpiryDate(2025-07-01) - policy1, policy3, policy5 expired → expected size: 3");
+        testResult(3, company.filterByExpiryDate(new MyDate(2025, 7, 1)).size());
     }
 
     // =================================================================
     // ALL POLICIES COUNT
     // =================================================================
 
-    /** Three policies were added across all users → allPolicies() returns 3. */
-    public static void testAllPoliciesCount() {
-        System.out.println("TEST [17/21] allPolicies() - 3 policies added across all users → expected size: 3");
-        testResult(3, company.allPolicies().size());
+    public static void testAllPoliciesCount(InsuranceCompany company) {
+        System.out.println("TEST [17/21] allPolicies() - 5 policies added across all users → expected size: 5");
+        testResult(5, company.allPolicies().size());
     }
 
-    // ===============================================================
-    // CAR PRICE RISE (modifies company state - runs after payment tests)
+    // =================================================================
+    // CAR PRICE RISE (modifies state - runs after payment tests)
     // =================================================================
 
     /**
-     * Raise all of Alice's car prices by 10%:
-     * car1: $25 000 → $27 500 | new payment1 = 27500/320 = 85.9375
-     * car2: $52 000 → $57 200 | new payment2 = 57200/70 + 100 ≈ 917.143
+     * Raise Alice's cars by 10%:
+     * car1 $25000 → $27500 | payment = 27500/320 = 85.9375
+     * car2 $52000 → $57200 | payment = 57200/70 + 100 ≈ 917.143
      * New Alice total ≈ 1003.080
      */
-    public static void testCarPriceRiseEffect() {
+    public static void testCarPriceRiseEffect(InsuranceCompany company) {
         System.out.println(
                 "TEST [18/21] carPriceRise(1001, 10%) - Camry $25000→$27500, BMW $52000→$57200 → expected: ≈ 1003.080");
         company.carPriceRise(1001, 0.10);
-        double newCar1Price = 25000.0 * 1.10;
-        double newCar2Price = 52000.0 * 1.10;
-        double expected = newCar1Price / (100 + 1 * 200 + 20)
-                + newCar2Price / (50 + 0 * 200 + 20) + (30 - 28) * 50;
+        double newCar1 = 25000.0 * 1.10;
+        double newCar2 = 52000.0 * 1.10;
+        double expected = newCar1 / (100 + 1 * 200 + 20)
+                + newCar2 / (50 + 0 * 200 + 20) + (30 - 28) * 50;
         testResult(expected, company.calcTotalPayments(1001));
     }
 
     // =================================================================
-    // DATE LOGIC (MyDate.isExpired)
+    // DATE LOGIC
     // =================================================================
 
-    /**
-     * Cutoff year > expiry year → expired → true.
-     * cutoff(2025,7,1).isExpired(expiry(2025,6,30)): same year, month 7 > 6 → true
-     */
     public static void testMyDateIsExpiredTrue() {
         System.out.println(
                 "TEST [19/21] MyDate.isExpired - cutoff(2025,7,1) vs expiry(2025,6,30), month 7>6 → expected: true");
         testResult(true, new MyDate(2025, 7, 1).isExpired(new MyDate(2025, 6, 30)));
     }
 
-    /**
-     * Cutoff year < expiry year → still valid → false.
-     * cutoff(2024,1,1).isExpired(expiry(2025,6,30)): year 2024 < 2025 → false
-     */
     public static void testMyDateIsExpiredFalse() {
         System.out.println(
                 "TEST [20/21] MyDate.isExpired - cutoff(2024,1,1) vs expiry(2025,6,30), year 2024<2025 → expected: false");
         testResult(false, new MyDate(2024, 1, 1).isExpired(new MyDate(2025, 6, 30)));
     }
 
-    /**
-     * Cutoff == expiry (same day) → treated as expired → true.
-     * isExpired returns: day >= expiryDate.day when year & month are equal.
-     * cutoff(2025,6,30).isExpired(expiry(2025,6,30)): 30 >= 30 → true
-     */
     public static void testMyDateIsExpiredSameDay() {
         System.out.println(
-                "TEST [21/21] MyDate.isExpired - cutoff(2025,6,30) vs expiry(2025,6,30), same day edge case → expected: true");
+                "TEST [21/21] MyDate.isExpired - cutoff(2025,6,30) vs expiry(2025,6,30), same day → expected: true");
         testResult(true, new MyDate(2025, 6, 30).isExpired(new MyDate(2025, 6, 30)));
     }
 
     // =================================================================
-    // single entry point that runs every test in story order
+    // CORE TEST
     // =================================================================
 
-    public static void coreTest() {
-        setup();
+    public static void testCase() {
+        // Build the company and populate it
+        InsuranceCompany company = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
+        fillData(company);
+
+        // Retrieve user1 from the company to pass into tests that need it
+        User user1 = company.findUser(1001);
 
         System.out.println("=================================================================");
         System.out.println("         SAFEGUARD INSURANCE - CORE TEST SUITE                  ");
         System.out.println("=================================================================");
         System.out.println("Company flat rate : 20");
-        System.out.println("Alice (1001) holds : policy1 ThirdParty Camry $25000 exp 2025-06-30");
-        System.out.println("                   : policy2 Comprehensive BMW X5 $52000 age 28 exp 2027-12-31");
-        System.out.println("Bob   (1002) holds : policy3 ThirdParty Civic $18000 exp 2024-03-15");
-        System.out.println("Charlie/Diana/Ethan: registered, no policies");
+        System.out.println("Alice (1001) holds: policy1 ThirdParty   Camry  $25000 exp 2025-06-30");
+        System.out.println("                    policy2 Comprehensive BMW X5 $52000 age 28 exp 2027-12-31");
+        System.out.println("Bob   (1002) holds: policy3 ThirdParty   Civic  $18000 exp 2024-03-15");
         System.out.println("=================================================================\n\n");
 
-        // Group 1 - Admin validation
-        testValidateAdminCorrect();
-        testValidateAdminWrong();
+        // Admin validation
+        testValidateAdminCorrect(company);
+        testValidateAdminWrong(company);
 
-        // Group 2 - User management
-        testAddUserDuplicate();
-        testFindUserExists();
-        testFindUserNotFound();
+        // User management
+        testAddUserDuplicate(company);
+        testFindUserExists(company, user1);
+        testFindUserNotFound(company);
 
-        // Group 3 - Policy management
-        testFindPolicyExists();
-        testFindPolicyNotFound();
-        testAddPolicyDuplicate();
+        // Policy management
+        testFindPolicyExists(company);
+        testFindPolicyNotFound(company);
+        testAddPolicyDuplicate(company);
 
-        // Group 4 - Premium calculations (isolated objects)
+        // Premium calculations (isolated - no company needed)
         testThirdPartyCalcPayment();
         testComprehensiveCalcPaymentOlderDriver();
         testComprehensiveCalcPaymentYoungDriver();
 
-        // Group 5 - Total payments (BEFORE price rise)
-        testCalcTotalPaymentsForUser();
-        testCalcTotalPaymentsAll();
+        // Total payments (BEFORE price rise)
+        testCalcTotalPaymentsForUser(company);
+        testCalcTotalPaymentsAll(company);
 
-        // Group 6 - Filtering
-        testFilterByCarModelFound();
-        testFilterByCarModelNotFound();
-        testFilterByExpiryDate();
+        // Filtering
+        testFilterByCarModelFound(company);
+        testFilterByCarModelNotFound(company);
+        testFilterByExpiryDate(company);
 
-        // Group 7 - All policies count
-        testAllPoliciesCount();
+        // All policies count
+        testAllPoliciesCount(company);
 
-        // Group 8 - Price rise (state change - placed after all payment tests)
-        testCarPriceRiseEffect();
+        // Price rise (state change - after all payment tests)
+        testCarPriceRiseEffect(company);
 
-        // Group 9 - Date logic
+        // Date logic (no company needed)
         testMyDateIsExpiredTrue();
         testMyDateIsExpiredFalse();
         testMyDateIsExpiredSameDay();
@@ -909,5 +888,4 @@ public class App {
         System.out.println("                    ALL TESTS COMPLETE                          ");
         System.out.println("=================================================================");
     }
-
 }
