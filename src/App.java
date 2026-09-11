@@ -535,8 +535,8 @@ public class App {
     public static void main(String[] args) {
         InsuranceCompany insuranceCompany = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(insuranceCompany);
-        // UserInterface UI = new UserInterface(insuranceCompany);
-        // UI.mainMenu();
+        UserInterface UI = new UserInterface(insuranceCompany);
+        UI.mainMenu();
 
         testCase();
     }

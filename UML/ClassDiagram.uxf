@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text/>
+  <zoom_level>3</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>528</x>
+      <y>582</y>
+      <w>306</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>/InsurancePolicy/
+--
+# policyHolderName : String
+# id : int
+# car : Car
+# numberOfClaims : int
+# expiryDate : MyDate
+--
++ InsurancePolicy(policyHolderName : String, id : int, car : Car, numberOfClaims : int, expiryDate : MyDate)
++ getID() : int
++ getExpiryDate() : MyDate
++ setExpiryDate(expiryDate : MyDate) : void
++ setPolicyHolderName(newName : String) : void
++ setCarModel(model : String) : void
++ print() : void
++ {static} printPolicies(policies : ArrayList&lt;InsurancePolicy&gt;) : void
++ {static} printPolicies(policies : ArrayList&lt;InsurancePolicy&gt;, flatRate : double) : void
++ toString() : String
++ /calcPayment(flatRate : double) : double/
++ {static} calcTotalPayments(policies : ArrayList&lt;InsurancePolicy&gt;, flatRate : int) : double
++ carPriceRise(risePercent : double) : void
++ {static} carPriceRiseAll(policies : ArrayList&lt;InsurancePolicy&gt;, risePercent : double) : void
++ {static} filterByCarModel(policies : ArrayList&lt;InsurancePolicy&gt;, model : String) : ArrayList&lt;InsurancePolicy&gt;
++ {static} filterByExpiryDate(policies : ArrayList&lt;InsurancePolicy&gt;, date : MyDate) : ArrayList&lt;InsurancePolicy&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>456</x>
+      <y>780</y>
+      <w>243</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>ThirdPartyPolicy
+--
+# comments : String
+--
++ ThirdPartyPolicy(policyHolderName : String, id : int, car : Car, numberOfClaims : int, expiryDate : MyDate, comments : String)
++ print() : void
++ toString() : String
++ calcPayment(flatRate : double) : double</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>726</x>
+      <y>777</y>
+      <w>261</w>
+      <h>51</h>
+    </coordinates>
+    <panel_attributes>ComprehensivePolicy
+--
+# driverAge : int
+# level : int
+--
++ ComprehensivePolicy(policyHolderName : String, id : int, car : Car, numberOfClaims : int, expiryDate : MyDate, driverAge : int, level : int)
++ print() : void
++ toString() : String
++ calcPayment(flatRate : double) : double</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>564</x>
+      <y>693</y>
+      <w>171</w>
+      <h>93</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+</panel_attributes>
+    <additional_attributes>550.0;10.0;550.0;220.0;10.0;220.0;10.0;290.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>726</x>
+      <y>756</y>
+      <w>123</w>
+      <h>27</h>
+    </coordinates>
+    <panel_attributes>lt=-</panel_attributes>
+    <additional_attributes>10.0;10.0;390.0;10.0;390.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>966</x>
+      <y>672</y>
+      <w>96</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>MyDate
+--
+- year : int
+- month : int
+- day : int
+--
++ MyDate(year : int, month : int, day : int)
++ getYear() : int
++ getMonth() : int
++ getDay() : int
++ setYear(year : int) : void
++ setMonth(month : int) : void
++ setDay(day : int) : void
++ isExpired(expiryDate : MyDate) : boolean</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>963</x>
+      <y>534</y>
+      <w>153</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>Address
+--
+- streetNum : int
+- street : String
+- suburb : String
+- city : String
+--
++ Address(streetNum : int, street : String, suburb : String, city : String)
++ getStreetNum() : int
++ getStreet() : String
++ getSuburb() : String
++ getCity() : String
++ setCity(city : String) : void
++ setStreetNum(streetNum : int) : void
++ setStreet(street : String) : void
++ setSuburb(suburb : String) : void
++ toString() : String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>531</x>
+      <y>408</y>
+      <w>291</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>User
+--
+- name : String
+- userID : int
+- address : Address
+- policies : ArrayList&lt;InsurancePolicy&gt;
+--
++ User(name : String, userID : int, address : Address)
++ getName() : String
++ getUserID() : int
++ getAddress() : Address
++ getPolicies() : ArrayList&lt;InsurancePolicy&gt;
++ setAddress(address : Address) : void
++ setCity(city : String) : void
++ findPolicy(policyID : int) : InsurancePolicy
++ print() : void
++ toString() : String
++ printPolicies(flatRate : int) : void
++ addPolicy(policy : InsurancePolicy) : boolean
++ calcTotalPremiums(flatRate : int) : double
++ carPriceRiseAll(risePercent : double) : void
++ filterByCarModel(carModel : String) : ArrayList&lt;InsurancePolicy&gt;
++ createThirdPartyPolicy(policyHolderName : String, id : int, car : Car, numberOfClaims : int, expiryDate : MyDate, comments : String) : boolean
++ createComprehensivePolicy(policyHolderName : String, id : int, car : Car, numberOfClaims : int, expiryDate : MyDate, driverAge : int, level : int) : boolean
++ filterByExpiryDate(date : MyDate) : ArrayList&lt;InsurancePolicy&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>252</x>
+      <y>657</y>
+      <w>168</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>Car
+--
+- manufacturingYear : int
+- price : double
+- model : String
+- type : CarType
+--
++ Car(manufacturingYear : int, price : double, model : String, type : CarType)
++ getModel() : String
++ getPrice() : double
++ setModel(model : String) : void
++ print() : void
++ toString() : String
++ priceRise(risePercent : double) : void
+--
+&lt;&lt;nested classifiers&gt;&gt;
+&lt;&lt;enumeration&gt;&gt; CarType
+SUV
+SED
+LUX
+HATCH</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>507</x>
+      <y>204</y>
+      <w>318</w>
+      <h>162</h>
+    </coordinates>
+    <panel_attributes>InsuranceCompany
+--
+- name : String
+- users : ArrayList&lt;User&gt;
+- adminUsername : String
+- adminPassword : String
+- flatRate : int
+--
++ InsuranceCompany(adminUserName : String, adminPassword : String, flatRate : int)
++ getName() : String
++ getUsers() : ArrayList&lt;User&gt;
++ getAdminUsername() : String
++ getAdminPassword() : String
++ getFlatRate() : int
++ validateAdmin(username : String, password : String) : boolean
++ findUser(userID : int) : User
++ addUser(user : User) : boolean
++ addUser(name : String, userID : int, address : Address) : boolean
++ addPolicy(userID : int, policy : InsurancePolicy) : boolean
++ findPolicy(userID : int, policyID : int) : InsurancePolicy
++ printPolicies(userID : int) : void
++ print() : void
++ toString() : String
++ createThirdPartyPolicy(userID : int, policyHolderName : String, id : int, car : Car, numberOfClaims : int, expiryDate : MyDate, comments : String) : boolean
++ createComprehensivePolicy(userID : int, policyHolderName : String, id : int, car : Car, numberOfClaims : int, expiryDate : MyDate, driverAge : int, level : int) : boolean
++ calcTotalPayments(userID : int) : double
++ calcTotalPayments() : double
++ carPriceRise(userID : int, risePercent : double) : boolean
++ carPriceRise(risePercent : double) : void
++ allPolicies() : ArrayList&lt;InsurancePolicy&gt;
++ filterByCarModel(carModel : String) : ArrayList&lt;InsurancePolicy&gt;
++ filterByCarModel(userID : int, carModel : String) : ArrayList&lt;InsurancePolicy&gt;
++ filterByExpiryDate(userID : int, date : MyDate) : ArrayList&lt;InsurancePolicy&gt;
++ filterByExpiryDate(date : MyDate) : ArrayList&lt;InsurancePolicy&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>657</x>
+      <y>525</y>
+      <w>21</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+</panel_attributes>
+    <additional_attributes>50.0;190.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>819</x>
+      <y>477</y>
+      <w>225</w>
+      <h>63</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>730.0;190.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>336</x>
+      <y>612</y>
+      <w>198</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=1..1</panel_attributes>
+    <additional_attributes>10.0;150.0;640.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>828</x>
+      <y>648</y>
+      <w>195</w>
+      <h>33</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m1=1..1</panel_attributes>
+    <additional_attributes>630.0;80.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>669</x>
+      <y>363</y>
+      <w>9</w>
+      <h>51</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;150.0;10.0;10.0</additional_attributes>
+  </element>
+</diagram>
