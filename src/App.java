@@ -535,10 +535,10 @@ public class App {
     public static void main(String[] args) {
         InsuranceCompany insuranceCompany = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(insuranceCompany);
-        // UserInterface UI = new UserInterface(insuranceCompany);
-        // UI.mainMenu();
+        UserInterface UI = new UserInterface(insuranceCompany);
+        UI.mainMenu();
 
-        testCase();
+        // testCase();
     }
 
     public static void fillData(InsuranceCompany insuranceCompany) {
@@ -846,29 +846,35 @@ public class App {
 
     /**
      * getTotalPaymentForCity for "Wollongong".
-     * Includes Alice (user1, with 10% price rise applied in test 18) and Diana
-     * (user4, 0 policies).
-     * Expected: ~1003.080
+     * Includes:
+     * - Alice (1001): 2 policies post-rise (~$1003.080)
+     * - Diana (1004): 1 ThirdParty policy ($30000 / 320 = $93.75)
+     * Expected: ~1096.830
      */
     public static void testGetTotalPaymentForCityWollongong(InsuranceCompany company) {
-        System.out.println(
-                "TEST [23/26] getTotalPaymentForCity(\"Wollongong\") - Alice post-rise total   expected: ~1003.080");
-        double newCar1Price = 25000.0 * 1.10;
-        double newCar2Price = 52000.0 * 1.10;
-        double expected = newCar1Price / (100 + 1 * 200 + 20)
-                + newCar2Price / (50 + 0 * 200 + 20) + (30 - 28) * 50;
+        System.out.println("TEST [23/26] getTotalPaymentForCity(\"Wollongong\") - Alice + Diana   expected: ~1096.830");
+        double aliceTotal = (25000.0 * 1.10) / (100 + 1 * 200 + 20)
+                + (52000.0 * 1.10) / (50 + 0 * 200 + 20) + (30 - 28) * 50;
+        double dianaTotal = 30000.0 / (100 + 1 * 200 + 20); // $93.75
+
+        double expected = aliceTotal + dianaTotal;
         testResult(expected, company.getTotalPaymentForCity("Wollongong"));
     }
 
     /**
      * getTotalPaymentForCity for "Shiraz".
-     * Includes Bob (user2: Civic $18,000 / 520 = ~34.615), Charlie (user3: 0), and
-     * Ethan (user5: 0).
-     * Expected: ~34.615
+     * Includes:
+     * - Bob (1002): Civic ThirdParty (~$34.615)
+     * - Charlie (1003): RAV4 Comprehensive ($45000 / 70 = ~$642.857)
+     * - Ethan (1005): 0 policies ($0.00)
+     * Expected: ~677.473
      */
     public static void testGetTotalPaymentForCityShiraz(InsuranceCompany company) {
-        System.out.println("TEST [24/26] getTotalPaymentForCity(\"Shiraz\") - Bob Civic only   expected: ~34.615");
-        double expected = 18000.0 / (100 + 2 * 200 + 20);
+        System.out.println("TEST [24/26] getTotalPaymentForCity(\"Shiraz\") - Bob + Charlie   expected: ~677.473");
+        double bobTotal = 18000.0 / (100 + 2 * 200 + 20);
+        double charlieTotal = 45000.0 / (50 + 0 * 200 + 20); // $642.857
+
+        double expected = bobTotal + charlieTotal;
         testResult(expected, company.getTotalPaymentForCity("Shiraz"));
     }
 
@@ -887,17 +893,14 @@ public class App {
     public static void testGetTotalPaymentPerCity(InsuranceCompany company) {
         System.out.println("TEST [26/26] getTotalPaymentPerCity - aggregated payments for [Wollongong, Shiraz]");
         double wollongongPayment = (25000.0 * 1.10) / (100 + 1 * 200 + 20)
-                + (52000.0 * 1.10) / (50 + 0 * 200 + 20) + (30 - 28) * 50;
-        double shirazPayment = 18000.0 / (100 + 2 * 200 + 20);
+                + (52000.0 * 1.10) / (50 + 0 * 200 + 20) + (30 - 28) * 50
+                + 30000.0 / (100 + 1 * 200 + 20);
 
-        ArrayList<String> cities = new ArrayList<>();
-        cities.add("Wollongong");
-        cities.add("Shiraz");
+        double shirazPayment = 18000.0 / (100 + 2 * 200 + 20)
+                + 45000.0 / (50 + 0 * 200 + 20);
 
-        ArrayList<Double> expected = new ArrayList<>();
-        expected.add(wollongongPayment);
-        expected.add(shirazPayment);
-
+        ArrayList<String> cities = new ArrayList<>(Arrays.asList("Wollongong", "Shiraz"));
+        ArrayList<Double> expected = new ArrayList<>(Arrays.asList(wollongongPayment, shirazPayment));
         testResult(expected, company.getTotalPaymentPerCity(cities));
     }
 
@@ -962,6 +965,7 @@ public class App {
         testGetTotalPaymentForCityWollongong(company);
         testGetTotalPaymentForCityShiraz(company);
         testGetTotalPaymentForCityNotFound(company);
+        testGetTotalPaymentPerCity(company);
 
         System.out.println("=================================================================");
         System.out.println("                    ALL TESTS COMPLETE                          ");

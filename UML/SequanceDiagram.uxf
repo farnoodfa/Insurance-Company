@@ -1,15 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="15.1">
-  <zoom_level>10</zoom_level>
-  <element>
-    <id>UMLGeneric</id>
-    <coordinates>
-      <x>220</x>
-      <y>130</y>
-      <w>100</w>
-      <h>30</h>
-    </coordinates>
-    <panel_attributes>_:Instance_</panel_attributes>
-    <additional_attributes/>
-  </element>
+  <help_text>@startuml
+autonumber
+skinparam style strictuml
+skinparam SequenceMessageAlignment center
+skinparam ParticipantPadding 15
+skinparam BoxPadding 10
+
+actor "Caller" as Caller
+participant "company : InsuranceCompany" as C
+participant "user : User" as U
+participant "&lt;&lt;class&gt;&gt;\nInsurancePolicy" as PClass
+participant "policy : InsurancePolicy" as P
+participant "date : MyDate" as D
+participant "expiredPolicies :\nArrayList&lt;InsurancePolicy&gt;" as EP
+
+Caller -&gt; C : filterByExpiryDate(userID, date)
+activate C
+
+' Internal self-call
+C -&gt; C : findUser(userID)
+activate C
+deactivate C
+
+alt user != null
+    C -&gt; U : filterByExpiryDate(date)
+    activate U
+
+    U -&gt; PClass : filterByExpiryDate(this.policies, date)
+    activate PClass
+
+    create EP
+    PClass -&gt; EP : &lt;&lt;create&gt;&gt; new()
+
+    loop for each policy in policies
+        PClass -&gt; P : getExpiryDate()
+        activate P
+        P --&gt; PClass : expDate
+        deactivate P
+
+        opt expDate != null
+            PClass -&gt; D : isExpired(expDate)
+            activate D
+            D --&gt; PClass : boolean
+            deactivate D
+
+            opt isExpired == true
+                PClass -&gt; EP : add(policy)
+            end
+        end
+    end
+
+    PClass --&gt; U : expiredPolicies
+    deactivate PClass
+
+    U --&gt; C : expiredPolicies
+    deactivate U
+
+    C --&gt; Caller : expiredPolicies
+
+else user == null
+    create participant "emptyList :\nArrayList&lt;InsurancePolicy&gt;" as EL
+    C -&gt; EL : &lt;&lt;create&gt;&gt; new()
+    C --&gt; Caller : emptyList
+end
+
+deactivate C
+@enduml
+</help_text>
+  <zoom_level>5</zoom_level>
 </diagram>
