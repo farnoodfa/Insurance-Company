@@ -83,7 +83,7 @@ public class UserInterface {
         boolean inAdminMenu = true;
         while (inAdminMenu) {
             displayAdminMenu();
-            int choice = getInt("Select an option (1-9): ");
+            int choice = getInt("Select an option (1-10): ");
             switch (choice) {
                 case 1:
                     runTestCode();
@@ -104,17 +104,20 @@ public class UserInterface {
                     filterByCarModel();
                     break;
                 case 7:
-                    filterByExpiryDate();;
+                    filterByExpiryDate();
                     break;
                 case 8:
                     updateAddress();
                     break;
                 case 9:
+                    reportPaymentPerCity();
+                    break;
+                case 10:
                     System.out.println(BOLD + "Logging out of Admin portal..." + RESET);
                     inAdminMenu = false;
                     break;
                 default:
-                    System.out.println(RED + "Invalid choice! Please select an option from 1 to 9." + RESET);
+                    System.out.println(RED + "Invalid choice! Please select an option from 1 to 10." + RESET);
                     break;
             }
             if (inAdminMenu) {
@@ -124,8 +127,7 @@ public class UserInterface {
     }
 
     public static void displayAdminMenu() {
-        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-        System.out.println(BOLD + "================ ADMIN MENU ================" + RESET);
+        System.out.println("\n" + BOLD + "================ ADMIN MENU ================" + RESET);
         System.out.println("1. Run Test Code");
         System.out.println("2. Create User");
         System.out.println("3. Create ThirdParty Policy");
@@ -134,7 +136,8 @@ public class UserInterface {
         System.out.println("6. Filter by Car Model");
         System.out.println("7. Filter by Expiry Date");
         System.out.println("8. Update Address");
-        System.out.println("9. Log Out");
+        System.out.println("9. City Premium Payments Report");
+        System.out.println("10. Log Out");
         System.out.println(BOLD + "============================================" + RESET);
     }
 
@@ -270,11 +273,22 @@ public class UserInterface {
         }
     }
 
+    public void reportPaymentPerCity() {
+        System.out.println(BOLD + "\n--- City Premium Payments Report ---" + RESET);
+        ArrayList<String> distinctCities = company.populateDistinctCityNames();
+
+        if (distinctCities == null || distinctCities.isEmpty()) {
+            System.out.println("No registered users or cities found.");
+            return;
+        }
+
+        ArrayList<Double> totalPayments = company.getTotalPaymentPerCity(distinctCities);
+        company.reportPaymentPerCity(distinctCities, totalPayments);
+    }
+
     // =================================================================
     // USER LOGIN & MENU
     // =================================================================
-    // ── new methods to add to UserInterface ─────────────────────────────────────
-
     public User userLogin() {
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         System.out.println(BOLD + "========= User Login =========" + RESET);

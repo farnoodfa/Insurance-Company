@@ -12,7 +12,7 @@ public class App {
      * // Create Car examples
      * Car car1 = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
      * Car car2 = new Car(2022, 50000.0, "BMW X5", Car.CarType.SUV);
-     * Car car3 = new Car(2021, 18000.0, "Honda Civic", Car.CarType.HATCH);
+     * Car car3 = new Car(2043, 18000.0, "Honda Civic", Car.CarType.HATCH);
      * 
      * // Create policy examples
      * InsurancePolicy policy1 = new ThirdPartyPolicy("Alice Smith", 101, car1, 1,
@@ -97,7 +97,7 @@ public class App {
      * private static User initializeUserWithPolicies() {
      * Car car1 = new Car(2020, 25000.0, "benz", Car.CarType.SED);
      * Car car2 = new Car(2022, 50000.0, "BMW X5", Car.CarType.SUV);
-     * Car car3 = new Car(2021, 18000.0, "Honda Civic", Car.CarType.HATCH);
+     * Car car3 = new Car(2043, 18000.0, "Honda Civic", Car.CarType.HATCH);
      * 
      * InsurancePolicy policy1 = new ThirdPartyPolicy("Alice Smith", 101, car1, 1,
      * "Standard third-party cover");
@@ -268,12 +268,12 @@ public class App {
      * Car car2 = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
      * Car car3 = new Car(2019, 18000.0, "Honda Civic", Car.CarType.HATCH);
      * Car car4 = new Car(2023, 45000.0, "Toyota RAV4", Car.CarType.SUV);
-     * Car car5 = new Car(2021, 30000.0, "Mazda 3", Car.CarType.SED);
+     * Car car5 = new Car(2043, 30000.0, "Mazda 3", Car.CarType.SED);
      * 
      * MyDate expDate1 = new MyDate(2025, 6, 30);
      * MyDate expDate2 = new MyDate(2027, 12, 31);
      * MyDate expDate3 = new MyDate(2024, 3, 15);
-     * MyDate expDate4 = new MyDate(2026, 8, 20);
+     * MyDate expDate4 = new MyDate(2043, 8, 20);
      * 
      * InsurancePolicy policy1 = new ThirdPartyPolicy("Alice Smith", 101, car1, 1,
      * expDate1, "Standard third-party");
@@ -362,9 +362,9 @@ public class App {
      * 
      * // 13. Filter policies by expiry date for a specific User ID
      * System.out.
-     * println("\n=== 13. Filter by Expiry Date for User 1001 (Cutoff: 2026-01-01) ==="
+     * println("\n=== 13. Filter by Expiry Date for User 1001 (Cutoff: 2043-01-01) ==="
      * );
-     * MyDate cutoffDate1001 = new MyDate(2026, 1, 1);
+     * MyDate cutoffDate1001 = new MyDate(2043, 1, 1);
      * ArrayList<InsurancePolicy> userExpiredList = company.filterByExpiryDate(1001,
      * cutoffDate1001);
      * if (userExpiredList.isEmpty()) {
@@ -538,7 +538,6 @@ public class App {
         UserInterface UI = new UserInterface(insuranceCompany);
         UI.mainMenu();
 
-        // testCase();
     }
 
     public static void fillData(InsuranceCompany insuranceCompany) {
@@ -568,13 +567,13 @@ public class App {
         Car car2 = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         Car car3 = new Car(2019, 18000.0, "Honda Civic", Car.CarType.HATCH);
         Car car4 = new Car(2023, 45000.0, "Toyota RAV4", Car.CarType.SUV);
-        Car car5 = new Car(2021, 30000.0, "Mazda 3", Car.CarType.SED);
+        Car car5 = new Car(2043, 30000.0, "Mazda 3", Car.CarType.SED);
 
         // --- Expiry Dates ---
         MyDate expDate1 = new MyDate(2025, 6, 30);
         MyDate expDate2 = new MyDate(2027, 12, 31);
         MyDate expDate3 = new MyDate(2024, 3, 15);
-        MyDate expDate4 = new MyDate(2026, 8, 20);
+        MyDate expDate4 = new MyDate(2043, 8, 20);
 
         // --- Policies ---
         InsurancePolicy policy1 = new ThirdPartyPolicy("Alice Smith", 101, car1, 1, expDate1, "Standard third-party");
@@ -624,12 +623,12 @@ public class App {
     // =================================================================
 
     public static void testValidateAdminCorrect(InsuranceCompany company) {
-        System.out.println("TEST [1/21] validateAdmin - correct credentials → expected: true");
+        System.out.println("TEST [1/43] validateAdmin - correct credentials → expected: true");
         testResult(true, company.validateAdmin("admin", "admin123"));
     }
 
     public static void testValidateAdminWrong(InsuranceCompany company) {
-        System.out.println("TEST [2/21] validateAdmin - wrong password → expected: false");
+        System.out.println("TEST [2/43] validateAdmin - wrong password → expected: false");
         testResult(false, company.validateAdmin("admin", "wrongpass"));
     }
 
@@ -638,19 +637,19 @@ public class App {
     // =================================================================
 
     public static void testAddUserDuplicate(InsuranceCompany company) {
-        System.out.println("TEST [3/21] addUser - duplicate ID 1001 → expected: false");
+        System.out.println("TEST [3/43] addUser - duplicate ID 1001 → expected: false");
         User duplicate = new User("Alice Clone", 1001,
                 new Address(1, "Fake St", "Nowhere", "Wollongong"));
         testResult(false, company.addUser(duplicate));
     }
 
     public static void testFindUserExists(InsuranceCompany company, User user1) {
-        System.out.println("TEST [4/21] findUser - ID 1001 exists → expected: user1 object (true)");
+        System.out.println("TEST [4/43] findUser - ID 1001 exists → expected: user1 object (true)");
         testResult(user1, company.findUser(1001));
     }
 
     public static void testFindUserNotFound(InsuranceCompany company) {
-        System.out.println("TEST [5/21] findUser - ID 9999 does not exist → expected: null (true)");
+        System.out.println("TEST [5/43] findUser - ID 9999 does not exist → expected: null (true)");
         testResult(true, company.findUser(9999) == null);
     }
 
@@ -659,17 +658,17 @@ public class App {
     // =================================================================
 
     public static void testFindPolicyExists(InsuranceCompany company) {
-        System.out.println("TEST [6/21] findPolicy - policy ID 101 for user 1001 → expected: non-null (true)");
+        System.out.println("TEST [6/43] findPolicy - policy ID 101 for user 1001 → expected: non-null (true)");
         testResult(true, company.findPolicy(1001, 101) != null);
     }
 
     public static void testFindPolicyNotFound(InsuranceCompany company) {
-        System.out.println("TEST [7/21] findPolicy - policy ID 9999 for user 1001 → expected: null (true)");
+        System.out.println("TEST [7/43] findPolicy - policy ID 9999 for user 1001 → expected: null (true)");
         testResult(true, company.findPolicy(1001, 9999) == null);
     }
 
     public static void testAddPolicyDuplicate(InsuranceCompany company) {
-        System.out.println("TEST [8/21] addPolicy - duplicate policy ID 101 for user 1001 → expected: false");
+        System.out.println("TEST [8/43] addPolicy - duplicate policy ID 101 for user 1001 → expected: false");
         Car dupCar = new Car(2018, 10000.0, "Kia Rio", Car.CarType.HATCH);
         ThirdPartyPolicy dup = new ThirdPartyPolicy(
                 "Alice Smith", 101, dupCar, 0, new MyDate(2025, 1, 1), "duplicate");
@@ -685,7 +684,7 @@ public class App {
      */
     public static void testThirdPartyCalcPayment() {
         System.out
-                .println("TEST [9/21] ThirdPartyPolicy.calcPayment - 25000/(100+200+20)=25000/320 → expected: 78.125");
+                .println("TEST [9/43] ThirdPartyPolicy.calcPayment - 25000/(100+200+20)=25000/320 → expected: 78.125");
         Car testCar = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
         ThirdPartyPolicy tp = new ThirdPartyPolicy(
                 "Alice Smith", 101, testCar, 1, new MyDate(2025, 6, 30), "test");
@@ -699,7 +698,7 @@ public class App {
      */
     public static void testComprehensiveCalcPaymentOlderDriver() {
         System.out.println(
-                "TEST [10/21] ComprehensivePolicy.calcPayment - age 35 (no surcharge) → expected: 52000/70 ≈ 742.857");
+                "TEST [10/43] ComprehensivePolicy.calcPayment - age 35 (no surcharge) → expected: 52000/70 ≈ 742.857");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
                 "Alice Smith", 102, testCar, 0, new MyDate(2027, 12, 31), 35, 1);
@@ -713,7 +712,7 @@ public class App {
      */
     public static void testComprehensiveCalcPaymentYoungDriver() {
         System.out.println(
-                "TEST [11/21] ComprehensivePolicy.calcPayment - age 28 (surcharge +100) → expected: 52000/70+100 ≈ 842.857");
+                "TEST [11/43] ComprehensivePolicy.calcPayment - age 28 (surcharge +100) → expected: 52000/70+100 ≈ 842.857");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
                 "Alice Smith", 102, testCar, 0, new MyDate(2027, 12, 31), 28, 1);
@@ -727,7 +726,7 @@ public class App {
 
     public static void testCalcTotalPaymentsForUser(InsuranceCompany company) {
         System.out.println(
-                "TEST [12/21] calcTotalPayments(1001) - policy1(78.125) + policy2(≈842.857) → expected: ≈ 920.982");
+                "TEST [12/43] calcTotalPayments(1001) - policy1(78.125) + policy2(≈842.857) → expected: ≈ 920.982");
         double expected = 25000.0 / (100 + 1 * 200 + 20)
                 + 52000.0 / (50 + 0 * 200 + 20) + (30 - 28) * 50;
         testResult(expected, company.calcTotalPayments(1001));
@@ -735,7 +734,7 @@ public class App {
 
     public static void testCalcTotalPaymentsAll(InsuranceCompany company) {
         System.out.println(
-                "TEST [13/21] calcTotalPayments() - all 5 policies across Alice/Bob/Charlie/Diana → expected: ≈ 1692.205");
+                "TEST [13/43] calcTotalPayments() - all 5 policies across Alice/Bob/Charlie/Diana → expected: ≈ 1692.205");
         double expected = 25000.0 / (100 + 1 * 200 + 20) // policy1 Alice ThirdParty
                 + 52000.0 / (50 + 0 * 200 + 20) + (30 - 28) * 50 // policy2 Alice Comprehensive age 28
                 + 18000.0 / (100 + 2 * 200 + 20) // policy3 Bob ThirdParty
@@ -750,12 +749,12 @@ public class App {
 
     public static void testFilterByCarModelFound(InsuranceCompany company) {
         System.out.println(
-                "TEST [14/21] filterByCarModel(\"Toyota\") - matches policy1 (Camry) + policy4 (RAV4) → expected size: 2");
+                "TEST [14/43] filterByCarModel(\"Toyota\") - matches policy1 (Camry) + policy4 (RAV4) → expected size: 2");
         testResult(2, company.filterByCarModel("Toyota").size());
     }
 
     public static void testFilterByCarModelNotFound(InsuranceCompany company) {
-        System.out.println("TEST [15/21] filterByCarModel(\"Tesla\") - no match → expected size: 0");
+        System.out.println("TEST [15/43] filterByCarModel(\"Tesla\") - no match → expected size: 0");
         testResult(0, company.filterByCarModel("Tesla").size());
     }
 
@@ -768,7 +767,7 @@ public class App {
      */
     public static void testFilterByExpiryDate(InsuranceCompany company) {
         System.out.println(
-                "TEST [16/21] filterByExpiryDate(2025-07-01) - policy1, policy3, policy5 expired → expected size: 3");
+                "TEST [16/43] filterByExpiryDate(2025-07-01) - policy1, policy3, policy5 expired → expected size: 3");
         testResult(3, company.filterByExpiryDate(new MyDate(2025, 7, 1)).size());
     }
 
@@ -777,7 +776,7 @@ public class App {
     // =================================================================
 
     public static void testAllPoliciesCount(InsuranceCompany company) {
-        System.out.println("TEST [17/21] allPolicies() - 5 policies added across all users → expected size: 5");
+        System.out.println("TEST [17/43] allPolicies() - 5 policies added across all users → expected size: 5");
         testResult(5, company.allPolicies().size());
     }
 
@@ -793,7 +792,7 @@ public class App {
      */
     public static void testCarPriceRiseEffect(InsuranceCompany company) {
         System.out.println(
-                "TEST [18/21] carPriceRise(1001, 10%) - Camry $25000→$27500, BMW $52000→$57200 → expected: ≈ 1003.080");
+                "TEST [18/43] carPriceRise(1001, 10%) - Camry $25000→$27500, BMW $52000→$57200 → expected: ≈ 1003.080");
         company.carPriceRise(1001, 0.10);
         double newCar1 = 25000.0 * 1.10;
         double newCar2 = 52000.0 * 1.10;
@@ -808,19 +807,19 @@ public class App {
 
     public static void testMyDateIsExpiredTrue() {
         System.out.println(
-                "TEST [19/21] MyDate.isExpired - cutoff(2025,7,1) vs expiry(2025,6,30), month 7>6 → expected: true");
+                "TEST [19/43] MyDate.isExpired - cutoff(2025,7,1) vs expiry(2025,6,30), month 7>6 → expected: true");
         testResult(true, new MyDate(2025, 7, 1).isExpired(new MyDate(2025, 6, 30)));
     }
 
     public static void testMyDateIsExpiredFalse() {
         System.out.println(
-                "TEST [20/21] MyDate.isExpired - cutoff(2024,1,1) vs expiry(2025,6,30), year 2024<2025 → expected: false");
+                "TEST [20/43] MyDate.isExpired - cutoff(2024,1,1) vs expiry(2025,6,30), year 2024<2025 → expected: false");
         testResult(false, new MyDate(2024, 1, 1).isExpired(new MyDate(2025, 6, 30)));
     }
 
     public static void testMyDateIsExpiredSameDay() {
         System.out.println(
-                "TEST [21/21] MyDate.isExpired - cutoff(2025,6,30) vs expiry(2025,6,30), same day → expected: true");
+                "TEST [21/43] MyDate.isExpired - cutoff(2025,6,30) vs expiry(2025,6,30), same day → expected: true");
         testResult(true, new MyDate(2025, 6, 30).isExpired(new MyDate(2025, 6, 30)));
     }
 
@@ -836,7 +835,7 @@ public class App {
      */
     public static void testPopulateDistinctCityNames(InsuranceCompany company) {
         System.out.println(
-                "TEST [22/26] populateDistinctCityNames - unique cities in order   expected: [Wollongong, Shiraz]");
+                "TEST [22/43] populateDistinctCityNames - unique cities in order   expected: [Wollongong, Shiraz]");
 
         ArrayList<String> expected = new ArrayList<>();
         expected.add("Wollongong");
@@ -852,7 +851,7 @@ public class App {
      * Expected: ~1096.830
      */
     public static void testGetTotalPaymentForCityWollongong(InsuranceCompany company) {
-        System.out.println("TEST [23/26] getTotalPaymentForCity(\"Wollongong\") - Alice + Diana   expected: ~1096.830");
+        System.out.println("TEST [23/43] getTotalPaymentForCity(\"Wollongong\") - Alice + Diana   expected: ~1096.830");
         double aliceTotal = (25000.0 * 1.10) / (100 + 1 * 200 + 20)
                 + (52000.0 * 1.10) / (50 + 0 * 200 + 20) + (30 - 28) * 50;
         double dianaTotal = 30000.0 / (100 + 1 * 200 + 20); // $93.75
@@ -870,7 +869,7 @@ public class App {
      * Expected: ~677.473
      */
     public static void testGetTotalPaymentForCityShiraz(InsuranceCompany company) {
-        System.out.println("TEST [24/26] getTotalPaymentForCity(\"Shiraz\") - Bob + Charlie   expected: ~677.473");
+        System.out.println("TEST [24/43] getTotalPaymentForCity(\"Shiraz\") - Bob + Charlie   expected: ~677.473");
         double bobTotal = 18000.0 / (100 + 2 * 200 + 20);
         double charlieTotal = 45000.0 / (50 + 0 * 200 + 20); // $642.857
 
@@ -882,7 +881,7 @@ public class App {
      * getTotalPaymentForCity for a city with no registered users must return 0.0.
      */
     public static void testGetTotalPaymentForCityNotFound(InsuranceCompany company) {
-        System.out.println("TEST [25/26] getTotalPaymentForCity(\"Melbourne\") - no registered users   expected: 0.0");
+        System.out.println("TEST [25/43] getTotalPaymentForCity(\"Melbourne\") - no registered users   expected: 0.0");
         testResult(0.0, company.getTotalPaymentForCity("Melbourne"));
     }
 
@@ -891,7 +890,7 @@ public class App {
      * to the order of cities passed in.
      */
     public static void testGetTotalPaymentPerCity(InsuranceCompany company) {
-        System.out.println("TEST [26/26] getTotalPaymentPerCity - aggregated payments for [Wollongong, Shiraz]");
+        System.out.println("TEST [43/43] getTotalPaymentPerCity - aggregated payments for [Wollongong, Shiraz]");
         double wollongongPayment = (25000.0 * 1.10) / (100 + 1 * 200 + 20)
                 + (52000.0 * 1.10) / (50 + 0 * 200 + 20) + (30 - 28) * 50
                 + 30000.0 / (100 + 1 * 200 + 20);
@@ -902,6 +901,167 @@ public class App {
         ArrayList<String> cities = new ArrayList<>(Arrays.asList("Wollongong", "Shiraz"));
         ArrayList<Double> expected = new ArrayList<>(Arrays.asList(wollongongPayment, shirazPayment));
         testResult(expected, company.getTotalPaymentPerCity(cities));
+    }
+
+    // =================================================================
+    // ADVANCE LEVEL TESTS
+    // ================================================================
+    // =================================================================
+    // REMOVE POLICY
+    // =================================================================
+
+    public static void testRemovePolicySuccess(InsuranceCompany company) {
+        System.out.println("TEST [27/43] removePolicy - remove policy 401 from user 1004 → expected: true");
+        testResult(true, company.removePolicy(1004, 401));
+    }
+
+    public static void testRemovePolicyAlreadyRemoved(InsuranceCompany company) {
+        System.out.println("TEST [28/43] removePolicy - remove policy 401 again (already removed) → expected: false");
+        testResult(false, company.removePolicy(1004, 401));
+    }
+
+    public static void testRemovePolicyInvalidUser(InsuranceCompany company) {
+        System.out.println("TEST [29/43] removePolicy - user 9999 does not exist → expected: false");
+        testResult(false, company.removePolicy(9999, 101));
+    }
+
+    // =================================================================
+    // AUTO-GENERATED USER ID
+    // =================================================================
+
+    public static void testAutoGeneratedUserIDIncremental() {
+        System.out
+                .println("TEST [30/43] getNextUserID - IDs must increment by 1 each call → expected: consecutive ints");
+        int first = User.getNextUserID();
+        int second = User.getNextUserID();
+        int third = User.getNextUserID();
+        testResult(true, second == first + 1 && third == second + 1);
+    }
+
+    public static void testAutoGeneratedUserIDIsUnique(InsuranceCompany company) {
+        System.out.println(
+                "TEST [31/43] getNextUserID - new user added with auto ID, must not duplicate → expected: true");
+        int autoID = User.getNextUserID();
+        User newUser = new User("Generated User", autoID, new Address(1, "Auto St", "GenSuburb", "Wollongong"));
+        testResult(true, company.addUser(newUser));
+    }
+
+    // =================================================================
+    // REMOVE USER
+    // =================================================================
+
+    public static void testRemoveUserSuccess(InsuranceCompany company) {
+        System.out.println("TEST [32/43] removeUser - remove user 1005 (Ethan) → expected: true");
+        testResult(true, company.removeUser(1005));
+    }
+
+    public static void testRemoveUserNotFound(InsuranceCompany company) {
+        System.out.println("TEST [33/43] removeUser - user 9999 does not exist → expected: false");
+        testResult(false, company.removeUser(9999));
+    }
+
+    public static void testRemoveUserConfirmGone(InsuranceCompany company) {
+        System.out.println("TEST [34/43] findUser - user 1005 removed, findUser must return null → expected: true");
+        testResult(true, company.findUser(1005) == null);
+    }
+
+    // =================================================================
+    // CHANGE ADMIN PASSWORD
+    // =================================================================
+
+    public static void testChangeAdminPasswordWrongOld(InsuranceCompany company) {
+        System.out.println("TEST [35/43] changeAdminPassword - wrong old password → expected: false");
+        testResult(false, company.changeAdminPassword("wrongPassword", "newPass123"));
+    }
+
+    public static void testChangeAdminPasswordSuccess(InsuranceCompany company) {
+        System.out.println("TEST [36/43] changeAdminPassword - correct old password → expected: true");
+        testResult(true, company.changeAdminPassword("admin123", "newPass123"));
+    }
+
+    public static void testChangeAdminPasswordValidateNew(InsuranceCompany company) {
+        System.out.println("TEST [37/43] validateAdmin - login with new password after change → expected: true");
+        testResult(true, company.validateAdmin("admin", "newPass123"));
+    }
+
+    public static void testChangeAdminPasswordOldInvalid(InsuranceCompany company) {
+        System.out.println("TEST [38/43] validateAdmin - old password must no longer work → expected: false");
+        testResult(false, company.validateAdmin("admin", "admin123"));
+    }
+
+    // =================================================================
+    // CAR MODEL AGGREGATION
+    // =================================================================
+
+    /**
+     * Alice (1001) has:
+     * policy1 → Toyota Camry
+     * policy2 → BMW X5
+     * Expected distinct models: [Toyota Camry, BMW X5]
+     */
+    public static void testPopulateDistinctCarModelsUser(InsuranceCompany company) {
+        System.out.println("TEST [39/43] populateDistinctCarModels (User 1001) - Camry + BMW X5 → expected size: 2");
+        User alice = company.findUser(1001);
+        testResult(2, alice.populateDistinctCarModels().size());
+    }
+
+    /**
+     * Alice has 1 Toyota Camry policy (after car price rise, same count).
+     * Count for "Toyota Camry" → expected: 1
+     * Total payment for "Toyota Camry" → 27500 / (100 + 1×200 + 20) = 27500/320 =
+     * 85.9375
+     */
+    public static void testGetTotalCountForCarModelUser(InsuranceCompany company) {
+        System.out.println("TEST [40/43] getTotalCountForCarModel (User 1001, \"Toyota Camry\") → expected: 1.0");
+        User alice = company.findUser(1001);
+        testResult(1.0, alice.getTotalCountForCarModel("Toyota Camry"));
+    }
+
+    public static void testGetTotalPaymentForCarModelUser(InsuranceCompany company) {
+        System.out.println(
+                "TEST [41/43] getTotalPaymentForCarModel (User 1001, \"Toyota Camry\", flatRate 20) - post-rise $27500 → expected: 85.9375");
+        User alice = company.findUser(1001);
+        double expected = (25000.0 * 1.10) / (100 + 1 * 200 + 20);
+        testResult(expected, alice.getTotalPaymentForCarModel("Toyota Camry", 20));
+    }
+
+    // =================================================================
+    // CAR MODEL AGGREGATION
+    // =================================================================
+
+    /**
+     * After removing Ethan (1005, no policies) and Diana's policy 401:
+     * Remaining policies:
+     * Alice → Toyota Camry, BMW X5
+     * Bob → Honda Civic
+     * Charlie→ Toyota RAV4
+     * Expected distinct company models: [Toyota Camry, BMW X5, Honda Civic, Toyota
+     * RAV4]
+     */
+    public static void testPopulateDistinctCarModelsCompany(InsuranceCompany company) {
+        System.out.println(
+                "TEST [42/43] populateDistinctCarModels (Company) - Camry, BMW X5, Civic, RAV4 → expected size: 4");
+        testResult(4, company.populateDistinctCarModels().size());
+    }
+
+    /**
+     * Count and payment per model across whole company:
+     * Toyota Camry → 1 policy, post-rise: 27500/320 = 85.9375
+     * BMW X5 → 1 policy, post-rise: 57200/70 + 100 ≈ 917.143
+     * Honda Civic → 1 policy: 18000/520 ≈ 34.615
+     * Toyota RAV4 → 1 policy: 45000/70 ≈ 642.857
+     * Total count across all models → 4
+     * Total payments summed → same as calcTotalPayments() at this state
+     */
+    public static void testGetTotalCountPerCarModelCompany(InsuranceCompany company) {
+        System.out.println(
+                "TEST [43/43] getTotalCountPerCarModel (Company) - 1 policy each for 4 models → expected sum: 4");
+        ArrayList<String> models = company.populateDistinctCarModels();
+        ArrayList<Integer> counts = company.getTotalCountPerCarModel(models);
+        int total = 0;
+        for (int c : counts)
+            total += c;
+        testResult(4, total);
     }
 
     public static void testCase() {
@@ -966,6 +1126,35 @@ public class App {
         testGetTotalPaymentForCityShiraz(company);
         testGetTotalPaymentForCityNotFound(company);
         testGetTotalPaymentPerCity(company);
+
+        // Remove Policy (Feature 1) — run before removing user so Diana's policy exists
+        testRemovePolicySuccess(company);
+        testRemovePolicyAlreadyRemoved(company);
+        testRemovePolicyInvalidUser(company);
+
+        // Auto-generated User ID (Feature 2)
+        testAutoGeneratedUserIDIncremental();
+        testAutoGeneratedUserIDIsUnique(company);
+
+        // Remove User (Feature 3)
+        testRemoveUserSuccess(company); // removes Ethan (1005)
+        testRemoveUserNotFound(company);
+        testRemoveUserConfirmGone(company);
+
+        // Change Admin Password (Feature 4) — run last among admin tests
+        testChangeAdminPasswordWrongOld(company);
+        testChangeAdminPasswordSuccess(company);
+        testChangeAdminPasswordValidateNew(company);
+        testChangeAdminPasswordOldInvalid(company);
+
+        // Car Model Aggregation - User (Feature 5)
+        testPopulateDistinctCarModelsUser(company);
+        testGetTotalCountForCarModelUser(company);
+        testGetTotalPaymentForCarModelUser(company);
+
+        // Car Model Aggregation - Company (Feature 5)
+        testPopulateDistinctCarModelsCompany(company);
+        testGetTotalCountPerCarModelCompany(company);
 
         System.out.println("=================================================================");
         System.out.println("                    ALL TESTS COMPLETE                          ");

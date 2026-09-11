@@ -231,17 +231,24 @@ public class InsuranceCompany {
     }
 
     // Goes through all users and populates a list of distinct city names
-    public ArrayList<String> populateDistinctCityNames() {
-        ArrayList<String> distinctCities = new ArrayList<String>();
-        for (User user : users) {
-            if (user != null && user.getAddress() != null) {
-                String city = user.getAddress().getCity();
-                if (city != null && !city.trim().isEmpty() && !distinctCities.contains(city)) {
-                    distinctCities.add(city);
+    public ArrayList<String> populateDistinctCityNames()
+    {
+        ArrayList<String> cities =new ArrayList<String>();
+        for (User user:users)
+        {
+            boolean found=false;
+            for (String city:cities)
+            {
+                if (user.getCity().equals(city))
+                {
+                    found=true;
+                    break;
                 }
             }
+            if (!found)
+                cities.add(user.getCity());
         }
-        return distinctCities;
+        return cities;        
     }
 
     // Returns the total premium payment for the given city across all users
@@ -285,5 +292,104 @@ public class InsuranceCompany {
             }
         }
         System.out.println("=================================================");
+    }
+
+    // Remove a policy from a specific user
+    public boolean removePolicy(int userID, int policyID) {
+        User user = findUser(userID);
+        if (user != null) {
+            return user.removePolicy(policyID);
+        }
+        return false;
+    }
+
+    // Remove a user by userID
+    public boolean removeUser(int userID) {
+        User user = findUser(userID);
+        if (user != null) {
+            users.remove(user);
+            return true;
+        }
+        return false;
+    }
+
+    // Change admin password (requires old password confirmation)
+    public boolean changeAdminPassword(String oldPassword, String newPassword) {
+        if (oldPassword == null || newPassword == null)
+            return false;
+        if (this.adminPassword.equals(oldPassword)) {
+            this.adminPassword = newPassword;
+            return true;
+        }
+        return false;
+    }
+
+    // Populate distinct car models across ALL users
+    public ArrayList<String> populateDistinctCarModels() {
+        ArrayList<String> distinctModels = new ArrayList<String>();
+        for (User user : users) {
+            if (user == null)
+                continue;
+            ArrayList<String> userModels = user.populateDistinctCarModels();
+            for (String model : userModels) {
+                if (!distinctModels.contains(model)) {
+                    distinctModels.add(model);
+                }
+            }
+        }
+        return distinctModels;
+    }
+
+    // Total count per car model across all users
+    public ArrayList<Integer> getTotalCountPerCarModel(ArrayList<String> carModels) {
+        ArrayList<Integer> totals = new ArrayList<Integer>();
+        if (carModels == null)
+            return totals;
+        for (String model : carModels) {
+            int count = 0;
+            for (User user : users) {
+                if (user != null) {
+                    count += (int) user.getTotalCountForCarModel(model);
+                }
+            }
+            totals.add(count);
+        }
+        return totals;
+    }
+
+    // Total payment per car model across all users
+    public ArrayList<Double> getTotalPaymentPerCarModel(ArrayList<String> carModels) {
+        ArrayList<Double> totals = new ArrayList<Double>();
+        if (carModels == null)
+            return totals;
+        for (String model : carModels) {
+            double total = 0.0;
+            for (User user : users) {
+                if (user != null) {
+                    total += user.getTotalPaymentForCarModel(model, flatRate);
+                }
+            }
+            totals.add(total);
+        }
+        return totals;
+    }
+
+    // Company-wide report per car model
+    public void reportPaymentsPerCarModel(ArrayList<String> carModels, ArrayList<Integer> counts,
+            ArrayList<Double> premiumPayments) {
+        System.out.println("==========================================================================");
+        System.out.printf("%-30s %-30s %-25s%n", "Car Model", "Total Premium Payment", "Average Premium Payment");
+        System.out.println("--------------------------------------------------------------------------");
+        if (carModels == null || counts == null || premiumPayments == null)
+            return;
+        int size = Math.min(carModels.size(), Math.min(counts.size(), premiumPayments.size()));
+        for (int i = 0; i < size; i++) {
+            String model = carModels.get(i);
+            int count = counts.get(i);
+            double total = premiumPayments.get(i);
+            double average = (count > 0) ? total / count : 0.0;
+            System.out.printf("%-30s $%,-29.2f $%,.2f%n", model, total, average);
+        }
+        System.out.println("==========================================================================");
     }
 }

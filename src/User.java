@@ -30,6 +30,10 @@ public class User {
         return policies;
     }
 
+    public String getCity() {
+        return address.getCity();
+    }
+
     // setters
     public void setAddress(Address address) {
         this.address = address;
@@ -122,5 +126,122 @@ public class User {
             return null;
         }
         return InsurancePolicy.filterByExpiryDate(this.policies, date);
+    }
+
+    // Remove a policy by policyID
+    public boolean removePolicy(int policyID) {
+        InsurancePolicy policy = findPolicy(policyID);
+        if (policy != null) {
+            policies.remove(policy);
+            return true;
+        }
+        return false;
+    }
+
+    // Static counter for auto-generating user IDs
+    private static int userCount = 0;
+
+    public static int getNextUserID() {
+        return ++userCount;
+    }
+
+    // Populate distinct car models across this user's policies
+    public ArrayList<String> populateDistinctCarModels() {
+        ArrayList<String> distinctModels = new ArrayList<String>();
+        if (policies == null)
+            return distinctModels;
+        for (InsurancePolicy policy : policies) {
+            String model = policy.car.getModel();
+            if (model != null && !distinctModels.contains(model)) {
+                distinctModels.add(model);
+            }
+        }
+        return distinctModels;
+    }
+
+    // Count how many policies this user has for a given car model
+    public double getTotalCountForCarModel(String carModel) {
+        if (policies == null || carModel == null)
+            return 0;
+        int count = 0;
+        for (InsurancePolicy policy : policies) {
+            if (policy.car.getModel().equalsIgnoreCase(carModel)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /*
+     * getTotalPaymentForCarModel needs flatRate
+     * i wrote bothe ways one should be removed
+     * for now i will keep both and you can decide which one to keep
+     * right now I will get flat rate as 0 because it's needed
+     */
+
+    // Total premium payments for a given car model for this user
+    public double getTotalPaymentForCarModel(String carModel) {
+        if (policies == null || carModel == null)
+            return 0;
+        double total = 0.0;
+        for (InsurancePolicy policy : policies) {
+            if (policy.car.getModel().equalsIgnoreCase(carModel)) {
+                total += policy.calcPayment(/* flatRate needed */ 0);
+            }
+        }
+        return total;
+    }
+
+    public double getTotalPaymentForCarModel(String carModel, int flatRate) {
+        if (policies == null || carModel == null)
+            return 0;
+        double total = 0.0;
+        for (InsurancePolicy policy : policies) {
+            if (policy.car.getModel().equalsIgnoreCase(carModel)) {
+                total += policy.calcPayment(flatRate);
+            }
+        }
+        return total;
+    }
+
+    // Count per model for a list of car models
+    public ArrayList<Integer> getTotalCountPerCarModel(ArrayList<String> carModels) {
+        ArrayList<Integer> counts = new ArrayList<Integer>();
+        if (carModels == null)
+            return counts;
+        for (String model : carModels) {
+            counts.add((int) getTotalCountForCarModel(model));
+        }
+        return counts;
+    }
+
+    // Total payment per model for a list of car models
+    public ArrayList<Double> getTotalPaymentPerCarModel(ArrayList<String> carModels, int flatRate) {
+        ArrayList<Double> payments = new ArrayList<Double>();
+        if (carModels == null)
+            return payments;
+        for (String model : carModels) {
+            payments.add(getTotalPaymentForCarModel(model, flatRate));
+        }
+        return payments;
+    }
+
+    // Report per car model for this user
+    public void reportPaymentsPerCarModel(ArrayList<String> carModels, ArrayList<Integer> counts,
+            ArrayList<Double> premiumPayments) {
+        System.out.println("==========================================================================");
+        System.out.printf("%-30s %-30s %-25s%n", "Car Model", "Total Premium Payment", "Average Premium Payment");
+        System.out.println("--------------------------------------------------------------------------");
+        if (carModels == null || counts == null || premiumPayments == null)
+            return;
+        int size = Math.min(carModels.size(), Math.min(counts.size(), premiumPayments.size()));
+        for (int i = 0; i < size; i++) {
+            String model = carModels.get(i);
+            int count = counts.get(i);
+            double total = premiumPayments.get(i);
+            double average = (count > 0) ? total / count : 0.0;
+            System.out.printf("%-30s $%,-29.2f $%,.2f%n", model, total, average);
+        }
+        System.out.println("==========================================================================");
     }
 }
