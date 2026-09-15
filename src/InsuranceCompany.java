@@ -254,9 +254,6 @@ public class InsuranceCompany {
     // Returns the total premium payment for the given city across all users
     public double getTotalPaymentForCity(String city) {
         double total = 0.0;
-        if (city == null) {
-            return total;
-        }
         for (User user : users) {
             if (user != null && user.getAddress() != null) {
                 if (city.equalsIgnoreCase(user.getAddress().getCity())) {
@@ -270,9 +267,6 @@ public class InsuranceCompany {
     // Aggregates total premium payments for each city in the list in matching order
     public ArrayList<Double> getTotalPaymentPerCity(ArrayList<String> cities) {
         ArrayList<Double> payments = new ArrayList<Double>();
-        if (cities == null) {
-            return payments;
-        }
         for (String city : cities) {
             payments.add(getTotalPaymentForCity(city));
         }
@@ -286,8 +280,7 @@ public class InsuranceCompany {
         System.out.println("-------------------------------------------------");
 
         if (cities != null && payments != null) {
-            int count = Math.min(cities.size(), payments.size());
-            for (int i = 0; i < count; i++) {
+            for (int i = 0; i < cities.size(); i++) {
                 System.out.printf("%-20s $%,.2f%n", cities.get(i), payments.get(i));
             }
         }

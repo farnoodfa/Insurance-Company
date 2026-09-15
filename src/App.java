@@ -533,6 +533,7 @@ public class App {
      */
 
     public static void main(String[] args) {
+        testCase();
         InsuranceCompany insuranceCompany = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(insuranceCompany);
         UserInterface UI = new UserInterface(insuranceCompany);
@@ -680,66 +681,79 @@ public class App {
     // =================================================================
 
     /**
-     * ThirdParty: 25000 / (100 + 1×200 + 20) = 25000/320 = 78.125 (exact)
+     * ThirdParty: 25000/100 + 1*200 + 20 = 250 + 200 + 20 = 470.0
      */
     public static void testThirdPartyCalcPayment() {
-        System.out
-                .println("TEST [9/43] ThirdPartyPolicy.calcPayment - 25000/(100+200+20)=25000/320 → expected: 78.125");
+        System.out.println("TEST [9/43] ThirdPartyPolicy.calcPayment - 25000/100 + 1*200 + 20   expected: 470.0");
         Car testCar = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
         ThirdPartyPolicy tp = new ThirdPartyPolicy(
                 "Alice Smith", 101, testCar, 1, new MyDate(2025, 6, 30), "test");
-        double expected = 25000.0 / (100 + 1 * 200 + 20);
+        double expected = (25000.0 / 100.0) + (1 * 200.0) + 20.0;
         testResult(expected, tp.calcPayment(20));
     }
 
     /**
-     * Comprehensive - age 35 (≥30, no surcharge):
-     * 52000 / (50 + 0×200 + 20) = 52000/70 ≈ 742.857
+     * Comprehensive - age 35 (> 30, no surcharge):
+     * 52000/50 + 0*200 + 20 = 1040 + 0 + 20 = 1060.0
      */
     public static void testComprehensiveCalcPaymentOlderDriver() {
-        System.out.println(
-                "TEST [10/43] ComprehensivePolicy.calcPayment - age 35 (no surcharge) → expected: 52000/70 ≈ 742.857");
+        System.out.println("TEST [10/43] ComprehensivePolicy.calcPayment - age 35 (no surcharge)   expected: 1060.0");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
                 "Alice Smith", 102, testCar, 0, new MyDate(2027, 12, 31), 35, 1);
-        double expected = 52000.0 / (50 + 0 * 200 + 20);
+        double expected = (52000.0 / 50.0) + (0 * 200.0) + 20.0;
         testResult(expected, cp.calcPayment(20));
     }
 
     /**
-     * Comprehensive - age 28 (<30, surcharge applies):
-     * 52000/70 + (30-28)×50 = 52000/70 + 100 ≈ 842.857
+     * Comprehensive - age 28 (<= 30, surcharge applies):
+     * 52000/50 + 0*200 + 20 + (30-28)*50 = 1040 + 20 + 100 = 1160.0
      */
     public static void testComprehensiveCalcPaymentYoungDriver() {
-        System.out.println(
-                "TEST [11/43] ComprehensivePolicy.calcPayment - age 28 (surcharge +100) → expected: 52000/70+100 ≈ 842.857");
+        System.out.println("TEST [11/43] ComprehensivePolicy.calcPayment - age 28 (surcharge +100)   expected: 1160.0");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
                 "Alice Smith", 102, testCar, 0, new MyDate(2027, 12, 31), 28, 1);
-        double expected = 52000.0 / (50 + 0 * 200 + 20) + (30 - 28) * 50;
+        double expected = (52000.0 / 50.0) + (0 * 200.0) + 20.0 + (30 - 28) * 50.0;
         testResult(expected, cp.calcPayment(20));
     }
 
     // =================================================================
-    // TOTAL PAYMENTS (must run BEFORE price rise)
+    // TOTAL PAYMENTS
     // =================================================================
 
+    /**
+     * Alice (1001):
+     * - Policy 1: 25000/100 + 1*200 + 20 = 470.0
+     * - Policy 2: 52000/50 + 0*200 + 20 + (30-28)*50 = 1160.0
+     * Expected: 470.0 + 1160.0 = 1630.0
+     */
     public static void testCalcTotalPaymentsForUser(InsuranceCompany company) {
-        System.out.println(
-                "TEST [12/43] calcTotalPayments(1001) - policy1(78.125) + policy2(≈842.857) → expected: ≈ 920.982");
-        double expected = 25000.0 / (100 + 1 * 200 + 20)
-                + 52000.0 / (50 + 0 * 200 + 20) + (30 - 28) * 50;
+        System.out
+                .println("TEST [12/43] calcTotalPayments(1001) - policy1(470.0) + policy2(1160.0)   expected: 1630.0");
+        double policy1 = (25000.0 / 100.0) + (1 * 200.0) + 20.0;
+        double policy2 = (52000.0 / 50.0) + (0 * 200.0) + 20.0 + (30 - 28) * 50.0;
+        double expected = policy1 + policy2;
         testResult(expected, company.calcTotalPayments(1001));
     }
 
+    /**
+     * All 5 initial policies:
+     * - Policy 1 (Alice): 470.0
+     * - Policy 2 (Alice): 1160.0
+     * - Policy 3 (Bob): 18000/100 + 2*200 + 20 = 600.0
+     * - Policy 4 (Charlie): 45000/50 + 0*200 + 20 = 920.0
+     * - Policy 5 (Diana): 30000/100 + 1*200 + 20 = 520.0
+     * Expected: 470 + 1160 + 600 + 920 + 520 = 3670.0
+     */
     public static void testCalcTotalPaymentsAll(InsuranceCompany company) {
-        System.out.println(
-                "TEST [13/43] calcTotalPayments() - all 5 policies across Alice/Bob/Charlie/Diana → expected: ≈ 1692.205");
-        double expected = 25000.0 / (100 + 1 * 200 + 20) // policy1 Alice ThirdParty
-                + 52000.0 / (50 + 0 * 200 + 20) + (30 - 28) * 50 // policy2 Alice Comprehensive age 28
-                + 18000.0 / (100 + 2 * 200 + 20) // policy3 Bob ThirdParty
-                + 45000.0 / (50 + 0 * 200 + 20) // policy4 Charlie Comprehensive age 35 (no surcharge)
-                + 30000.0 / (100 + 1 * 200 + 20); // policy5 Diana ThirdParty
+        System.out.println("TEST [13/43] calcTotalPayments() - all 5 policies   expected: 3670.0");
+        double policy1 = (25000.0 / 100.0) + (1 * 200.0) + 20.0;
+        double policy2 = (52000.0 / 50.0) + (0 * 200.0) + 20.0 + (30 - 28) * 50.0;
+        double policy3 = (18000.0 / 100.0) + (2 * 200.0) + 20.0;
+        double policy4 = (45000.0 / 50.0) + (0 * 200.0) + 20.0;
+        double policy5 = (30000.0 / 100.0) + (1 * 200.0) + 20.0;
+        double expected = policy1 + policy2 + policy3 + policy4 + policy5;
         testResult(expected, company.calcTotalPayments());
     }
 
@@ -786,18 +800,17 @@ public class App {
 
     /**
      * Raise Alice's cars by 10%:
-     * car1 $25000 → $27500 | payment = 27500/320 = 85.9375
-     * car2 $52000 → $57200 | payment = 57200/70 + 100 ≈ 917.143
-     * New Alice total ≈ 1003.080
+     * - car1: 25000 * 1.10 = 27500 -> 27500/100 + 200 + 20 = 495.0
+     * - car2: 52000 * 1.10 = 57200 -> 57200/50 + 20 + 100 = 1264.0
+     * Expected: 495.0 + 1264.0 = 1759.0
      */
     public static void testCarPriceRiseEffect(InsuranceCompany company) {
-        System.out.println(
-                "TEST [18/43] carPriceRise(1001, 10%) - Camry $25000→$27500, BMW $52000→$57200 → expected: ≈ 1003.080");
+        System.out.println("TEST [18/43] carPriceRise(1001, 10%) - Camry $27500, BMW $57200   expected: 1759.0");
         company.carPriceRise(1001, 0.10);
         double newCar1 = 25000.0 * 1.10;
         double newCar2 = 52000.0 * 1.10;
-        double expected = newCar1 / (100 + 1 * 200 + 20)
-                + newCar2 / (50 + 0 * 200 + 20) + (30 - 28) * 50;
+        double expected = (newCar1 / 100.0 + 1 * 200.0 + 20.0)
+                + (newCar2 / 50.0 + 0 * 200.0 + 20.0 + (30 - 28) * 50.0);
         testResult(expected, company.calcTotalPayments(1001));
     }
 
@@ -844,35 +857,31 @@ public class App {
     }
 
     /**
-     * getTotalPaymentForCity for "Wollongong".
-     * Includes:
-     * - Alice (1001): 2 policies post-rise (~$1003.080)
-     * - Diana (1004): 1 ThirdParty policy ($30000 / 320 = $93.75)
-     * Expected: ~1096.830
+     * Wollongong includes:
+     * - Alice (1001, post-rise): 1759.0
+     * - Diana (1004): 30000/100 + 1*200 + 20 = 520.0
+     * Expected: 1759.0 + 520.0 = 2279.0
      */
     public static void testGetTotalPaymentForCityWollongong(InsuranceCompany company) {
-        System.out.println("TEST [23/43] getTotalPaymentForCity(\"Wollongong\") - Alice + Diana   expected: ~1096.830");
-        double aliceTotal = (25000.0 * 1.10) / (100 + 1 * 200 + 20)
-                + (52000.0 * 1.10) / (50 + 0 * 200 + 20) + (30 - 28) * 50;
-        double dianaTotal = 30000.0 / (100 + 1 * 200 + 20); // $93.75
-
+        System.out.println("TEST [23/43] getTotalPaymentForCity(\"Wollongong\") - Alice + Diana   expected: 2279.0");
+        double aliceTotal = ((25000.0 * 1.10) / 100.0 + 1 * 200.0 + 20.0)
+                + ((52000.0 * 1.10) / 50.0 + 0 * 200.0 + 20.0 + (30 - 28) * 50.0);
+        double dianaTotal = (30000.0 / 100.0) + (1 * 200.0) + 20.0;
         double expected = aliceTotal + dianaTotal;
         testResult(expected, company.getTotalPaymentForCity("Wollongong"));
     }
 
     /**
-     * getTotalPaymentForCity for "Shiraz".
-     * Includes:
-     * - Bob (1002): Civic ThirdParty (~$34.615)
-     * - Charlie (1003): RAV4 Comprehensive ($45000 / 70 = ~$642.857)
-     * - Ethan (1005): 0 policies ($0.00)
-     * Expected: ~677.473
+     * Shiraz includes:
+     * - Bob (1002): 18000/100 + 2*200 + 20 = 600.0
+     * - Charlie (1003): 45000/50 + 0*200 + 20 = 920.0
+     * - Ethan (1005): 0 policies = 0.0
+     * Expected: 600.0 + 920.0 = 1520.0
      */
     public static void testGetTotalPaymentForCityShiraz(InsuranceCompany company) {
-        System.out.println("TEST [24/43] getTotalPaymentForCity(\"Shiraz\") - Bob + Charlie   expected: ~677.473");
-        double bobTotal = 18000.0 / (100 + 2 * 200 + 20);
-        double charlieTotal = 45000.0 / (50 + 0 * 200 + 20); // $642.857
-
+        System.out.println("TEST [24/43] getTotalPaymentForCity(\"Shiraz\") - Bob + Charlie   expected: 1520.0");
+        double bobTotal = (18000.0 / 100.0) + (2 * 200.0) + 20.0;
+        double charlieTotal = (45000.0 / 50.0) + (0 * 200.0) + 20.0;
         double expected = bobTotal + charlieTotal;
         testResult(expected, company.getTotalPaymentForCity("Shiraz"));
     }
@@ -886,20 +895,20 @@ public class App {
     }
 
     /**
-     * getTotalPaymentPerCity must return the aggregated sums corresponding
-     * to the order of cities passed in.
+     * Aggregated payments for [Wollongong, Shiraz] -> [2279.0, 1520.0]
      */
     public static void testGetTotalPaymentPerCity(InsuranceCompany company) {
-        System.out.println("TEST [43/43] getTotalPaymentPerCity - aggregated payments for [Wollongong, Shiraz]");
-        double wollongongPayment = (25000.0 * 1.10) / (100 + 1 * 200 + 20)
-                + (52000.0 * 1.10) / (50 + 0 * 200 + 20) + (30 - 28) * 50
-                + 30000.0 / (100 + 1 * 200 + 20);
-
-        double shirazPayment = 18000.0 / (100 + 2 * 200 + 20)
-                + 45000.0 / (50 + 0 * 200 + 20);
-
-        ArrayList<String> cities = new ArrayList<>(Arrays.asList("Wollongong", "Shiraz"));
-        ArrayList<Double> expected = new ArrayList<>(Arrays.asList(wollongongPayment, shirazPayment));
+        System.out.println("TEST [26/43] getTotalPaymentPerCity - aggregated payments for [Wollongong, Shiraz]");
+        String city1 = "Wollongong";    
+        String city2 = "Shiraz";
+        ArrayList<String> cities = new ArrayList<>();
+        cities.add(city1);
+        cities.add(city2);
+        double expected1= 2279.0;
+        double expected2= 1520.0;
+        ArrayList<Double> expected = new ArrayList<>();
+        expected.add(expected1);
+        expected.add(expected2);
         testResult(expected, company.getTotalPaymentPerCity(cities));
     }
 
@@ -1017,11 +1026,15 @@ public class App {
         testResult(1.0, alice.getTotalCountForCarModel("Toyota Camry"));
     }
 
+    /**
+     * Alice (1001) Toyota Camry post-rise price: $27500.0
+     * Payment: 27500/100 + 1*200 + 20 = 275 + 200 + 20 = 495.0
+     */
     public static void testGetTotalPaymentForCarModelUser(InsuranceCompany company) {
         System.out.println(
-                "TEST [41/43] getTotalPaymentForCarModel (User 1001, \"Toyota Camry\", flatRate 20) - post-rise $27500 → expected: 85.9375");
+                "TEST [41/43] getTotalPaymentForCarModel (User 1001, \"Toyota Camry\", flatRate 20)   expected: 495.0");
         User alice = company.findUser(1001);
-        double expected = (25000.0 * 1.10) / (100 + 1 * 200 + 20);
+        double expected = ((25000.0 * 1.10) / 100.0) + (1 * 200.0) + 20.0;
         testResult(expected, alice.getTotalPaymentForCarModel("Toyota Camry", 20));
     }
 

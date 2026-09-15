@@ -227,8 +227,6 @@ public class User {
     // Count per model for a list of car models
     public ArrayList<Integer> getTotalCountPerCarModel(ArrayList<String> carModels) {
         ArrayList<Integer> counts = new ArrayList<Integer>();
-        if (carModels == null)
-            return counts;
         for (String model : carModels) {
             counts.add((int) getTotalCountForCarModel(model));
         }
@@ -238,8 +236,6 @@ public class User {
     // Total payment per model for a list of car models
     public ArrayList<Double> getTotalPaymentPerCarModel(ArrayList<String> carModels, int flatRate) {
         ArrayList<Double> payments = new ArrayList<Double>();
-        if (carModels == null)
-            return payments;
         for (String model : carModels) {
             payments.add(getTotalPaymentForCarModel(model, flatRate));
         }
@@ -252,10 +248,7 @@ public class User {
         System.out.println("==========================================================================");
         System.out.printf("%-30s %-30s %-25s%n", "Car Model", "Total Premium Payment", "Average Premium Payment");
         System.out.println("--------------------------------------------------------------------------");
-        if (carModels == null || counts == null || premiumPayments == null)
-            return;
-        int size = Math.min(carModels.size(), Math.min(counts.size(), premiumPayments.size()));
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < counts.size(); i++) {
             String model = carModels.get(i);
             int count = counts.get(i);
             double total = premiumPayments.get(i);

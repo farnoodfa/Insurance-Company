@@ -22,10 +22,9 @@ public class ComprehensivePolicy extends InsurancePolicy {
 
     @Override
     public double calcPayment(double flatRate) {
-        double premiumRate = car.getPrice() / (50 + numberOfClaims * 200 + flatRate);
-        if (driverAge < 30) {
-            premiumRate += (30 - driverAge) * 50;
-        }
-        return premiumRate;
+        if (driverAge <= 30) {
+            return car.getPrice() / 50 + numberOfClaims * 200 + flatRate + (30 - driverAge) * 50;
+        } else
+            return car.getPrice() / 50 + numberOfClaims * 200 + flatRate;
     }
 }

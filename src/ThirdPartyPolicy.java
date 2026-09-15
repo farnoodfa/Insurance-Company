@@ -20,7 +20,7 @@ public class ThirdPartyPolicy extends InsurancePolicy {
 
     @Override
     public double calcPayment(double flatRate) {
-        double premiumRate = car.getPrice() / (100 + numberOfClaims * 200 + flatRate);
-        return premiumRate;
+       return car.getPrice() / 100 + numberOfClaims * 200 + flatRate;
+       
     }
 }

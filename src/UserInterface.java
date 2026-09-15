@@ -408,6 +408,12 @@ public class UserInterface {
                     userViewTotalPremiums(user);
                     break;
                 case 9:
+                    userReportCarModel(user);
+                    break;
+                case 10:
+                    userRemovePolicy(user);
+                    break;
+                case 11:
                     System.out.println(BOLD + "Logging out..." + RESET);
                     inUserMenu = false;
                     break;
@@ -432,7 +438,9 @@ public class UserInterface {
         System.out.println("6. Filter Policies by Expiry Date");
         System.out.println("7. Update My Address");
         System.out.println("8. View Total Premium Payments");
-        System.out.println("9. Log Out");
+        System.out.println("9. Payments per Car Model");
+        System.out.println("10. Remove a Policy");
+        System.out.println("11. Log Out");
         System.out.println(BOLD + "=================================================" + RESET);
     }
 
@@ -544,6 +552,19 @@ public class UserInterface {
         System.out.println(BOLD + "\n--- Total Premium Payments ---" + RESET);
         double total = user.calcTotalPremiums(company.getFlatRate());
         System.out.printf("Total premium payments for " + user.getName() + ": $%.2f%n", total);
+    }
+
+    private void userReportCarModel(User user) {
+        ArrayList<String> models = user.populateDistinctCarModels();
+        ArrayList<Integer> counts = user.getTotalCountPerCarModel(models);
+        ArrayList<Double> payments = user.getTotalPaymentPerCarModel(models, company.getFlatRate());
+        user.reportPaymentsPerCarModel(models, counts, payments);
+    }
+
+    private void userRemovePolicy(User user) {
+        int policyID = getInt("Policy ID to remove: ");
+        boolean result = user.removePolicy(policyID);
+        System.out.println(result ? "Policy removed." : "Policy not found.");
     }
 
     // =================================================================
