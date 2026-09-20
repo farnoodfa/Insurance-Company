@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class InsuranceCompany {
+public class InsuranceCompany implements Cloneable {
     private String name;
     private ArrayList<User> users; // list of all the users having a policy with the company
     private String adminUsername;
@@ -231,24 +231,20 @@ public class InsuranceCompany {
     }
 
     // Goes through all users and populates a list of distinct city names
-    public ArrayList<String> populateDistinctCityNames()
-    {
-        ArrayList<String> cities =new ArrayList<String>();
-        for (User user:users)
-        {
-            boolean found=false;
-            for (String city:cities)
-            {
-                if (user.getCity().equals(city))
-                {
-                    found=true;
+    public ArrayList<String> populateDistinctCityNames() {
+        ArrayList<String> cities = new ArrayList<String>();
+        for (User user : users) {
+            boolean found = false;
+            for (String city : cities) {
+                if (user.getCity().equals(city)) {
+                    found = true;
                     break;
                 }
             }
             if (!found)
                 cities.add(user.getCity());
         }
-        return cities;        
+        return cities;
     }
 
     // Returns the total premium payment for the given city across all users
@@ -385,4 +381,35 @@ public class InsuranceCompany {
         }
         System.out.println("==========================================================================");
     }
+
+    // lab4
+    // copy constructor
+    public InsuranceCompany(InsuranceCompany company) {
+        this.adminPassword = company.adminPassword;
+        this.adminUsername = company.adminUsername;
+        this.name = company.name;
+        this.flatRate = company.flatRate;
+        this.users = new ArrayList<>();
+        for (User user : company.users) {
+            users.add(new User(user));
+        }
+    }
+
+    // lab4
+    public InsuranceCompany clone() throws CloneNotSupportedException {
+        InsuranceCompany cloned = (InsuranceCompany) super.clone();
+        cloned.users = User.deepCopy(users);
+        return cloned;
+    }
+
+    // lab4
+    public ArrayList<User> deepCopyUsers() throws CloneNotSupportedException {
+        return User.deepCopy(users);
+    }
+
+    // lab4
+    public ArrayList<User> shallowCopyUsers() {
+        return User.shallowCopy(users);
+    }
+
 }

@@ -1,4 +1,4 @@
-public class Address {
+public class Address implements Cloneable {
     private int streetNum;
     private String street;
     private String suburb;
@@ -38,6 +38,7 @@ public class Address {
         }
         this.city = city;
     }
+
     public void setStreetNum(int streetNum) {
         if (streetNum < 1) {
             throw new IllegalArgumentException("Street number must be a positive integer.");
@@ -63,4 +64,21 @@ public class Address {
         return city + ", " + suburb + ", " + street + "St, St Number: " + streetNum;
     }
 
+    // lab4
+    // copy constructor
+    public Address(Address other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot copy from a null Address object.");
+        }
+        this.streetNum = other.streetNum;
+        this.street = other.street;
+        this.suburb = other.suburb;
+        this.city = other.city;
+    }
+
+    // lab4
+    @Override
+    public Address clone() throws CloneNotSupportedException {
+        return (Address) super.clone();
+    }
 }

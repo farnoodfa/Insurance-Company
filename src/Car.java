@@ -1,4 +1,4 @@
-public class Car {
+public class Car implements Cloneable {
 
     enum CarType {
         SUV, SED, LUX, HATCH
@@ -42,5 +42,23 @@ public class Car {
     // rising the price of the car
     public void priceRise(double risePercent) {
         this.price = this.price * (1 + risePercent);
+    }
+
+    // lab4
+    // copy constructor
+    public Car(Car other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot copy from a null Car object.");
+        }
+        this.manufacturingYear = other.manufacturingYear;
+        this.price = other.price;
+        this.model = other.model;
+        this.type = other.type;
+    }
+
+    // lab4
+    @Override
+    public Car clone() throws CloneNotSupportedException {
+        return (Car) super.clone();
     }
 }

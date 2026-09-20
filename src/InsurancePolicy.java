@@ -1,6 +1,6 @@
 import java.util.*;
 
-abstract class InsurancePolicy {
+abstract class InsurancePolicy implements Cloneable {
     protected String policyHolderName;
     protected int id;
     protected Car car;
@@ -108,5 +108,46 @@ abstract class InsurancePolicy {
             }
         }
         return expiredPolicies;
+    }
+
+    // lab4
+    // copy constructor
+    public InsurancePolicy(InsurancePolicy other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot copy from a null InsurancePolicy object.");
+        }
+        this.policyHolderName = other.policyHolderName;
+        this.id = other.id;
+        this.car = new Car(other.car);
+        this.numberOfClaims = other.numberOfClaims;
+        this.expiryDate = new MyDate(other.expiryDate);
+    }
+
+    // lab4
+    @Override
+    public InsurancePolicy clone() throws CloneNotSupportedException {
+        InsurancePolicy cloned = (InsurancePolicy) super.clone();
+        cloned.car.clone();
+        cloned.expiryDate.clone();
+        return cloned;
+    }
+
+    // lab4
+    public static ArrayList<InsurancePolicy> deepCopy(ArrayList<InsurancePolicy> policies)
+            throws CloneNotSupportedException {
+        ArrayList<InsurancePolicy> copied = new ArrayList<>();
+        for (InsurancePolicy insurancePolicy : policies) {
+            copied.add(insurancePolicy.clone());
+        }
+        return copied;
+    }
+
+    // lab4
+    public static ArrayList<InsurancePolicy> shallowCopy(ArrayList<InsurancePolicy> policies) {
+        ArrayList<InsurancePolicy> copied = new ArrayList<>();
+        for (InsurancePolicy insurancePolicy : policies) {
+            copied.add(insurancePolicy);
+        }
+        return copied;
     }
 }

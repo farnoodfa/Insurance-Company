@@ -1,4 +1,4 @@
-public class MyDate {
+public class MyDate implements Cloneable {
     private int year;
     private int month;
     private int day;
@@ -65,4 +65,21 @@ public class MyDate {
         return this.day >= expiryDate.day;
     }
 
+    // lab4
+    // copy constructor
+    public MyDate(MyDate other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot copy from a null MyDate object.");
+        }
+        this.year = other.year;
+        this.month = other.month;
+        this.day = other.day;
+    }
+
+    // lab4
+    @Override
+    public MyDate clone() throws CloneNotSupportedException {
+        return (MyDate) super.clone();
+
+    }
 }

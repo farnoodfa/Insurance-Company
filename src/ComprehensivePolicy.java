@@ -27,4 +27,17 @@ public class ComprehensivePolicy extends InsurancePolicy {
         } else
             return car.getPrice() / 50 + numberOfClaims * 200 + flatRate;
     }
+
+    // lab4
+    // copy constructor
+    public ComprehensivePolicy(ComprehensivePolicy other) {
+        super(other);
+        this.driverAge = other.driverAge;
+        this.level = other.level;
+    }
+
+    @Override
+    public ComprehensivePolicy clone() throws CloneNotSupportedException {
+        return (ComprehensivePolicy) super.clone();
+    }
 }

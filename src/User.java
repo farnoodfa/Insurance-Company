@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class User {
+public class User implements Cloneable {
     private static int count = 1000;
 
     private String name;
@@ -9,7 +9,7 @@ public class User {
     private ArrayList<InsurancePolicy> policies;
 
     // Auto-generates userID incrementally (overload)
-    
+
     public User(String name, Address address) {
         this.userID = ++count; // Increments count and assigns the new ID
         this.name = name;
@@ -256,5 +256,57 @@ public class User {
             System.out.printf("%-30s $%,-29.2f $%,.2f%n", model, total, average);
         }
         System.out.println("==========================================================================");
+    }
+
+    // lab4
+    // copy constructor
+    public User(User user) {
+        name = user.name;
+        userID = user.userID;
+        address = new Address(user.address);
+        policies = new ArrayList<>();
+        for (InsurancePolicy policy : user.policies) {
+            if (policy instanceof ThirdPartyPolicy) {
+                policies.add(new ThirdPartyPolicy((ThirdPartyPolicy) policy));
+            } else if (policy instanceof ComprehensivePolicy) {
+                policies.add(new ComprehensivePolicy((ComprehensivePolicy) policy));
+            }
+        }
+    }
+
+    // lab4
+    public User clone() throws CloneNotSupportedException {
+        User cloned = (User) super.clone();
+        cloned.address.clone();
+        cloned.policies = InsurancePolicy.deepCopy(policies);
+        return cloned;
+    }
+
+    // lab4
+    public static ArrayList<User> shallowCopy(ArrayList<User> users) {
+        ArrayList<User> shallowCopy = new ArrayList<>();
+        for (User user : users) {
+            shallowCopy.add(user);
+        }
+        return shallowCopy;
+    }
+
+    // lab4
+    public static ArrayList<User> deepCopy(ArrayList<User> users) throws CloneNotSupportedException {
+        ArrayList<User> deepCopy = new ArrayList<>();
+        for (User user : users) {
+            deepCopy.add(user.clone());
+        }
+        return deepCopy;
+    }
+
+    // lab4
+    public ArrayList<InsurancePolicy> deepCopyPolicies() throws CloneNotSupportedException {
+        return InsurancePolicy.deepCopy(policies);
+    }
+
+    // lab4
+    public ArrayList<InsurancePolicy> shallowCopyPolicies() {
+        return InsurancePolicy.shallowCopy(policies);
     }
 }

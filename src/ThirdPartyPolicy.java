@@ -20,7 +20,19 @@ public class ThirdPartyPolicy extends InsurancePolicy {
 
     @Override
     public double calcPayment(double flatRate) {
-       return car.getPrice() / 100 + numberOfClaims * 200 + flatRate;
-       
+        return car.getPrice() / 100 + numberOfClaims * 200 + flatRate;
+
+    }
+
+    // lab4
+    // copy constructor
+    public ThirdPartyPolicy(ThirdPartyPolicy other) {
+        super(other);
+        this.comments = other.comments;
+    }
+
+    // lab4
+    public ThirdPartyPolicy clone() throws CloneNotSupportedException {
+        return (ThirdPartyPolicy) super.clone();
     }
 }
