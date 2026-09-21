@@ -1,6 +1,6 @@
 import java.util.*;
 
-abstract class InsurancePolicy implements Cloneable {
+abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy> {
     protected String policyHolderName;
     protected int id;
     protected Car car;
@@ -149,5 +149,11 @@ abstract class InsurancePolicy implements Cloneable {
             copied.add(insurancePolicy);
         }
         return copied;
+    }
+
+    // lab4
+    @Override
+    public int compareTo(InsurancePolicy other) {
+        return this.expiryDate.compareTo(other.expiryDate);
     }
 }

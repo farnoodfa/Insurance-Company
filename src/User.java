@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class User implements Cloneable {
+public class User implements Cloneable, Comparable<User> {
     private static int count = 1000;
 
     private String name;
@@ -307,5 +307,31 @@ public class User implements Cloneable {
     // lab4
     public ArrayList<InsurancePolicy> shallowCopyPolicies() {
         return InsurancePolicy.shallowCopy(policies);
+    }
+
+    // lab4
+    @Override
+    public int compareTo(User other) {
+        return this.address.compareTo(other.address);
+    }
+
+    // lab4
+    public int compareTo1(User other) {
+        double total = InsurancePolicy.calcTotalPayments(this.policies, 20);
+        double otherTotal = InsurancePolicy.calcTotalPayments(other.policies, 20);
+
+        if (total < otherTotal) {
+            return -1;
+        }
+        if (total > otherTotal) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public ArrayList<InsurancePolicy> sortPoliciesByDate() {
+        ArrayList<InsurancePolicy> sorted = InsurancePolicy.shallowCopy(policies);
+        Collections.sort(sorted);
+        return sorted;
     }
 }

@@ -1,4 +1,4 @@
-public class MyDate implements Cloneable {
+public class MyDate implements Cloneable, Comparable<MyDate> {
     private int year;
     private int month;
     private int day;
@@ -82,4 +82,32 @@ public class MyDate implements Cloneable {
         return (MyDate) super.clone();
 
     }
+
+    // lab4
+    @Override
+    public int compareTo(MyDate other) {
+        if (this.year < other.year) {
+            return -1;
+        }
+        if (this.year > other.year) {
+            return 1;
+        }
+
+        if (this.month < other.month) {
+            return -1;
+        }
+        if (this.month > other.month) {
+            return 1;
+        }
+
+        if (this.day < other.day) {
+            return -1;
+        }
+        if (this.day > other.day) {
+            return 1;
+        }
+
+        return 0;
+    }
+
 }
