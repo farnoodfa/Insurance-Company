@@ -127,8 +127,8 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
     @Override
     public InsurancePolicy clone() throws CloneNotSupportedException {
         InsurancePolicy cloned = (InsurancePolicy) super.clone();
-        cloned.car.clone();
-        cloned.expiryDate.clone();
+        cloned.car = car.clone();
+        cloned.expiryDate = expiryDate.clone();
         return cloned;
     }
 

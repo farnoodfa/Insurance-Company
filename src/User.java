@@ -276,7 +276,7 @@ public class User implements Cloneable, Comparable<User> {
     // lab4
     public User clone() throws CloneNotSupportedException {
         User cloned = (User) super.clone();
-        cloned.address.clone();
+        cloned.address = address.clone();
         cloned.policies = InsurancePolicy.deepCopy(policies);
         return cloned;
     }
@@ -329,6 +329,7 @@ public class User implements Cloneable, Comparable<User> {
         return 0;
     }
 
+    // lab4
     public ArrayList<InsurancePolicy> sortPoliciesByDate() {
         ArrayList<InsurancePolicy> sorted = InsurancePolicy.shallowCopy(policies);
         Collections.sort(sorted);

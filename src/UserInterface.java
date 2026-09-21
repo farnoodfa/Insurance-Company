@@ -162,7 +162,11 @@ public class UserInterface {
     // =================================================================
     public void runTestCode() {
         System.out.println(BOLD + "\n--- Executing Automated Test Code ---" + RESET);
-        App.testCase();
+        try {
+            App.testCase();
+        } catch (CloneNotSupportedException e) {
+System.out.println(BOLD+ RED+ "Eror: " + e + RESET);
+        }
     }
 
     public void createUser() {
