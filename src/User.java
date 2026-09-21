@@ -266,10 +266,9 @@ public class User implements Cloneable {
         address = new Address(user.address);
         policies = new ArrayList<>();
         for (InsurancePolicy policy : user.policies) {
-            if (policy instanceof ThirdPartyPolicy) {
-                policies.add(new ThirdPartyPolicy((ThirdPartyPolicy) policy));
-            } else if (policy instanceof ComprehensivePolicy) {
-                policies.add(new ComprehensivePolicy((ComprehensivePolicy) policy));
+            if (policy instanceof ThirdPartyPolicy ? policies.add(new ThirdPartyPolicy((ThirdPartyPolicy) policy))
+                    : policies.add(new ComprehensivePolicy((ComprehensivePolicy) policy))) {
+
             }
         }
     }
