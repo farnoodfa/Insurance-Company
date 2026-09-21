@@ -412,4 +412,10 @@ public class InsuranceCompany implements Cloneable {
         return User.shallowCopy(users);
     }
 
+    public ArrayList<User> sortUsers() {
+        ArrayList<User> shallowCopy = User.shallowCopy(users);
+        Collections.sort(shallowCopy);
+        return shallowCopy;
+    }
+
 }
