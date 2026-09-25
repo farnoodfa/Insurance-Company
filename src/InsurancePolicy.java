@@ -24,6 +24,10 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
         return expiryDate;
     }
 
+    public String getCarModel() {
+        return car.getModel();
+    }
+
     public void setExpiryDate(MyDate expiryDate) {
         this.expiryDate = expiryDate;
     }
@@ -102,7 +106,6 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
             return expiredPolicies;
         }
         for (InsurancePolicy policy : policies) {
-            // Cutoff date tests if policy's expiry date has passed
             if (policy.getExpiryDate() != null && date.isExpired(policy.getExpiryDate())) {
                 expiredPolicies.add(policy);
             }

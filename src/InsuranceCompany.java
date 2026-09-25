@@ -315,18 +315,22 @@ public class InsuranceCompany implements Cloneable {
 
     // Populate distinct car models across ALL users
     public ArrayList<String> populateDistinctCarModels() {
-        ArrayList<String> distinctModels = new ArrayList<String>();
+        ArrayList<String> allModels = new ArrayList<String>();
         for (User user : users) {
-            if (user == null)
-                continue;
             ArrayList<String> userModels = user.populateDistinctCarModels();
-            for (String model : userModels) {
-                if (!distinctModels.contains(model)) {
-                    distinctModels.add(model);
+            for (String userModel : userModels) {
+                boolean found = false;
+                for (String model : allModels) {
+                    if (model.equals(userModel)) {
+                        found = true;
+                        break;
+                    }
                 }
+                if (!found)
+                    allModels.add(userModel);
             }
         }
-        return distinctModels;
+        return allModels;
     }
 
     // Total count per car model across all users

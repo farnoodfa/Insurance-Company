@@ -11,13 +11,13 @@ public class User implements Cloneable, Comparable<User> {
     // Auto-generates userID incrementally (overload)
 
     public User(String name, Address address) {
-        this.userID = ++count; // Increments count and assigns the new ID
+        this.userID = ++count;
         this.name = name;
         this.address = address;
         this.policies = new ArrayList<InsurancePolicy>();
     }
 
-    // Existing Constructor: Retained so manual ID assignments still work
+    // manual ID assignments still work
     public User(String name, int userID, Address address) {
         this.name = name;
         this.userID = userID;
@@ -167,16 +167,19 @@ public class User implements Cloneable, Comparable<User> {
 
     // Populate distinct car models across this user's policies
     public ArrayList<String> populateDistinctCarModels() {
-        ArrayList<String> distinctModels = new ArrayList<String>();
-        if (policies == null)
-            return distinctModels;
+        ArrayList<String> models = new ArrayList<String>();
         for (InsurancePolicy policy : policies) {
-            String model = policy.car.getModel();
-            if (model != null && !distinctModels.contains(model)) {
-                distinctModels.add(model);
+            boolean found = false;
+            for (String model : models) {
+                if (policy.getCarModel().equals(model)) {
+                    found = true;
+                    break;
+                }
             }
+            if (!found)
+                models.add(policy.getCarModel());
         }
-        return distinctModels;
+        return models;
     }
 
     // Count how many policies this user has for a given car model
@@ -319,7 +322,7 @@ public class User implements Cloneable, Comparable<User> {
     public int compareTo1(User other) {
         double total = InsurancePolicy.calcTotalPayments(this.policies, 20);
         double otherTotal = InsurancePolicy.calcTotalPayments(other.policies, 20);
-
+        // return total - OtherTotal
         if (total < otherTotal) {
             return -1;
         }

@@ -1178,7 +1178,7 @@ public class App {
 
     // lab4
     public static void testLab4(InsuranceCompany company) throws CloneNotSupportedException {
-        System.out.println("=================================================================");
+        System.out.println("==============================  LAB-4 TEST ===============================");
 
         User user = company.findUser(1001);
 
@@ -1262,6 +1262,6 @@ public class App {
 
         testResult(true, originalUpdated && cloneUnchanged);
 
-        System.out.println("=================================================================");
+        System.out.println("============================  LAB-4 test completed =========================");
     }
 }
