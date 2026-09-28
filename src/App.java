@@ -532,16 +532,17 @@ public class App {
      * }
      */
 
-    public static void main(String[] args) throws CloneNotSupportedException {
+    public static void main(String[] args) throws CloneNotSupportedException, PolicyException {
         InsuranceCompany insuranceCompany = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(insuranceCompany);
-        testLab4(insuranceCompany);
+        // testLab4(insuranceCompany);
+        testLab5(insuranceCompany);
         UserInterface UI = new UserInterface(insuranceCompany);
         UI.mainMenu();
 
     }
 
-    public static void fillData(InsuranceCompany insuranceCompany) {
+    public static void fillData(InsuranceCompany insuranceCompany) throws PolicyException {
 
         // --- Addresses ---
         Address addr1 = new Address(12, "Crown St", "Gwynneville", "Wollongong");
@@ -577,11 +578,13 @@ public class App {
         MyDate expDate4 = new MyDate(2043, 8, 20);
 
         // --- Policies ---
-        InsurancePolicy policy1 = new ThirdPartyPolicy("Alice Smith", 101, car1, 1, expDate1, "Standard third-party");
-        InsurancePolicy policy2 = new ComprehensivePolicy("Alice Smith", 102, car2, 0, expDate2, 28, 1);
-        InsurancePolicy policy3 = new ThirdPartyPolicy("Bob Johnson", 201, car3, 2, expDate3, "Roadside assistance");
-        InsurancePolicy policy4 = new ComprehensivePolicy("Charlie Brown", 301, car4, 0, expDate4, 35, 2);
-        InsurancePolicy policy5 = new ThirdPartyPolicy("Diana Prince", 401, car5, 1, expDate1, "Basic coverage");
+        // --- Policies (Using valid 6-digit IDs starting with 3) ---
+        InsurancePolicy policy1 = new ThirdPartyPolicy("Alice Smith", 300101, car1, 1, expDate1,
+                "Standard third-party");
+        InsurancePolicy policy2 = new ComprehensivePolicy("Alice Smith", 300102, car2, 0, expDate2, 28, 1);
+        InsurancePolicy policy3 = new ThirdPartyPolicy("Bob Johnson", 300201, car3, 2, expDate3, "Roadside assistance");
+        InsurancePolicy policy4 = new ComprehensivePolicy("Charlie Brown", 300301, car4, 0, expDate4, 35, 2);
+        InsurancePolicy policy5 = new ThirdPartyPolicy("Diana Prince", 300401, car5, 1, expDate1, "Basic coverage");
 
         // --- Attach policies to users ---
         insuranceCompany.addPolicy(1001, policy1);
@@ -659,8 +662,8 @@ public class App {
     // =================================================================
 
     public static void testFindPolicyExists(InsuranceCompany company) {
-        System.out.println("TEST [6/43] findPolicy - policy ID 101 for user 1001 → expected: non-null (true)");
-        testResult(true, company.findPolicy(1001, 101) != null);
+        System.out.println("TEST [6/43] findPolicy - policy ID 300101 for user 1001   expected: non-null (true)");
+        testResult(true, company.findPolicy(1001, 300101) != null);
     }
 
     public static void testFindPolicyNotFound(InsuranceCompany company) {
@@ -668,11 +671,11 @@ public class App {
         testResult(true, company.findPolicy(1001, 9999) == null);
     }
 
-    public static void testAddPolicyDuplicate(InsuranceCompany company) {
-        System.out.println("TEST [8/43] addPolicy - duplicate policy ID 101 for user 1001 → expected: false");
+    public static void testAddPolicyDuplicate(InsuranceCompany company) throws PolicyException {
+        System.out.println("TEST [8/43] addPolicy - duplicate policy ID 300101 for user 1001   expected: false");
         Car dupCar = new Car(2018, 10000.0, "Kia Rio", Car.CarType.HATCH);
         ThirdPartyPolicy dup = new ThirdPartyPolicy(
-                "Alice Smith", 101, dupCar, 0, new MyDate(2025, 1, 1), "duplicate");
+                "Alice Smith", 300101, dupCar, 0, new MyDate(2025, 1, 1), "duplicate");
         testResult(false, company.addPolicy(1001, dup));
     }
 
@@ -683,11 +686,11 @@ public class App {
     /**
      * ThirdParty: 25000/100 + 1*200 + 20 = 250 + 200 + 20 = 470.0
      */
-    public static void testThirdPartyCalcPayment() {
-        System.out.println("TEST [9/43] ThirdPartyPolicy.calcPayment - 25000/100 + 1*200 + 20   expected: 470.0");
+    public static void testThirdPartyCalcPayment() throws PolicyException {
+        System.out.println("TEST [9/43] ThirdPartyPolicy.calcPayment   expected: 470.0");
         Car testCar = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
         ThirdPartyPolicy tp = new ThirdPartyPolicy(
-                "Alice Smith", 101, testCar, 1, new MyDate(2025, 6, 30), "test");
+                "Alice Smith", 300101, testCar, 1, new MyDate(2025, 6, 30), "test");
         double expected = (25000.0 / 100.0) + (1 * 200.0) + 20.0;
         testResult(expected, tp.calcPayment(20));
     }
@@ -696,11 +699,11 @@ public class App {
      * Comprehensive - age 35 (> 30, no surcharge):
      * 52000/50 + 0*200 + 20 = 1040 + 0 + 20 = 1060.0
      */
-    public static void testComprehensiveCalcPaymentOlderDriver() {
-        System.out.println("TEST [10/43] ComprehensivePolicy.calcPayment - age 35 (no surcharge)   expected: 1060.0");
+    public static void testComprehensiveCalcPaymentOlderDriver() throws PolicyException {
+        System.out.println("TEST [10/43] ComprehensivePolicy.calcPayment - age 35   expected: 1060.0");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
-                "Alice Smith", 102, testCar, 0, new MyDate(2027, 12, 31), 35, 1);
+                "Alice Smith", 300102, testCar, 0, new MyDate(2027, 12, 31), 35, 1);
         double expected = (52000.0 / 50.0) + (0 * 200.0) + 20.0;
         testResult(expected, cp.calcPayment(20));
     }
@@ -709,11 +712,11 @@ public class App {
      * Comprehensive - age 28 (<= 30, surcharge applies):
      * 52000/50 + 0*200 + 20 + (30-28)*50 = 1040 + 20 + 100 = 1160.0
      */
-    public static void testComprehensiveCalcPaymentYoungDriver() {
-        System.out.println("TEST [11/43] ComprehensivePolicy.calcPayment - age 28 (surcharge +100)   expected: 1160.0");
+    public static void testComprehensiveCalcPaymentYoungDriver() throws PolicyException {
+        System.out.println("TEST [11/43] ComprehensivePolicy.calcPayment - age 28   expected: 1160.0");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
-                "Alice Smith", 102, testCar, 0, new MyDate(2027, 12, 31), 28, 1);
+                "Alice Smith", 300102, testCar, 0, new MyDate(2027, 12, 31), 28, 1);
         double expected = (52000.0 / 50.0) + (0 * 200.0) + 20.0 + (30 - 28) * 50.0;
         testResult(expected, cp.calcPayment(20));
     }
@@ -920,13 +923,13 @@ public class App {
     // =================================================================
 
     public static void testRemovePolicySuccess(InsuranceCompany company) {
-        System.out.println("TEST [27/43] removePolicy - remove policy 401 from user 1004 → expected: true");
-        testResult(true, company.removePolicy(1004, 401));
+        System.out.println("TEST [27/43] removePolicy - remove policy 300401 from user 1004   expected: true");
+        testResult(true, company.removePolicy(1004, 300401));
     }
 
     public static void testRemovePolicyAlreadyRemoved(InsuranceCompany company) {
-        System.out.println("TEST [28/43] removePolicy - remove policy 401 again (already removed) → expected: false");
-        testResult(false, company.removePolicy(1004, 401));
+        System.out.println("TEST [28/43] removePolicy - remove policy 300401 again   expected: false");
+        testResult(false, company.removePolicy(1004, 300401));
     }
 
     public static void testRemovePolicyInvalidUser(InsuranceCompany company) {
@@ -1023,7 +1026,7 @@ public class App {
     public static void testGetTotalCountForCarModelUser(InsuranceCompany company) {
         System.out.println("TEST [40/43] getTotalCountForCarModel (User 1001, \"Toyota Camry\") → expected: 1.0");
         User alice = company.findUser(1001);
-        testResult(1.0, alice.getTotalCountForCarModel("Toyota Camry"));
+        testResult(1, alice.getTotalCountForCarModel("Toyota Camry"));
     }
 
     /**
@@ -1077,7 +1080,7 @@ public class App {
         testResult(4, total);
     }
 
-    public static void testCase() throws CloneNotSupportedException {
+    public static void testCase() throws CloneNotSupportedException, PolicyException {
         // Build the company and populate it
         InsuranceCompany company = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(company);
@@ -1171,13 +1174,15 @@ public class App {
 
         testLab4(company);
 
+        testLab5(company);
+
         System.out.println("=================================================================");
         System.out.println("                    ALL TESTS COMPLETE                          ");
         System.out.println("=================================================================");
     }
 
     // lab4
-    public static void testLab4(InsuranceCompany company) throws CloneNotSupportedException {
+    public static void testLab4(InsuranceCompany company) throws CloneNotSupportedException, PolicyException {
         System.out.println("==============================  LAB-4 TEST ===============================");
 
         User user = company.findUser(1001);
@@ -1190,7 +1195,8 @@ public class App {
         user.setCity("New York");
         Car newCar = new Car(2021, 35000.0, "Nissan Altima", Car.CarType.SED);
         MyDate newExp = new MyDate(2026, 5, 10);
-        InsurancePolicy newPolicy = new ThirdPartyPolicy("Alice Smith", 501, newCar, 0, newExp, "New Policy");
+        // Inside testLab4:
+        InsurancePolicy newPolicy = new ThirdPartyPolicy("Alice Smith", 300501, newCar, 0, newExp, "New Policy");
         user.addPolicy(newPolicy);
 
         // 3. Sort policies by expiry date
@@ -1235,7 +1241,7 @@ public class App {
         }
 
         System.out.println("\n--- [3] Company's Current Users (With Frank Added) ---");
-        for (User u : company.getUsers()) {
+        for (User u : company.getUsers().values()) {
             System.out.println("ID: " + u.getUserID() + " | Name: " + u.getName() + " | City: " + u.getCity());
         }
 
@@ -1263,5 +1269,48 @@ public class App {
         testResult(true, originalUpdated && cloneUnchanged);
 
         System.out.println("============================  LAB-4 test completed =========================");
+    }
+
+    public static void testLab5(InsuranceCompany company) {
+        System.out.println("========================== LAB-5 Test ============================");
+
+        System.out.println("TEST = PolicyException validation on invalid ID (101)");
+        try {
+            Car testCar = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
+            new ThirdPartyPolicy("Test User", 101, testCar, 0, new MyDate(2025, 1, 1), "test");
+            testResult(true, false);
+        } catch (PolicyException e) {
+            System.out.println("Caught expected exception message: " + e);
+            boolean isValidGeneratedID = e.getID() >= 300000 && e.getID() <= 399999;
+            testResult(true, isValidGeneratedID);
+        }
+System.out.println("Testing User and Company Data Aggregation Methods");
+
+    User targetUser = null;
+    for (User userInstance : company.getUsers().values()) {
+        targetUser = userInstance;
+        break;
+    }
+
+    if (targetUser != null) {
+        // Retrieve aggregation maps for the user
+        HashMap<String, Integer> userCounts = targetUser.getTotalCountPerCarModel();
+        HashMap<String, Double> userPremiums = targetUser.getTotalPremiumPerCarModel(company.getFlatRate());
+
+        // Pass variables into the overloaded user report method to consume them
+        targetUser.reportPaymentsPerCarModel(userCounts, userPremiums);
+    }
+
+    // Retrieve and report city aggregation map
+    HashMap<String, Double> cityPremiums = company.getTotalPremiumPerCity();
+    company.reportPaymentPerCity(cityPremiums);
+
+    // Retrieve and report company car model aggregation maps
+    HashMap<String, Integer> companyModelCounts = company.getTotalCountPerCarModel();
+    HashMap<String, Double> companyModelPremiums = company.getTotalPremiumPerCarModel();
+    company.reportPaymentsPerCarModel(companyModelCounts, companyModelPremiums);
+
+    System.out.println("All data aggregation tests executed successfully");
+
     }
 }

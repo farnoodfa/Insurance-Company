@@ -7,9 +7,18 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
     protected int numberOfClaims;
     protected MyDate expiryDate;
 
-    public InsurancePolicy(String policyHolderName, int id, Car car, int numberOfClaims, MyDate expiryDate) {
+    public InsurancePolicy(String policyHolderName, int id, Car car, int numberOfClaims, MyDate expiryDate)
+            throws PolicyException {
+        if (id < 300000 || id > 399999) {
+            Random rand = new Random();
+            int generatedID = 300000 + rand.nextInt(100000); // Generates 300000 - 399999
+
+            this.id = generatedID;
+            throw new PolicyException(generatedID);
+        } else {
+            this.id = id;
+        }
         this.policyHolderName = policyHolderName;
-        this.id = id;
         this.car = car;
         this.numberOfClaims = numberOfClaims;
         this.expiryDate = expiryDate;
@@ -26,6 +35,10 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
 
     public String getCarModel() {
         return car.getModel();
+    }
+
+    public Car getCar() {
+        return car;
     }
 
     public void setExpiryDate(MyDate expiryDate) {
@@ -113,7 +126,7 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
         return expiredPolicies;
     }
 
-    // lab4
+    // -------------------------------------------lab4
     // copy constructor
     public InsurancePolicy(InsurancePolicy other) {
         if (other == null) {
@@ -158,5 +171,116 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
     @Override
     public int compareTo(InsurancePolicy other) {
         return this.expiryDate.compareTo(other.expiryDate);
+    }
+
+    // ----------------------------lab5
+
+    public static HashMap<Integer, InsurancePolicy> filterByCarModel(HashMap<Integer, InsurancePolicy> policies,
+            String carModel) {
+        HashMap<Integer, InsurancePolicy> filteredPolicies = new HashMap<>();
+        for (InsurancePolicy policy : policies.values()) {
+            if (policy.car.getModel().contains(carModel)) {
+                filteredPolicies.put(policy.getID(), policy);
+            }
+        }
+        return filteredPolicies;
+    }
+
+    public static HashMap<Integer, InsurancePolicy> filterByExpiryDate(HashMap<Integer, InsurancePolicy> policies,
+            MyDate date) {
+        HashMap<Integer, InsurancePolicy> expiredPolicies = new HashMap<>();
+        if (policies == null || date == null) {
+            return expiredPolicies;
+        }
+        for (InsurancePolicy policy : policies.values()) {
+            if (date.isExpired(policy.getExpiryDate())) {
+                expiredPolicies.put(policy.getID(), policy);
+            }
+        }
+        return expiredPolicies;
+    }
+
+    public static ArrayList<InsurancePolicy> deepCopy(HashMap<Integer, InsurancePolicy> policies)
+            throws CloneNotSupportedException {
+        ArrayList<InsurancePolicy> copied = new ArrayList<>();
+        for (InsurancePolicy insurancePolicy : policies.values()) {
+            copied.add(insurancePolicy.clone());
+        }
+        return copied;
+    }
+
+    public static HashMap<Integer, InsurancePolicy> deepCopyHashMap(HashMap<Integer, InsurancePolicy> policies)
+            throws CloneNotSupportedException {
+        HashMap<Integer, InsurancePolicy> copied = new HashMap<>();
+
+        for (InsurancePolicy insurancePolicy : policies.values()) {
+            copied.put(insurancePolicy.id, insurancePolicy.clone());
+        }
+        return copied;
+    }
+
+    public static HashMap<Integer, InsurancePolicy> deepCopyHashMap(ArrayList<InsurancePolicy> policies)
+            throws CloneNotSupportedException {
+        HashMap<Integer, InsurancePolicy> copied = new HashMap<>();
+
+        for (InsurancePolicy insurancePolicy : policies) {
+            copied.put(insurancePolicy.id, insurancePolicy.clone());
+        }
+        return copied;
+    }
+
+    public static ArrayList<InsurancePolicy> shallowCopy(HashMap<Integer, InsurancePolicy> policies) {
+        ArrayList<InsurancePolicy> copied = new ArrayList<>();
+        for (InsurancePolicy insurancePolicy : policies.values()) {
+            copied.add(insurancePolicy);
+        }
+        return copied;
+    }
+
+    public static HashMap<Integer, InsurancePolicy> shallowCopyHashMap(HashMap<Integer, InsurancePolicy> policies) {
+        HashMap<Integer, InsurancePolicy> copied = new HashMap<>();
+        for (InsurancePolicy insurancePolicy : policies.values()) {
+            copied.put(insurancePolicy.id, insurancePolicy);
+        }
+        return copied;
+    }
+
+    public static HashMap<Integer, InsurancePolicy> shallowCopyHashMap(ArrayList<InsurancePolicy> policies) {
+        HashMap<Integer, InsurancePolicy> copied = new HashMap<>();
+        for (InsurancePolicy insurancePolicy : policies) {
+            copied.put(insurancePolicy.id, insurancePolicy);
+        }
+        return copied;
+    }
+
+    public static void printPolicies(HashMap<Integer, InsurancePolicy> policies) {
+        for (InsurancePolicy policy : policies.values()) {
+            System.out.println(policy.toString());
+        }
+    }
+
+    // Overloaded version to include flatRate and premium calculation
+    public static void printPolicies(HashMap<Integer, InsurancePolicy> policies, double flatRate) {
+        for (InsurancePolicy policy : policies.values()) {
+            policy.print();
+            System.out.println("Premium Payment: $" + policy.calcPayment(flatRate));
+        }
+    }
+
+    public static double calcTotalPayments(HashMap<Integer, InsurancePolicy> policies, int flatRate) {
+        double tatalPayments = 0.0;
+        for (InsurancePolicy policy : policies.values()) {
+            tatalPayments += policy.calcPayment(flatRate);
+        }
+        return tatalPayments;
+    }
+
+    public static void carPriceRiseAll(HashMap<Integer, InsurancePolicy> policies, double risePercent) {
+        if (policies == null) {
+            return;
+        }
+        for (InsurancePolicy insurancePolicy : policies.values()) {
+            insurancePolicy.carPriceRise(risePercent);
+        }
     }
 }
