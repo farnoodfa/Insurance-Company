@@ -809,7 +809,7 @@ public class App {
      */
     public static void testCarPriceRiseEffect(InsuranceCompany company) {
         System.out.println("TEST [18/43] carPriceRise(1001, 10%) - Camry $27500, BMW $57200   expected: 1759.0");
-        company.carPriceRise(1001, 0.10);
+        company.carPriceRise( 0.10);
         double newCar1 = 25000.0 * 1.10;
         double newCar2 = 52000.0 * 1.10;
         double expected = (newCar1 / 100.0 + 1 * 200.0 + 20.0)

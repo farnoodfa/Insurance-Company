@@ -46,12 +46,12 @@ public class User implements Cloneable, Comparable<User> {
         return address;
     }
 
-    // public ArrayList<InsurancePolicy> getPolicies() {
-    // return policies;
-    // }
-
     public String getCity() {
         return address.getCity();
+    }
+
+    public HashMap<Integer, InsurancePolicy> getPolicies() {
+        return policies;
     }
 
     // setters
@@ -63,14 +63,17 @@ public class User implements Cloneable, Comparable<User> {
         address.setCity(city);
     }
 
-    // public InsurancePolicy findPolicy(int policyID) {
-    // for (InsurancePolicy policy : policies) {
-    // if (policy.getID() == policyID) {
-    // return policy;
-    // }
-    // }
-    // return null;
-    // }
+    public InsurancePolicy findPolicy(int policyID) {
+        return policies.get(policyID);
+    }
+
+    public boolean addPolicy(InsurancePolicy policy) {
+        if (findPolicy(policy.getID()) == null) {
+            policies.put(policy.getID(), policy);
+            return true;
+        } else
+            return false;
+    }
 
     public void print() {
         System.out.println(this);
@@ -98,14 +101,6 @@ public class User implements Cloneable, Comparable<User> {
         InsurancePolicy.printPolicies(policies, flatRate);
     }
 
-    // public boolean addPolicy(InsurancePolicy policy) {
-    // if (policy != null && findPolicy(policy.getID()) == null) {
-    // policies.add(policy);
-    // return true;
-    // }
-    // return false;
-    // }
-
     public double calcTotalPremiums(int flatRate) {
         if (policies == null) {
             return 0;
@@ -120,13 +115,6 @@ public class User implements Cloneable, Comparable<User> {
         InsurancePolicy.carPriceRiseAll(policies, risePercent);
     }
 
-    // public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
-    // if (this.policies == null) {
-    // return null;
-    // }
-    // return InsurancePolicy.filterByCarModel(this.policies, carModel);
-    // }
-
     public boolean createThirdPartyPolicy(String policyHolderName, int id, Car car, int numberOfClaims,
             MyDate expiryDate, String comments) throws PolicyException {
         ThirdPartyPolicy policy = new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
@@ -140,72 +128,12 @@ public class User implements Cloneable, Comparable<User> {
         return addPolicy(policy);
     }
 
-    // // Filters policies expired by the given date
-    // public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
-    // if (this.policies == null) {
-    // return null;
-    // }
-    // return InsurancePolicy.filterByExpiryDate(this.policies, date);
-    // }
-
-    // // Remove a policy by policyID
-    // public boolean removePolicy(int policyID) {
-    // InsurancePolicy policy = findPolicy(policyID);
-    // if (policy != null) {
-    // policies.remove(policy);
-    // return true;
-    // }
-    // return false;
-    // }
-
     // Static counter for auto-generating user IDs
     private static int userCount = 0;
 
     public static int getNextUserID() {
         return ++userCount;
     }
-
-    // // Populate distinct car models across this user's policies
-    // public ArrayList<String> populateDistinctCarModels() {
-    // ArrayList<String> models = new ArrayList<String>();
-    // for (InsurancePolicy policy : policies) {
-    // boolean found = false;
-    // for (String model : models) {
-    // if (policy.getCarModel().equals(model)) {
-    // found = true;
-    // break;
-    // }
-    // }
-    // if (!found)
-    // models.add(policy.getCarModel());
-    // }
-    // return models;
-    // }
-
-    // // Count how many policies this user has for a given car model
-    // public int getTotalCountForCarModel(String carModel) {
-    // if (policies == null || carModel == null)
-    // return 0;
-    // int count = 0;
-    // for (InsurancePolicy policy : policies) {
-    // if (policy.car.getModel().equalsIgnoreCase(carModel)) {
-    // count++;
-    // }
-    // }
-    // return count;
-    // }
-
-    // public double getTotalPaymentForCarModel(String carModel, int flatRate) {
-    // if (policies == null || carModel == null)
-    // return 0;
-    // double total = 0.0;
-    // for (InsurancePolicy policy : policies) {
-    // if (policy.car.getModel().equalsIgnoreCase(carModel)) {
-    // total += policy.calcPayment(flatRate);
-    // }
-    // }
-    // return total;
-    // }
 
     // Count per model for a list of car models
     public ArrayList<Integer> getTotalCountPerCarModel(ArrayList<String> carModels) {
@@ -323,34 +251,6 @@ public class User implements Cloneable, Comparable<User> {
 
     // -------------------------------------------lab5
 
-    public HashMap<Integer, InsurancePolicy> getPolicies() {
-        return policies;
-    }
-
-    public InsurancePolicy findPolicy(int policyID) {
-        // for (InsurancePolicy policy : policies) {
-        // if (policy.getID() == policyID) {
-        // return policy;
-        // }
-        // }
-        // return null;
-
-        return policies.get(policyID);
-    }
-
-    public boolean addPolicy(InsurancePolicy policy) {
-        // if (policy != null && findPolicy(policy.getID()) == null) {
-        // policies.add(policy);
-        // return true;
-        // }
-        // return false;
-        if (findPolicy(policy.getID()) == null) {
-            policies.put(policy.getID(), policy);
-            return true;
-        } else
-            return false;
-    }
-
     public HashMap<Integer, InsurancePolicy> filterByCarModel(String carModel) {
         if (this.policies == null) {
             return null;
@@ -437,14 +337,6 @@ public class User implements Cloneable, Comparable<User> {
         return deepCopy;
     }
 
-    public static ArrayList<User> shallowCopy(HashMap<Integer, User> users) {
-        ArrayList<User> shallowCopy = new ArrayList<>();
-        for (User user : users.values()) {
-            shallowCopy.add(user);
-        }
-        return shallowCopy;
-    }
-
     public HashMap<Integer, InsurancePolicy> deepCopyPoliciesHashMap() throws CloneNotSupportedException {
         return InsurancePolicy.deepCopyHashMap(policies);
     }
@@ -456,7 +348,15 @@ public class User implements Cloneable, Comparable<User> {
     public static HashMap<Integer, User> shallowCopyHashMap(HashMap<Integer, User> users) {
         HashMap<Integer, User> shallowCopy = new HashMap<>();
         for (User user : users.values()) {
-            shallowCopy.put(user.userID, user);
+            shallowCopy.put(user.getUserID(), user);
+        }
+        return shallowCopy;
+    }
+
+    public static ArrayList<User> shallowCopy(HashMap<Integer, User> users) {
+        ArrayList<User> shallowCopy = new ArrayList<>();
+        for (User user : users.values()) {
+            shallowCopy.add(user);
         }
         return shallowCopy;
     }
@@ -464,7 +364,7 @@ public class User implements Cloneable, Comparable<User> {
     public static HashMap<Integer, User> shallowCopyHashMap(ArrayList<User> users) {
         HashMap<Integer, User> shallowCopy = new HashMap<>();
         for (User user : users) {
-            shallowCopy.put(user.userID, user);
+            shallowCopy.put(user.getUserID(), user);
         }
         return shallowCopy;
     }
