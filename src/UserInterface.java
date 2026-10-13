@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 public class UserInterface {
     // constants for text formatting
@@ -126,12 +127,25 @@ public class UserInterface {
                 case 14:
                     changeAdminPassword();
                     break;
+                // -------------------------------lab6
                 case 15:
+                    saveDataToTextFile();
+                    break;
+                case 16:
+                    loadDataFromTextFile();
+                    break;
+                case 17:
+                    saveDataToBinaryFile();
+                    break;
+                case 18:
+                    loadDataFromBinaryFile();
+                    break;
+                case 19:
                     System.out.println(BOLD + "Logging out of Admin portal..." + RESET);
                     inAdminMenu = false;
                     break;
                 default:
-                    System.out.println(RED + "Invalid choice! Please select an option from 1 to 14." + RESET);
+                    System.out.println(RED + "Invalid choice! Please select an option from 1 to 19." + RESET);
                     break;
             }
             if (inAdminMenu) {
@@ -156,7 +170,13 @@ public class UserInterface {
         System.out.println("12. Remove a Policy from User");
         System.out.println("13. Remove a User");
         System.out.println("14. Change Admin Password");
-        System.out.println("15. Log Out");
+        // -------------------------------lab6
+        System.out.println("15. save data to file (text)");
+        System.out.println("16. load data from file (text)");
+        System.out.println("17. save data to file (binary)");
+        System.out.println("18. load data from file (binary)");
+
+        System.out.println("19. Log Out");
         System.out.println(BOLD + "============================================" + RESET);
     }
 
@@ -723,6 +743,48 @@ public class UserInterface {
         System.out.print("\nPlease press enter key to continue");
         scanner.nextLine();
 
+    }
+
+    // -----------------------------------------------lab6
+
+    public void saveDataToTextFile() {
+        String fileName = getString("Enter filename to save data (e.g., data.txt): ");
+        try {
+            company.saveTextFile(fileName);
+            System.out.println(GREEN + "Data successfully saved to " + fileName + RESET);
+        } catch (IOException e) {
+            System.out.println(RED + "Error saving data: " + e.getMessage() + RESET);
+        }
+    }
+
+    public void loadDataFromTextFile() {
+        String fileName = getString("Enter filename to load data (e.g., data.txt): ");
+        try {
+            company.loadTextFile(fileName);
+            System.out.println(GREEN + "Data successfully loaded from " + fileName + RESET);
+        } catch (IOException | PolicyException e) {
+            System.out.println(RED + "Error loading data: " + e.getMessage() + RESET);
+        }
+    }
+
+    public void saveDataToBinaryFile() {
+        String fileName = getString("Enter filename to save data (e.g., data.bin): ");
+        try {
+            company.save(fileName);
+            System.out.println(GREEN + "Data successfully saved to " + fileName + RESET);
+        } catch (IOException e) {
+            System.out.println(RED + "Error saving data: " + e.getMessage() + RESET);
+        }
+    }
+
+    public void loadDataFromBinaryFile() {
+        String fileName = getString("Enter filename to load data (e.g., data.bin): ");
+        try {
+            company.load(fileName);
+            System.out.println(GREEN + "Data successfully loaded from " + fileName + RESET);
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println(RED + "Error loading data: " + e.getMessage() + RESET);
+        }
     }
 
 }

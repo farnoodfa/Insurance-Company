@@ -35,4 +35,9 @@ public class ThirdPartyPolicy extends InsurancePolicy {
     public ThirdPartyPolicy clone() throws CloneNotSupportedException {
         return (ThirdPartyPolicy) super.clone();
     }
+
+    // -------------------------------lab6
+    public String toDelimitedString() {
+        return "TP" + "," + super.toDelimitedString() + "," + comments;
+    }
 }

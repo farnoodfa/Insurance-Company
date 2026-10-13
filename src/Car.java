@@ -1,4 +1,6 @@
-public class Car implements Cloneable {
+import java.io.Serializable;
+
+public class Car implements Cloneable, Serializable {
 
     enum CarType {
         SUV, SED, LUX, HATCH
@@ -61,4 +63,11 @@ public class Car implements Cloneable {
     public Car clone() throws CloneNotSupportedException {
         return (Car) super.clone();
     }
+
+
+    //-------------------------------lab6
+    public String toDelimitedString() {
+        return manufacturingYear + "," + price + "," + model + "," + type;
+    }
+
 }

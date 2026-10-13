@@ -1,4 +1,6 @@
-public class MyDate implements Cloneable, Comparable<MyDate> {
+import java.io.*;
+
+public class MyDate implements Cloneable, Comparable<MyDate>, Serializable {
     private int year;
     private int month;
     private int day;
@@ -108,6 +110,12 @@ public class MyDate implements Cloneable, Comparable<MyDate> {
         }
 
         return 0;
+    }
+
+    //-------------------------------lab6
+
+    public String toDelimitedString(){
+        return year + "," + month + "," + day;
     }
 
 }

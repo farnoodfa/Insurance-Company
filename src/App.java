@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.*;
 
 // Driver class to test Insurance Policy system functionality
@@ -532,11 +533,13 @@ public class App {
      * }
      */
 
-    public static void main(String[] args) throws CloneNotSupportedException, PolicyException {
+    public static void main(String[] args)
+            throws CloneNotSupportedException, PolicyException, IOException, ClassNotFoundException {
         InsuranceCompany insuranceCompany = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(insuranceCompany);
         // testLab4(insuranceCompany);
-        testLab5(insuranceCompany);
+        // testLab5(insuranceCompany);
+        testLab6(insuranceCompany);
         UserInterface UI = new UserInterface(insuranceCompany);
         UI.mainMenu();
 
@@ -809,7 +812,7 @@ public class App {
      */
     public static void testCarPriceRiseEffect(InsuranceCompany company) {
         System.out.println("TEST [18/43] carPriceRise(1001, 10%) - Camry $27500, BMW $57200   expected: 1759.0");
-        company.carPriceRise( 0.10);
+        company.carPriceRise(0.10);
         double newCar1 = 25000.0 * 1.10;
         double newCar2 = 52000.0 * 1.10;
         double expected = (newCar1 / 100.0 + 1 * 200.0 + 20.0)
@@ -1284,33 +1287,188 @@ public class App {
             boolean isValidGeneratedID = e.getID() >= 300000 && e.getID() <= 399999;
             testResult(true, isValidGeneratedID);
         }
-System.out.println("Testing User and Company Data Aggregation Methods");
+        System.out.println("Testing User and Company Data Aggregation Methods");
 
-    User targetUser = null;
-    for (User userInstance : company.getUsers().values()) {
-        targetUser = userInstance;
-        break;
+        User targetUser = null;
+        for (User userInstance : company.getUsers().values()) {
+            targetUser = userInstance;
+            break;
+        }
+
+        if (targetUser != null) {
+            // Retrieve aggregation maps for the user
+            HashMap<String, Integer> userCounts = targetUser.getTotalCountPerCarModel();
+            HashMap<String, Double> userPremiums = targetUser.getTotalPremiumPerCarModel(company.getFlatRate());
+
+            // Pass variables into the overloaded user report method to consume them
+            targetUser.reportPaymentsPerCarModel(userCounts, userPremiums);
+        }
+
+        // Retrieve and report city aggregation map
+        HashMap<String, Double> cityPremiums = company.getTotalPremiumPerCity();
+        company.reportPaymentPerCity(cityPremiums);
+
+        // Retrieve and report company car model aggregation maps
+        HashMap<String, Integer> companyModelCounts = company.getTotalCountPerCarModel();
+        HashMap<String, Double> companyModelPremiums = company.getTotalPremiumPerCarModel();
+        company.reportPaymentsPerCarModel(companyModelCounts, companyModelPremiums);
+
+        System.out.println("All data aggregation tests executed successfully");
+
     }
 
-    if (targetUser != null) {
-        // Retrieve aggregation maps for the user
-        HashMap<String, Integer> userCounts = targetUser.getTotalCountPerCarModel();
-        HashMap<String, Double> userPremiums = targetUser.getTotalPremiumPerCarModel(company.getFlatRate());
+    // -------------------------------------------------------lab6
 
-        // Pass variables into the overloaded user report method to consume them
-        targetUser.reportPaymentsPerCarModel(userCounts, userPremiums);
-    }
+    public static void testLab6(InsuranceCompany company) throws IOException, ClassNotFoundException, PolicyException {
+        System.out.println("========================== LAB-6 Tests ============================");
 
-    // Retrieve and report city aggregation map
-    HashMap<String, Double> cityPremiums = company.getTotalPremiumPerCity();
-    company.reportPaymentPerCity(cityPremiums);
+        // File path constants
+        String BINARY_POLICIES_FILE = "policies.ser";
+        String BINARY_USERS_FILE = "users.ser";
+        String BINARY_COMPANY_FILE = "company.ser";
+        String TEXT_POLICIES_FILE = "policies.txt";
+        String TEXT_USERS_FILE = "users.txt";
+        String TEXT_COMPANY_FILE = "company.txt";
 
-    // Retrieve and report company car model aggregation maps
-    HashMap<String, Integer> companyModelCounts = company.getTotalCountPerCarModel();
-    HashMap<String, Double> companyModelPremiums = company.getTotalPremiumPerCarModel();
-    company.reportPaymentsPerCarModel(companyModelCounts, companyModelPremiums);
+        // Shared test fixtures
+        Car sampleCar = new Car(2021, 35000.0, "Porsche 911", Car.CarType.SED);
+        MyDate sampleExpiryDate = new MyDate(2026, 5, 10);
 
-    System.out.println("All data aggregation tests executed successfully");
+        // 1. Binary File - HashMap of Policies
+        // ---------------------------------------------------------------
+        System.out.println("\n--- [1] Binary File: HashMap of Policies ---");
 
+        User sampleUser = company.findUser(1001);
+        HashMap<Integer, InsurancePolicy> policyMap = new HashMap<>(sampleUser.getPolicies()); // fixed - copy not
+                                                                                               // reference
+
+        InsurancePolicy.save(policyMap, BINARY_POLICIES_FILE);
+        System.out.println("Policies saved to " + BINARY_POLICIES_FILE);
+
+        InsurancePolicy extraPolicy = new ThirdPartyPolicy("Test User", 300999, sampleCar, 0, sampleExpiryDate,
+                "Binary test policy");
+        policyMap.put(extraPolicy.getID(), extraPolicy);
+        InsurancePolicy.save(policyMap, BINARY_POLICIES_FILE);
+        System.out.println("New policy added and saved again.");
+
+        policyMap.clear();
+        System.out.println("HashMap cleared. Size: " + policyMap.size());
+        HashMap<Integer, InsurancePolicy> loadedBinaryPolicies = InsurancePolicy.load(BINARY_POLICIES_FILE);
+        System.out.println("Policies loaded from " + BINARY_POLICIES_FILE + ". Size: " + loadedBinaryPolicies.size());
+        InsurancePolicy.printPolicies(loadedBinaryPolicies);
+
+        // 2. Binary File - HashMap of Users
+        // ---------------------------------------------------------------
+        System.out.println("\n--- [2] Binary File: HashMap of Users ---");
+
+        HashMap<Integer, User> userMap = new HashMap<>(company.getUsers()); // fixed - copy not reference
+
+        User.save(userMap, BINARY_USERS_FILE);
+        System.out.println("Users saved to " + BINARY_USERS_FILE);
+
+        Address binaryUserAddress = new Address(10, "Crown St", "Wollongong Suburb", "Wollongong");
+        User binaryTestUser = new User("Binary Test User", 1099, binaryUserAddress);
+        InsurancePolicy binaryUserPolicy = new ThirdPartyPolicy("Binary Test User", 300998, sampleCar, 1,
+                sampleExpiryDate, "Binary user policy");
+        binaryTestUser.addPolicy(binaryUserPolicy);
+        userMap.put(binaryTestUser.getUserID(), binaryTestUser);
+        User.save(userMap, BINARY_USERS_FILE);
+        System.out.println("New user added and saved again.");
+
+        userMap.clear();
+        System.out.println("HashMap cleared. Size: " + userMap.size());
+        HashMap<Integer, User> loadedBinaryUsers = User.load(BINARY_USERS_FILE);
+        System.out.println("Users loaded from " + BINARY_USERS_FILE + ". Size: " + loadedBinaryUsers.size());
+        for (User user : loadedBinaryUsers.values()) {
+            System.out.println(user);
+        }
+
+        // 3. Binary File - InsuranceCompany Object
+        // ---------------------------------------------------------------
+        System.out.println("\n--- [3] Binary File: InsuranceCompany Object ---");
+
+        company.save(BINARY_COMPANY_FILE);
+        System.out.println("Company saved to " + BINARY_COMPANY_FILE);
+
+        Address binaryCompanyAddress = new Address(20, "George St", "CBD", "Sydney");
+        company.addUser(new User("New Company User", 1098, binaryCompanyAddress));
+        company.createThirdPartyPolicy(1098, "New Company User", 300997, sampleCar, 0, sampleExpiryDate,
+                "Company binary policy");
+        company.save(BINARY_COMPANY_FILE);
+        System.out.println("New user and policy added, company saved again.");
+
+        InsuranceCompany restoredBinaryCompany = new InsuranceCompany();
+        restoredBinaryCompany.load(BINARY_COMPANY_FILE);
+        System.out.println("Company loaded from " + BINARY_COMPANY_FILE + ":");
+        System.out.println(restoredBinaryCompany);
+
+        // 4. Text File - HashMap of Policies
+        // ---------------------------------------------------------------
+        System.out.println("\n--- [4] Text File: HashMap of Policies ---");
+
+        HashMap<Integer, InsurancePolicy> textPolicyMap = new HashMap<>(sampleUser.getPolicies()); // fixed - copy not
+                                                                                                   // reference
+
+        InsurancePolicy.saveTextFile(textPolicyMap, TEXT_POLICIES_FILE);
+        System.out.println("Policies saved to " + TEXT_POLICIES_FILE);
+
+        InsurancePolicy extraTextPolicy = new ThirdPartyPolicy("Test User", 300996, sampleCar, 2, sampleExpiryDate,
+                "Text test policy");
+        textPolicyMap.put(extraTextPolicy.getID(), extraTextPolicy);
+        InsurancePolicy.saveTextFile(textPolicyMap, TEXT_POLICIES_FILE);
+        System.out.println("New policy added and saved again.");
+
+        textPolicyMap.clear();
+        System.out.println("HashMap cleared. Size: " + textPolicyMap.size());
+        HashMap<Integer, InsurancePolicy> loadedTextPolicies = InsurancePolicy.loadTextFile(TEXT_POLICIES_FILE);
+        System.out.println("Policies loaded from " + TEXT_POLICIES_FILE + ". Size: " + loadedTextPolicies.size());
+        InsurancePolicy.printPolicies(loadedTextPolicies);
+
+        // 5. Text File - HashMap of Users
+        // ---------------------------------------------------------------
+        System.out.println("\n--- [5] Text File: HashMap of Users ---");
+
+        HashMap<Integer, User> textUserMap = new HashMap<>(company.getUsers()); // fixed - copy not reference
+
+        User.saveTextFile(textUserMap, TEXT_USERS_FILE);
+        System.out.println("Users saved to " + TEXT_USERS_FILE);
+
+        Address textUserAddress = new Address(30, "Golestan St", "Sadra", "Shiraz");
+        User textTestUser = new User("Text Test User", 1097, textUserAddress);
+        InsurancePolicy textUserPolicy = new ThirdPartyPolicy("Text Test User", 300995, sampleCar, 0, sampleExpiryDate,
+                "Text user policy");
+        textTestUser.addPolicy(textUserPolicy);
+        textUserMap.put(textTestUser.getUserID(), textTestUser);
+        User.saveTextFile(textUserMap, TEXT_USERS_FILE);
+        System.out.println("New user added and saved again.");
+
+        textUserMap.clear();
+        System.out.println("HashMap cleared. Size: " + textUserMap.size());
+        HashMap<Integer, User> loadedTextUsers = User.loadTextFile(TEXT_USERS_FILE);
+        System.out.println("Users loaded from " + TEXT_USERS_FILE + ". Size: " + loadedTextUsers.size());
+        for (User user : loadedTextUsers.values()) {
+            System.out.println(user);
+        }
+
+        // 6. Text File - InsuranceCompany Object
+        // ---------------------------------------------------------------
+        System.out.println("\n--- [6] Text File: InsuranceCompany Object ---");
+
+        company.saveTextFile(TEXT_COMPANY_FILE);
+        System.out.println("Company saved to " + TEXT_COMPANY_FILE);
+
+        Address textCompanyAddress = new Address(40, "Golestan St", "Sadra Suburb", "Shiraz");
+        company.addUser(new User("Text Company User", 1096, textCompanyAddress));
+        company.createThirdPartyPolicy(1096, "Text Company User", 300994, sampleCar, 0, sampleExpiryDate,
+                "Text company policy");
+        company.saveTextFile(TEXT_COMPANY_FILE);
+        System.out.println("New user and policy added, company saved again.");
+
+        InsuranceCompany restoredTextCompany = new InsuranceCompany();
+        restoredTextCompany.loadTextFile(TEXT_COMPANY_FILE);
+        System.out.println("Company loaded from " + TEXT_COMPANY_FILE + ":");
+        System.out.println(restoredTextCompany);
+
+        System.out.println("========================== LAB-6 Tests Complete ============================");
     }
 }

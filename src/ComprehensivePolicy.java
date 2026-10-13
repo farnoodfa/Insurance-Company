@@ -40,4 +40,9 @@ public class ComprehensivePolicy extends InsurancePolicy {
     public ComprehensivePolicy clone() throws CloneNotSupportedException {
         return (ComprehensivePolicy) super.clone();
     }
+
+    // -------------------------------lab6
+    public String toDelimitedString() {
+        return "CP" + "," + super.toDelimitedString() + "," + driverAge + "," + level;
+    }
 }

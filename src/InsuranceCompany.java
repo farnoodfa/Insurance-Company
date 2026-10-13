@@ -1,6 +1,7 @@
+import java.io.*;
 import java.util.*;
 
-public class InsuranceCompany implements Cloneable {
+public class InsuranceCompany implements Cloneable, Serializable {
     private String name;
     // private ArrayList<User> users;
     private HashMap<Integer, User> users;
@@ -548,5 +549,120 @@ public class InsuranceCompany implements Cloneable {
         HashMap<String, Integer> counts = getTotalCountPerCarModel();
         HashMap<String, Double> premiums = getTotalPremiumPerCarModel();
         reportPaymentsPerCarModel(counts, premiums);
+    }
+
+    // ---------------------------------------------------------------lab6
+
+    public InsuranceCompany() {
+        this.adminPassword = "";
+        this.adminUsername = "";
+        this.flatRate = 100;
+        this.name = "";
+        this.users = new HashMap<>();
+    }
+
+    public Boolean load(String fileName) throws IOException, ClassNotFoundException {
+        try (FileInputStream file = new FileInputStream(fileName);
+                ObjectInputStream obj = new ObjectInputStream(file)) {
+            InsuranceCompany loaded = (InsuranceCompany) obj.readObject();
+            this.name = loaded.name;
+            this.adminUsername = loaded.adminUsername;
+            this.adminPassword = loaded.adminPassword;
+            this.flatRate = loaded.flatRate;
+            this.users = loaded.users;
+        }
+        return true;
+    }
+
+    public Boolean save(String fileName) throws IOException {
+        try (FileOutputStream file = new FileOutputStream(fileName);
+                ObjectOutputStream obj = new ObjectOutputStream(file)) {
+            obj.writeObject(this);
+        }
+        return true;
+    }
+
+    public String toDelimitedString() {
+        String result = name + "," + adminUsername + "," + adminPassword + ","
+                + flatRate + "," + users.size();
+        return result;
+    }
+
+    public Boolean saveTextFile(String fileName) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            // company info
+            writer.write(this.toDelimitedString());
+            writer.newLine();
+            // users and their policies
+            for (User user : users.values()) {
+                writer.write(user.toDelimitedString());
+                writer.newLine();
+                for (InsurancePolicy policy : user.getPolicies().values()) {
+                    writer.write(policy.toDelimitedString());
+                    writer.newLine();
+                }
+            }
+        }
+        return true;
+    }
+
+    public Boolean loadTextFile(String fileName) throws IOException, PolicyException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            // read company line
+            String[] parts = reader.readLine().split(",");
+            this.name = parts[0];
+            this.adminUsername = parts[1];
+            this.adminPassword = parts[2];
+            this.flatRate = Integer.parseInt(parts[3]);
+            int numUsers = Integer.parseInt(parts[4]);
+            this.users = new HashMap<>();
+
+            for (int i = 0; i < numUsers; i++) {
+                // read user line
+                String[] userParts = reader.readLine().split(",");
+                String name = userParts[0];
+                int userID = Integer.parseInt(userParts[1]);
+                int streetNum = Integer.parseInt(userParts[2]);
+                String street = userParts[3];
+                String suburb = userParts[4];
+                String city = userParts[5];
+                int numPolicies = Integer.parseInt(userParts[6]);
+                Address address = new Address(streetNum, street, suburb, city);
+                User user = new User(name, userID, address);
+
+                // read each policy line for this user
+                for (int j = 0; j < numPolicies; j++) {
+                    String[] policyParts = reader.readLine().split(",");
+                    String policyType = policyParts[0];
+                    String policyHolderName = policyParts[1];
+                    int id = Integer.parseInt(policyParts[2]);
+                    int numberOfClaims = Integer.parseInt(policyParts[3]);
+                    int year = Integer.parseInt(policyParts[4]);
+                    int month = Integer.parseInt(policyParts[5]);
+                    int day = Integer.parseInt(policyParts[6]);
+                    int manufacturingYear = Integer.parseInt(policyParts[7]);
+                    double price = Double.parseDouble(policyParts[8]);
+                    String model = policyParts[9];
+                    Car.CarType type = Car.CarType.valueOf(policyParts[10]);
+                    Car car = new Car(manufacturingYear, price, model, type);
+                    MyDate expiryDate = new MyDate(year, month, day);
+                    InsurancePolicy policy;
+                    if (policyType.equals("TP")) {
+                        String comments = policyParts[11];
+                        policy = new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
+                    } else if (policyType.equals("CP")) {
+                        int driverAge = Integer.parseInt(policyParts[11]);
+                        int level = Integer.parseInt(policyParts[12]);
+                        policy = new ComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate,
+                                driverAge, level);
+                    } else {
+                        throw new IOException("Unknown policy type: " + policyType);
+                    }
+                    user.addPolicy(policy);
+                }
+                this.users.put(userID, user);
+            }
+        }
+        return true;
     }
 }
