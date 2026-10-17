@@ -60,6 +60,91 @@ public class User implements Cloneable, Comparable<User>, Serializable {
         this.address = address;
     }
 
+        // public InsurancePolicy findPolicy(int policyID) {
+    // for (InsurancePolicy policy : policies) {
+    // if (policy.getID() == policyID) {
+    // return policy;
+    // }
+    // }
+    // return null;
+    // }
+
+        // public boolean addPolicy(InsurancePolicy policy) {
+    // if (policy != null && findPolicy(policy.getID()) == null) {
+    // policies.add(policy);
+    // return true;
+    // }
+    // return false;
+    // }
+
+        // public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
+    // if (this.policies == null) {
+    // return null;
+    // }
+    // return InsurancePolicy.filterByCarModel(this.policies, carModel);
+    // }
+
+        // // Filters policies expired by the given date
+    // public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
+    // if (this.policies == null) {
+    // return null;
+    // }
+    // return InsurancePolicy.filterByExpiryDate(this.policies, date);
+    // }
+
+    // // Remove a policy by policyID
+    // public boolean removePolicy(int policyID) {
+    // InsurancePolicy policy = findPolicy(policyID);
+    // if (policy != null) {
+    // policies.remove(policy);
+    // return true;
+    // }
+    // return false;
+    // }
+
+        // // Populate distinct car models across this user's policies
+    // public ArrayList<String> populateDistinctCarModels() {
+    // ArrayList<String> models = new ArrayList<String>();
+    // for (InsurancePolicy policy : policies) {
+    // boolean found = false;
+    // for (String model : models) {
+    // if (policy.getCarModel().equals(model)) {
+    // found = true;
+    // break;
+    // }
+    // }
+    // if (!found)
+    // models.add(policy.getCarModel());
+    // }
+    // return models;
+    // }
+
+    // // Count how many policies this user has for a given car model
+    // public int getTotalCountForCarModel(String carModel) {
+    // if (policies == null || carModel == null)
+    // return 0;
+    // int count = 0;
+    // for (InsurancePolicy policy : policies) {
+    // if (policy.car.getModel().equalsIgnoreCase(carModel)) {
+    // count++;
+    // }
+    // }
+    // return count;
+    // }
+
+    // public double getTotalPaymentForCarModel(String carModel, int flatRate) {
+    // if (policies == null || carModel == null)
+    // return 0;
+    // double total = 0.0;
+    // for (InsurancePolicy policy : policies) {
+    // if (policy.car.getModel().equalsIgnoreCase(carModel)) {
+    // total += policy.calcPayment(flatRate);
+    // }
+    // }
+    // return total;
+    // }
+
+
     public void setCity(String city) {
         address.setCity(city);
     }
@@ -458,6 +543,34 @@ public class User implements Cloneable, Comparable<User>, Serializable {
         return true;
     }
 
+    // public static HashMap<Integer, User> load(String fileName) throws IOException, ClassNotFoundException {
+    //     HashMap<Integer, User> users = new HashMap<>();
+    //     try (FileInputStream file = new FileInputStream(fileName);
+    //             ObjectInputStream inputSt = new ObjectInputStream(file)) {
+    //         try {
+    //             while (true) {
+    //                 User user = (User) inputSt.readObject();
+    //                 users.put(user.getUserID(), user);
+    //             }
+    //         } catch (EOFException e) {
+
+    //         }
+    //         System.out.println("End of file reached: no more users to load.");
+    //     }
+    //     return users;
+    // }
+
+    // public static Boolean save(HashMap<Integer, User> users, String fileName)
+    //         throws IOException {
+    //     try (FileOutputStream file = new FileOutputStream(fileName);
+    //             ObjectOutputStream obj = new ObjectOutputStream(file)) {
+    //         for (User user : users.values()) {
+    //             obj.writeObject(user);
+    //         }
+    //     }
+    //     return true;
+    // }
+
     public String toDelimitedString() {
         String result = name + "," + userID + "," + address.toDelimitedString() + "," + policies.size();
         for (InsurancePolicy policy : policies.values()) {
@@ -517,12 +630,13 @@ public class User implements Cloneable, Comparable<User>, Serializable {
         return users;
     }
 
-    public static void saveTextFile(HashMap<Integer, User> users, String fileName) throws IOException {
+    public static Boolean saveTextFile(HashMap<Integer, User> users, String fileName) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
             for (User user : users.values()) {
                 bw.write(user.toDelimitedString());
                 bw.newLine();
             }
         }
+        return true;
     }
 }

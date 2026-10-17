@@ -304,6 +304,35 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
         return true;
     }
 
+
+    //         public static HashMap<Integer, InsurancePolicy> load(String fileName)
+    //         throws IOException, ClassNotFoundException {
+    //     HashMap<Integer, InsurancePolicy> policies = new HashMap<>();
+    //     try (FileInputStream file = new FileInputStream(fileName);
+    //             ObjectInputStream inputSt = new ObjectInputStream(file)) {
+    //         try {
+    //             while (true) {
+    //                 InsurancePolicy policy = (InsurancePolicy) inputSt.readObject();
+    //                 policies.put(policy.getID(), policy);
+    //             }
+    //         } catch (EOFException e) {
+    //             System.out.println("End of file reached: no more policies to load.");
+    //         }
+    //     }
+    //     return policies;
+    // }
+
+    // public static Boolean save(HashMap<Integer, InsurancePolicy> policies, String fileName)
+    //         throws IOException {
+    //     try (FileOutputStream file = new FileOutputStream(fileName);
+    //             ObjectOutputStream outputSt = new ObjectOutputStream(file)) {
+    //         for (InsurancePolicy policy : policies.values()) {
+    //             outputSt.writeObject(policy);
+    //         }
+    //     }
+    //     return true;
+    // }
+
     public String toDelimitedString() {
         return policyHolderName + "," + id + "," + numberOfClaims + "," + expiryDate.toDelimitedString() + ","
                 + car.toDelimitedString();

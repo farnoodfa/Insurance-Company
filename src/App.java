@@ -1083,7 +1083,8 @@ public class App {
         testResult(4, total);
     }
 
-    public static void testCase() throws CloneNotSupportedException, PolicyException {
+    public static void testCase()
+            throws CloneNotSupportedException, PolicyException, ClassNotFoundException, IOException {
         // Build the company and populate it
         InsuranceCompany company = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(company);
@@ -1178,6 +1179,8 @@ public class App {
         testLab4(company);
 
         testLab5(company);
+
+        testLab6(company);
 
         System.out.println("=================================================================");
         System.out.println("                    ALL TESTS COMPLETE                          ");

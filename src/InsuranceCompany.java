@@ -46,6 +46,199 @@ public class InsuranceCompany implements Cloneable, Serializable {
         return flatRate;
     }
 
+
+        // // Finds a user by userID, returns null if not found
+    // public User findUser(int userID) {
+    // // for (User user : users) {
+    // // if (user.getUserID() == userID) {
+    // // return user;
+    // // }
+    // // }
+    // // return null;
+    // return users.get(userID);
+    // }
+
+    // // Adds a user if the user object is not null and userID is unique
+    // public boolean addUser(User user) {
+    // // if (user != null && findUser(user.getUserID()) == null) {
+    // // users.add(user);
+    // // return true;
+    // // }
+    // // return false;
+    // if (user != null && findUser(user.getUserID()) == null) {
+    // users.put(user.getUserID(), user);
+    // return true;
+    // } else
+    // return false;
+    // }
+
+     // // Prints all users and all of their policies with calculated premiums
+    // public void print() {
+    // // for (User user : users) {
+    // // System.out.println(
+    // // "User: " + user.getName() + " | ID: " + user.getUserID() + " | Address: "
+    // +
+    // // user.getAddress());
+    // // user.printPolicies(flatRate);
+    // // System.out.println("-----------------------");
+    // // }
+    // for (User user : users.values()) {
+
+    // System.out.println(
+    // "User: " + user.getName() + " | ID: " + user.getUserID() + " | Address: " +
+    // user.getAddress());
+    // user.printPolicies(flatRate);
+    // System.out.println("-----------------------");
+    // }
+    // }
+
+    // // Converts the company details, all users, and their policies to String
+    // public String toString() {
+    // String result = "===== Insurance Company: " + name + "\nUsers:\n ======";
+    // // for (User user : users) {
+    // // result += user.toString() + "\n";
+    // // }
+
+    // for (User user : users.values()) {
+    // result += user.toString() + "\n";
+    // }
+    // return result;
+    // }
+
+     // // Calculates total premium payments across all users in the company
+    // public double calcTotalPayments() {
+    // double total = 0.0;
+    // // for (User user : users) {
+    // // total += user.calcTotalPremiums(flatRate);
+    // // }
+    // for (User user : users.values()) {
+    // total += user.calcTotalPremiums(flatRate);
+    // }
+    // return total;
+    // }
+
+     // // Increases car prices by risePercent across all users in the company
+    // public void carPriceRise(double risePercent) {
+    // // for (User user : users) {
+    // // user.carPriceRiseAll(risePercent);
+    // // }
+
+    // for (User user : users.values()) {
+    // user.carPriceRiseAll(risePercent);
+    // }
+    // }
+
+    // // Returns a consolidated list of all policies held across all users
+    // public ArrayList<InsurancePolicy> allPolicies() {
+    // ArrayList<InsurancePolicy> allPolicies = new ArrayList<InsurancePolicy>();
+    // // for (User user : users) {
+    // // if (user.getPolicies() != null) {
+    // // for (InsurancePolicy policy : user.getPolicies()) {
+    // // allPolicies.add(policy);
+    // // }
+    // // }
+    // // }
+
+    // for (User user : users.values()) {
+    // if (user.getPolicies() != null) {
+    // for (InsurancePolicy policy : user.getPolicies()) {
+    // allPolicies.add(policy);
+    // }
+    // }
+    // }
+    // return allPolicies;
+    // }
+
+    // // Filters policies by car model across all users in the company
+    // public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
+    // ArrayList<InsurancePolicy> filteredList = new ArrayList<InsurancePolicy>();
+    // for (User user : users) {
+    // ArrayList<InsurancePolicy> userMatchedPolicies =
+    // user.filterByCarModel(carModel);
+    // if (userMatchedPolicies != null) {
+    // for (InsurancePolicy policy : userMatchedPolicies) {
+    // filteredList.add(policy);
+    // }
+    // }
+    // }
+    // return filteredList;
+    // }
+
+    // // Overloaded method to filter policies by car model for a specific user
+    // public ArrayList<InsurancePolicy> filterByCarModel(int userID, String
+    // carModel) {
+    // User user = findUser(userID);
+    // if (user != null) {
+    // return user.filterByCarModel(carModel);
+    // }
+    // return new ArrayList<InsurancePolicy>();
+    // }
+
+    // // Filters policies by expiry date for a specific user
+    // public ArrayList<InsurancePolicy> filterByExpiryDate(int userID, MyDate date)
+    // {
+    // User user = findUser(userID);
+    // if (user != null) {
+    // return user.filterByExpiryDate(date);
+    // }
+    // return new ArrayList<InsurancePolicy>();
+
+    // }
+
+    // // Filters policies expired by the given date across all users in the company
+    // public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
+    // ArrayList<InsurancePolicy> filtered = new ArrayList<>();
+    // for (User user : users) {
+    // ArrayList<InsurancePolicy> expired = user.filterByExpiryDate(date);
+    // if (expired != null) {
+    // for (InsurancePolicy policy : expired) {
+    // filtered.add(policy);
+    // }
+    // }
+    // }
+    // return filtered;
+    // }
+
+    // // Goes through all users and populates a list of distinct city names
+    // public ArrayList<String> populateDistinctCityNames() {
+    // ArrayList<String> cities = new ArrayList<String>();
+    // for (User user : users) {
+    // boolean found = false;
+    // for (String city : cities) {
+    // if (user.getCity().equals(city)) {
+    // found = true;
+    // break;
+    // }
+    // }
+    // if (!found)
+    // cities.add(user.getCity());
+    // }
+    // return cities;
+    // }
+
+    // // Returns the total premium payment for the given city across all users
+    // public double getTotalPaymentForCity(String city) {
+    // double total = 0.0;
+    // for (User user : users) {
+    // if (user != null && user.getAddress() != null) {
+    // if (city.equalsIgnoreCase(user.getAddress().getCity())) {
+    // total += user.calcTotalPremiums(flatRate);
+    // }
+    // }
+    // }
+    // return total;
+    // }
+
+        // // Remove a user by userID
+    // public boolean removeUser(int userID) {
+    // User user = findUser(userID);
+    // if (user != null) {
+    // users.remove(user);
+    // return true;
+    // }
+    // return false;
+    // }
+
     // Validates admin credentials against stored details
     public boolean validateAdmin(String username, String password) {
         return this.adminUsername.equals(username) && this.adminPassword.equals(password);
@@ -582,26 +775,54 @@ public class InsuranceCompany implements Cloneable, Serializable {
         return true;
     }
 
+    // public Boolean load(String fileName) throws IOException, ClassNotFoundException {
+    //     try (FileInputStream file = new FileInputStream(fileName);
+    //             ObjectInputStream obj = new ObjectInputStream(file)) {
+    //         // company fields first, in the same order they were saved
+    //         this.name = (String) obj.readObject();
+    //         this.adminUsername = (String) obj.readObject();
+    //         this.adminPassword = (String) obj.readObject();
+    //         this.flatRate = obj.readInt();
+    //         this.users = new HashMap<>();
+    //         // then the users until the end of the file   
+    //         try {
+    //             while (true) {
+    //                 User user = (User) obj.readObject();
+    //                 this.users.put(user.getUserID(), user);
+    //             }
+    //         } catch (EOFException e) {
+    //             System.out.println("End of file reached: no more users to load.");
+    //         }
+    //     }
+    //     return true;
+    // }
+
+    // public Boolean save(String fileName) throws IOException {
+    //     try (FileOutputStream file = new FileOutputStream(fileName);
+    //             ObjectOutputStream obj = new ObjectOutputStream(file)) {
+    //         obj.writeObject(name);
+    //         obj.writeObject(adminUsername);
+    //         obj.writeObject(adminPassword);
+    //         obj.writeInt(flatRate);
+    //         for (User user : users.values()) {
+    //             obj.writeObject(user);
+    //         }
+    //     }
+    //     return true;
+    // }
+
     public String toDelimitedString() {
-        String result = name + "," + adminUsername + "," + adminPassword + ","
-                + flatRate + "," + users.size();
+        String result = name + "," + adminUsername + "," + adminPassword + "," + flatRate + "," + users.size();
+        for (User user : users.values()) {
+            result += "\n" + user.toDelimitedString();
+        }
         return result;
     }
 
     public Boolean saveTextFile(String fileName) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            // company info
             writer.write(this.toDelimitedString());
             writer.newLine();
-            // users and their policies
-            for (User user : users.values()) {
-                writer.write(user.toDelimitedString());
-                writer.newLine();
-                for (InsurancePolicy policy : user.getPolicies().values()) {
-                    writer.write(policy.toDelimitedString());
-                    writer.newLine();
-                }
-            }
         }
         return true;
     }
@@ -618,41 +839,40 @@ public class InsuranceCompany implements Cloneable, Serializable {
             this.users = new HashMap<>();
 
             for (int i = 0; i < numUsers; i++) {
-                // read user line
+                // read user line (user fields, number of policies, then the policies)
                 String[] userParts = reader.readLine().split(",");
-                String name = userParts[0];
-                int userID = Integer.parseInt(userParts[1]);
-                int streetNum = Integer.parseInt(userParts[2]);
-                String street = userParts[3];
-                String suburb = userParts[4];
-                String city = userParts[5];
-                int numPolicies = Integer.parseInt(userParts[6]);
+                int index = 0;
+                String userName = userParts[index++];
+                int userID = Integer.parseInt(userParts[index++]);
+                int streetNum = Integer.parseInt(userParts[index++]);
+                String street = userParts[index++];
+                String suburb = userParts[index++];
+                String city = userParts[index++];
+                int numPolicies = Integer.parseInt(userParts[index++]);
                 Address address = new Address(streetNum, street, suburb, city);
-                User user = new User(name, userID, address);
+                User user = new User(userName, userID, address);
 
-                // read each policy line for this user
                 for (int j = 0; j < numPolicies; j++) {
-                    String[] policyParts = reader.readLine().split(",");
-                    String policyType = policyParts[0];
-                    String policyHolderName = policyParts[1];
-                    int id = Integer.parseInt(policyParts[2]);
-                    int numberOfClaims = Integer.parseInt(policyParts[3]);
-                    int year = Integer.parseInt(policyParts[4]);
-                    int month = Integer.parseInt(policyParts[5]);
-                    int day = Integer.parseInt(policyParts[6]);
-                    int manufacturingYear = Integer.parseInt(policyParts[7]);
-                    double price = Double.parseDouble(policyParts[8]);
-                    String model = policyParts[9];
-                    Car.CarType type = Car.CarType.valueOf(policyParts[10]);
+                    String policyType = userParts[index++];
+                    String policyHolderName = userParts[index++];
+                    int id = Integer.parseInt(userParts[index++]);
+                    int numberOfClaims = Integer.parseInt(userParts[index++]);
+                    int year = Integer.parseInt(userParts[index++]);
+                    int month = Integer.parseInt(userParts[index++]);
+                    int day = Integer.parseInt(userParts[index++]);
+                    int manufacturingYear = Integer.parseInt(userParts[index++]);
+                    double price = Double.parseDouble(userParts[index++]);
+                    String model = userParts[index++];
+                    Car.CarType type = Car.CarType.valueOf(userParts[index++]);
                     Car car = new Car(manufacturingYear, price, model, type);
                     MyDate expiryDate = new MyDate(year, month, day);
                     InsurancePolicy policy;
                     if (policyType.equals("TP")) {
-                        String comments = policyParts[11];
+                        String comments = userParts[index++];
                         policy = new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
                     } else if (policyType.equals("CP")) {
-                        int driverAge = Integer.parseInt(policyParts[11]);
-                        int level = Integer.parseInt(policyParts[12]);
+                        int driverAge = Integer.parseInt(userParts[index++]);
+                        int level = Integer.parseInt(userParts[index++]);
                         policy = new ComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate,
                                 driverAge, level);
                     } else {

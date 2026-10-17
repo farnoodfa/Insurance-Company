@@ -83,7 +83,7 @@ public class UserInterface {
         boolean inAdminMenu = true;
         while (inAdminMenu) {
             displayAdminMenu();
-            int choice = getInt("Select an option (1-15): ");
+            int choice = getInt("Select an option (1-19): ");
             switch (choice) {
                 case 1:
                     runTestCode();
@@ -191,6 +191,11 @@ public class UserInterface {
             System.out.println(BOLD + RED + "Eror: " + e + RESET);
         } catch (PolicyException err) {
             System.out.println(BOLD + RED + "Eror: " + err + RESET);
+        }
+        catch (ClassNotFoundException e) {
+            System.out.println(BOLD + RED + "Eror: " + e + RESET);
+        } catch (IOException e) {
+            System.out.println(BOLD + RED + "Eror: " + e + RESET);
         }
     }
 
@@ -762,8 +767,8 @@ public class UserInterface {
         try {
             company.loadTextFile(fileName);
             System.out.println(GREEN + "Data successfully loaded from " + fileName + RESET);
-        } catch (IOException | PolicyException e) {
-            System.out.println(RED + "Error loading data: " + e.getMessage() + RESET);
+        } catch (IOException | PolicyException | RuntimeException e) {
+            System.out.println(RED + "Error loading data: " + e + RESET);
         }
     }
 
