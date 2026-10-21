@@ -83,7 +83,7 @@ public class UserInterface {
         boolean inAdminMenu = true;
         while (inAdminMenu) {
             displayAdminMenu();
-            int choice = getInt("Select an option (1-19): ");
+            int choice = getInt("Select an option (1-20): ");
             switch (choice) {
                 case 1:
                     runTestCode();
@@ -92,60 +92,63 @@ public class UserInterface {
                     createUser();
                     break;
                 case 3:
-                    createThirdPartyPolicy();
+                    createUserWithID();
                     break;
                 case 4:
-                    createComprehensivePolicy();
+                    createThirdPartyPolicy();
                     break;
                 case 5:
-                    printUserInformation();
+                    createComprehensivePolicy();
                     break;
                 case 6:
-                    filterByCarModel();
+                    printUserInformation();
                     break;
                 case 7:
-                    filterByExpiryDate();
+                    filterByCarModel();
                     break;
                 case 8:
-                    updateAddress();
+                    filterByExpiryDate();
                     break;
                 case 9:
-                    reportPaymentsPerCarModelForUser();
+                    updateAddress();
                     break;
                 case 10:
-                    reportPaymentPerCity();
+                    reportPaymentsPerCarModelForUser();
                     break;
                 case 11:
-                    reportPaymentsPerCarModelCompany();
+                    reportPaymentPerCity();
                     break;
                 case 12:
-                    removePolicyAdmin();
+                    reportPaymentsPerCarModelCompany();
                     break;
                 case 13:
-                    removeUser();
+                    removePolicyAdmin();
                     break;
                 case 14:
+                    removeUser();
+                    break;
+                case 15:
                     changeAdminPassword();
                     break;
                 // -------------------------------lab6
-                case 15:
+                case 16:
                     saveDataToTextFile();
                     break;
-                case 16:
+                case 17:
                     loadDataFromTextFile();
                     break;
-                case 17:
+                case 18:
                     saveDataToBinaryFile();
                     break;
-                case 18:
+                case 19:
                     loadDataFromBinaryFile();
                     break;
-                case 19:
+                case 20:
                     System.out.println(BOLD + "Logging out of Admin portal..." + RESET);
                     inAdminMenu = false;
                     break;
                 default:
-                    System.out.println(RED + "Invalid choice! Please select an option from 1 to 19." + RESET);
+                    System.out.println(RED + "Invalid choice! Please select an option from 1 to 20." + RESET);
                     break;
             }
             if (inAdminMenu) {
@@ -155,28 +158,29 @@ public class UserInterface {
     }
 
     public static void displayAdminMenu() {
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         System.out.println("\n" + BOLD + "================ ADMIN MENU ================" + RESET);
         System.out.println("1.  Run Test Code");
         System.out.println("2.  Create User (Auto-generated ID)");
-        System.out.println("3.  Create ThirdParty Policy for User");
-        System.out.println("4.  Create Comprehensive Policy for User");
-        System.out.println("5.  Print User Information");
-        System.out.println("6.  Filter Policies by Car Model");
-        System.out.println("7.  Filter Policies by Expiry Date");
-        System.out.println("8.  Update User Address");
-        System.out.println("9.  Car Model Premium Payments Report (User)");
-        System.out.println("10. City Premium Payments Report across all Users");
-        System.out.println("11. Car Model Premium Payments Report across all Users");
-        System.out.println("12. Remove a Policy from User");
-        System.out.println("13. Remove a User");
-        System.out.println("14. Change Admin Password");
+        System.out.println("3.  Create User (Manual ID)");
+        System.out.println("4.  Create ThirdParty Policy for User");
+        System.out.println("5.  Create Comprehensive Policy for User");
+        System.out.println("6.  Print User Information");
+        System.out.println("7.  Filter Policies by Car Model");
+        System.out.println("8.  Filter Policies by Expiry Date");
+        System.out.println("9.  Update User Address");
+        System.out.println("10. Car Model Premium Payments Report (User)");
+        System.out.println("11. City Premium Payments Report across all Users");
+        System.out.println("12. Car Model Premium Payments Report across all Users");
+        System.out.println("13. Remove a Policy from User");
+        System.out.println("14. Remove a User");
+        System.out.println("15. Change Admin Password");
         // -------------------------------lab6
-        System.out.println("15. save data to file (text)");
-        System.out.println("16. load data from file (text)");
-        System.out.println("17. save data to file (binary)");
-        System.out.println("18. load data from file (binary)");
-
-        System.out.println("19. Log Out");
+        System.out.println("16. Save data to file (text)");
+        System.out.println("17. Load data from file (text)");
+        System.out.println("18. Save data to file (binary)");
+        System.out.println("19. Load data from file (binary)");
+        System.out.println("20. Log Out");
         System.out.println(BOLD + "============================================" + RESET);
     }
 
@@ -191,26 +195,42 @@ public class UserInterface {
             System.out.println(BOLD + RED + "Eror: " + e + RESET);
         } catch (PolicyException err) {
             System.out.println(BOLD + RED + "Eror: " + err + RESET);
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             System.out.println(BOLD + RED + "Eror: " + e + RESET);
         } catch (IOException e) {
             System.out.println(BOLD + RED + "Eror: " + e + RESET);
+        } catch (PolicyHolderNameException e) {
+            System.out.println(RED + "Eror: " + e + RESET);
         }
     }
 
     public void createUser() {
         System.out.println(BOLD + "\n--- Create New User ---" + RESET);
+        int nextID = User.getCount() + 1;
+        if (company.findUser(nextID) != null) {
+            System.out.println(RED + "Failed to add user: User ID " + nextID + " already exists." + RESET);
+            return;
+        }
+        userString = getString("Enter User Full Name: ");
+        Address address = promptAddress();
+        User newUser = new User(userString, address);
+        company.addUser(newUser);
+        System.out.println(
+                GREEN + "User created successfully with auto-generated ID: " + newUser.getUserID() + RESET);
+    }
+
+    public void createUserWithID() {
+        System.out.println(BOLD + "\n--- Create New User ---" + RESET);
         userInt = getInt("Enter User ID: ");
+        if (company.findUser(userInt) != null) {
+            System.out.println(RED + "Failed to add user: User ID " + userInt + " already exists." + RESET);
+            return;
+        }
         userString = getString("Enter User Full Name: ");
         Address address = promptAddress();
 
-        boolean created = company.addUser(userString, userInt, address);
-        if (created) {
-            System.out.println(GREEN + "User created and added successfully!" + RESET);
-        } else {
-            System.out.println(RED + "Failed to add user: User ID " + userInt + " already exists." + RESET);
-        }
+        company.addUser(userString, userInt, address);
+        System.out.println(GREEN + "User created and added successfully!" + RESET);
     }
 
     public void createThirdPartyPolicy() {
@@ -235,14 +255,19 @@ public class UserInterface {
             } else {
                 System.out.println(RED + "Failed: Policy ID " + policyID + " already exists for this user." + RESET);
             }
+        } catch (PolicyHolderNameException e) {
+            System.out.println(e);
         } catch (PolicyException e) {
             System.out.println(e);
+
             try {
                 boolean added = company.createThirdPartyPolicy(userID, policyHolder, e.getID(), car, claims, expiryDate,
                         comments);
                 if (added) {
                     System.out.println(GREEN + "Policy created with newly assigned ID: " + e.getID() + RESET);
                 }
+            } catch (PolicyHolderNameException err) {
+                System.out.println(err);
             } catch (PolicyException ignored) {
                 // Will not happen since e.getID() is guaranteed to be 3xxxxx
             }
@@ -272,6 +297,9 @@ public class UserInterface {
             } else {
                 System.out.println(RED + "Failed: Policy ID " + policyID + " already exists for this user." + RESET);
             }
+
+        } catch (PolicyHolderNameException e) {
+            System.out.println(e);
         } catch (PolicyException e) {
             System.out.println(e);
 
@@ -281,7 +309,10 @@ public class UserInterface {
                 if (added) {
                     System.out.println(GREEN + "Policy created with newly assigned ID: " + e.getID() + RESET);
                 }
+            } catch (PolicyHolderNameException err) {
+                System.out.println(err);
             } catch (PolicyException ignored) {
+                System.out.println(ignored);
             }
         }
     }
@@ -300,7 +331,7 @@ public class UserInterface {
     public void filterByCarModel() {
         System.out.println(BOLD + "\n--- Filter Policies by Car Model ---" + RESET);
         String model = getString("Enter Car Model to search: ");
-        HashMap<Integer, InsurancePolicy> results = company.filterByCarModel(model);
+        ArrayList<InsurancePolicy> results = company.filterByCarModel(model);
 
         if (results == null || results.isEmpty()) {
             System.out.println("No policies found matching car model: " + model);
@@ -321,7 +352,7 @@ public class UserInterface {
         }
 
         MyDate cutoffDate = promptDate("Cutoff");
-        HashMap<Integer, InsurancePolicy> expiredPolicies = company.filterByExpiryDate(userID, cutoffDate);
+        ArrayList<InsurancePolicy> expiredPolicies = company.filterByExpiryDate(userID, cutoffDate);
 
         if (expiredPolicies == null || expiredPolicies.isEmpty()) {
             System.out.println("No expired policies found for User ID " + userID + " by " + cutoffDate.getYear() + "/"
@@ -531,6 +562,9 @@ public class UserInterface {
             } else {
                 System.out.println(RED + "Failed to add policy." + RESET);
             }
+
+        } catch (PolicyHolderNameException e) {
+            System.out.println(e);
         } catch (PolicyException e) {
             System.out.println(e);
 
@@ -539,6 +573,8 @@ public class UserInterface {
                 if (added) {
                     System.out.println(GREEN + "Third-Party Policy added with newly assigned ID: " + e.getID() + RESET);
                 }
+            } catch (PolicyHolderNameException err) {
+                System.out.println(err);
             } catch (PolicyException ignored) {
             }
         }
@@ -566,6 +602,8 @@ public class UserInterface {
             } else {
                 System.out.println(RED + "Failed to add policy." + RESET);
             }
+        } catch (PolicyHolderNameException e) {
+            System.out.println(e);
         } catch (PolicyException e) {
             System.out.println(e);
 
@@ -576,6 +614,8 @@ public class UserInterface {
                     System.out
                             .println(GREEN + "Comprehensive Policy added with newly assigned ID: " + e.getID() + RESET);
                 }
+            } catch (PolicyHolderNameException err) {
+                System.out.println(err);
             } catch (PolicyException ignored) {
             }
         }
@@ -595,8 +635,7 @@ public class UserInterface {
         int policyID = getInt("Enter Policy ID: ");
         InsurancePolicy policy = user.findPolicy(policyID);
         if (policy != null) {
-            policy.print();
-            System.out.printf("Premium Payment: $%.2f%n", policy.calcPayment(company.getFlatRate()));
+            policy.print(company.getFlatRate());
         } else {
             System.out.println(RED + "No policy found with ID " + policyID + "." + RESET);
         }
@@ -605,7 +644,7 @@ public class UserInterface {
     public void userFilterByCarModel(User user) {
         System.out.println(BOLD + "\n--- Filter My Policies by Car Model ---" + RESET);
         String model = getString("Enter Car Model to search: ");
-        HashMap<Integer, InsurancePolicy> results = user.filterByCarModel(model);
+        ArrayList<InsurancePolicy> results = user.filterByCarModel(model);
 
         if (results == null || results.isEmpty()) {
             System.out.println("No policies found matching car model: " + model);
@@ -618,7 +657,7 @@ public class UserInterface {
     public void userFilterByExpiryDate(User user) {
         System.out.println(BOLD + "\n--- Filter My Expired Policies ---" + RESET);
         MyDate cutoffDate = promptDate("Cutoff");
-        HashMap<Integer, InsurancePolicy> expiredPolicies = user.filterByExpiryDate(cutoffDate);
+       ArrayList<InsurancePolicy> expiredPolicies = user.filterByExpiryDate(cutoffDate);
 
         if (expiredPolicies == null || expiredPolicies.isEmpty()) {
             System.out.println("No expired policies found by " + cutoffDate.getYear() + "/"
@@ -644,10 +683,9 @@ public class UserInterface {
     }
 
     private void userReportCarModel(User user) {
-        ArrayList<String> models = user.populateDistinctCarModels();
-        ArrayList<Integer> counts = user.getTotalCountPerCarModel(models);
-        ArrayList<Double> payments = user.getTotalPaymentPerCarModel(models, company.getFlatRate());
-        user.reportPaymentsPerCarModel(models, counts, payments);
+        HashMap<String, Integer> counts = user.getTotalCountPerCarModel();
+        HashMap<String, Double> payments = user.getTotalPremiumPerCarModel(company.getFlatRate());
+        user.reportPremiumCarModel(counts, payments);
     }
 
     private void userRemovePolicy(User user) {
@@ -659,13 +697,21 @@ public class UserInterface {
     // =================================================================
     // REUSABLE PROMPT & INPUT HELPERS
     // =================================================================
+
+    // ============================= Assignment2 changes(erorr handeling)
     public Address promptAddress() {
-        System.out.println("--- Enter Address Details ---");
-        userInt = getInt("Enter Street Number: ");
-        String street = getString("Enter Street Name: ");
-        String suburb = getString("Enter Suburb: ");
-        String city = getString("Enter City: ");
-        return new Address(userInt, street, suburb, city);
+        while (true) {
+            try {
+                System.out.println("--- Enter Address Details ---");
+                userInt = getInt("Enter Street Number: ");
+                String street = getString("Enter Street Name: ");
+                String suburb = getString("Enter Suburb: ");
+                String city = getString("Enter City: ");
+                return new Address(userInt, street, suburb, city);
+            } catch (IllegalArgumentException e) {
+                System.out.println(RED + "Error: " + e.getMessage() + " Please try again." + RESET);
+            }
+        }
     }
 
     public Car promptCar() {
@@ -694,12 +740,20 @@ public class UserInterface {
         return new Car(year, price, model, type);
     }
 
+    // =========================================================== Assignment2
+    // changes(erorr handeling)
     public MyDate promptDate(String label) {
-        System.out.println("--- Enter " + label + " Date ---");
-        int year = getInt("Enter Year (e.g. 2026): ");
-        int month = getInt("Enter Month (1-12): ");
-        int day = getInt("Enter Day (1-31): ");
-        return new MyDate(year, month, day);
+        while (true) {
+            try {
+                System.out.println("--- Enter " + label + " Date ---");
+                int year = getInt("Enter Year (e.g. 2026): ");
+                int month = getInt("Enter Month (1-12): ");
+                int day = getInt("Enter Day (1-31): ");
+                return new MyDate(year, month, day);
+            } catch (IllegalArgumentException e) {
+                System.out.println(RED + "Error: " + e.getMessage() + " Please try again." + RESET);
+            }
+        }
     }
 
     public double getDouble(String message) {
@@ -769,6 +823,8 @@ public class UserInterface {
             System.out.println(GREEN + "Data successfully loaded from " + fileName + RESET);
         } catch (IOException | PolicyException | RuntimeException e) {
             System.out.println(RED + "Error loading data: " + e + RESET);
+        } catch (PolicyHolderNameException e) {
+            System.out.println(e);
         }
     }
 

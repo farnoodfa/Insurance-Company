@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.*;
 
 abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>, Serializable {
+    private static final String pattern = "[A-Z][a-z]{2,} [A-Z][a-z]{2,}";
     protected String policyHolderName;
     protected int id;
     protected Car car;
@@ -9,7 +10,7 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
     protected MyDate expiryDate;
 
     public InsurancePolicy(String policyHolderName, int id, Car car, int numberOfClaims, MyDate expiryDate)
-            throws PolicyException {
+            throws PolicyException, PolicyHolderNameException {
         if (id < 300000 || id > 399999) {
             Random rand = new Random();
             int generatedID = 300000 + rand.nextInt(100000); // Generates 300000 - 399999
@@ -18,6 +19,10 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
             throw new PolicyException(generatedID);
         } else {
             this.id = id;
+        }
+
+        if (!policyHolderName.matches(pattern)) {
+            throw new PolicyHolderNameException(policyHolderName);
         }
         this.policyHolderName = policyHolderName;
         this.car = car;
@@ -47,7 +52,10 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
     }
 
     // setters
-    public void setPolicyHolderName(String newName) {
+    public void setPolicyHolderName(String newName) throws PolicyHolderNameException {
+        if (!newName.matches(pattern)) {
+            throw new PolicyHolderNameException(newName);
+        }
         policyHolderName = newName;
     }
 
@@ -60,6 +68,11 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
         car.print();
     }
 
+    public void print(double flatRate) {
+        print();
+        System.out.printf("Premium Payment: $%.2f%n", calcPayment(flatRate));
+    }
+
     public static void printPolicies(ArrayList<InsurancePolicy> policies) {
         for (InsurancePolicy policy : policies) {
             System.out.println(policy.toString());
@@ -69,8 +82,7 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
     // Overloaded version to include flatRate and premium calculation
     public static void printPolicies(ArrayList<InsurancePolicy> policies, double flatRate) {
         for (InsurancePolicy policy : policies) {
-            policy.print();
-            System.out.println("Premium Payment: $" + policy.calcPayment(flatRate));
+            policy.print(flatRate);
         }
     }
 
@@ -81,7 +93,7 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
 
     public abstract double calcPayment(double flatRate); // super method for calculating the payment
 
-    public static double calcTotalPayments(ArrayList<InsurancePolicy> policies, int flatRate) { // calculating all
+    public static double calcTotalPayments(ArrayList<InsurancePolicy> policies, double flatRate) { // calculating all
         double tatalPayments = 0.0;
         for (InsurancePolicy policy : policies) {
             tatalPayments += policy.calcPayment(flatRate);
@@ -176,26 +188,26 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
 
     // ----------------------------lab5
 
-    public static HashMap<Integer, InsurancePolicy> filterByCarModel(HashMap<Integer, InsurancePolicy> policies,
+    public static ArrayList< InsurancePolicy> filterByCarModel(HashMap<Integer, InsurancePolicy> policies,
             String carModel) {
-        HashMap<Integer, InsurancePolicy> filteredPolicies = new HashMap<>();
+        ArrayList< InsurancePolicy> filteredPolicies = new ArrayList<>();
         for (InsurancePolicy policy : policies.values()) {
             if (policy.car.getModel().contains(carModel)) {
-                filteredPolicies.put(policy.getID(), policy);
+                filteredPolicies.add(policy.getID(), policy);
             }
         }
         return filteredPolicies;
     }
 
-    public static HashMap<Integer, InsurancePolicy> filterByExpiryDate(HashMap<Integer, InsurancePolicy> policies,
+        public static ArrayList<InsurancePolicy> filterByExpiryDate(HashMap<Integer, InsurancePolicy> policies,
             MyDate date) {
-        HashMap<Integer, InsurancePolicy> expiredPolicies = new HashMap<>();
+        ArrayList<InsurancePolicy> expiredPolicies = new ArrayList<>();
         if (policies == null || date == null) {
             return expiredPolicies;
         }
         for (InsurancePolicy policy : policies.values()) {
             if (date.isExpired(policy.getExpiryDate())) {
-                expiredPolicies.put(policy.getID(), policy);
+                expiredPolicies.add(policy);
             }
         }
         return expiredPolicies;
@@ -304,33 +316,33 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
         return true;
     }
 
-
-    //         public static HashMap<Integer, InsurancePolicy> load(String fileName)
-    //         throws IOException, ClassNotFoundException {
-    //     HashMap<Integer, InsurancePolicy> policies = new HashMap<>();
-    //     try (FileInputStream file = new FileInputStream(fileName);
-    //             ObjectInputStream inputSt = new ObjectInputStream(file)) {
-    //         try {
-    //             while (true) {
-    //                 InsurancePolicy policy = (InsurancePolicy) inputSt.readObject();
-    //                 policies.put(policy.getID(), policy);
-    //             }
-    //         } catch (EOFException e) {
-    //             System.out.println("End of file reached: no more policies to load.");
-    //         }
-    //     }
-    //     return policies;
+    // public static HashMap<Integer, InsurancePolicy> load(String fileName)
+    // throws IOException, ClassNotFoundException {
+    // HashMap<Integer, InsurancePolicy> policies = new HashMap<>();
+    // try (FileInputStream file = new FileInputStream(fileName);
+    // ObjectInputStream inputSt = new ObjectInputStream(file)) {
+    // try {
+    // while (true) {
+    // InsurancePolicy policy = (InsurancePolicy) inputSt.readObject();
+    // policies.put(policy.getID(), policy);
+    // }
+    // } catch (EOFException e) {
+    // System.out.println("End of file reached: no more policies to load.");
+    // }
+    // }
+    // return policies;
     // }
 
-    // public static Boolean save(HashMap<Integer, InsurancePolicy> policies, String fileName)
-    //         throws IOException {
-    //     try (FileOutputStream file = new FileOutputStream(fileName);
-    //             ObjectOutputStream outputSt = new ObjectOutputStream(file)) {
-    //         for (InsurancePolicy policy : policies.values()) {
-    //             outputSt.writeObject(policy);
-    //         }
-    //     }
-    //     return true;
+    // public static Boolean save(HashMap<Integer, InsurancePolicy> policies, String
+    // fileName)
+    // throws IOException {
+    // try (FileOutputStream file = new FileOutputStream(fileName);
+    // ObjectOutputStream outputSt = new ObjectOutputStream(file)) {
+    // for (InsurancePolicy policy : policies.values()) {
+    // outputSt.writeObject(policy);
+    // }
+    // }
+    // return true;
     // }
 
     public String toDelimitedString() {
@@ -339,41 +351,51 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
     }
 
     public static HashMap<Integer, InsurancePolicy> loadTextFile(String fileName)
-            throws IOException, PolicyException {
-        HashMap<Integer, InsurancePolicy> policies = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-                String policyType = parts[0];
-                String policyHolderName = parts[1];
-                int id = Integer.parseInt(parts[2]);
-                int numberOfClaims = Integer.parseInt(parts[3]);
-                int year = Integer.parseInt(parts[4]);
-                int month = Integer.parseInt(parts[5]);
-                int day = Integer.parseInt(parts[6]);
-                int manufacturingYear = Integer.parseInt(parts[7]);
-                double price = Double.parseDouble(parts[8]);
-                String model = parts[9];
-                Car.CarType type = Car.CarType.valueOf(parts[10]);
-                Car car = new Car(manufacturingYear, price, model, type);
-                MyDate expiryDate = new MyDate(year, month, day);
-                InsurancePolicy policy;
-                if (policyType.equals("TP")) {
-                    String comments = parts[11];
-                    policy = new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
-                } else if (policyType.equals("CP")) {
-                    int driverAge = Integer.parseInt(parts[11]);
-                    int level = Integer.parseInt(parts[12]);
-                    policy = new ComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate, driverAge,
-                            level);
-                } else {
-                    throw new IOException("Unknown policy type: " + policyType);
-                }
-                policies.put(id, policy);
+            throws IOException, PolicyException, PolicyHolderNameException {
+        HashMap<Integer, InsurancePolicy> policies = new HashMap<Integer, InsurancePolicy>();
+        try (BufferedReader in = new BufferedReader(new FileReader(fileName))) {
+            String line = in.readLine();
+            while (line != null) {
+                String[] field = line.trim().split(",");
+                InsurancePolicy policy = loadOnePolicy(field, 0);
+                policies.put(policy.getID(), policy);
+                line = in.readLine();
             }
         }
         return policies;
+    }
+
+    public static InsurancePolicy loadOnePolicy(String[] field, int counter)
+            throws PolicyException, PolicyHolderNameException {
+        String type = field[counter++];
+        String policyHolderName = field[counter++];
+        int id = Integer.parseInt(field[counter++]);
+        int numberOfClaims = Integer.parseInt(field[counter++]);
+
+        // Expiry Date fields
+        int expYear = Integer.parseInt(field[counter++]);
+        int expMonth = Integer.parseInt(field[counter++]);
+        int expDay = Integer.parseInt(field[counter++]);
+        MyDate expiryDate = new MyDate(expYear, expMonth, expDay);
+
+        // Car fields
+        int carYear = Integer.parseInt(field[counter++]);
+        double carPrice = Double.parseDouble(field[counter++]);
+        String carModel = field[counter++];
+        Car.CarType carType = Car.CarType.valueOf(field[counter++]);
+        Car car = new Car(carYear, carPrice, carModel, carType);
+
+        switch (type) {
+            case "CP":
+                int driverAge = Integer.parseInt(field[counter++]);
+                int level = Integer.parseInt(field[counter++]);
+                return new ComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate, driverAge, level);
+            case "TP":
+                String comments = field[counter++];
+                return new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
+            default:
+                throw new IllegalArgumentException("Unknown policy type: " + type);
+        }
     }
 
     public static Boolean saveTextFile(HashMap<Integer, InsurancePolicy> policies, String fileName)

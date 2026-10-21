@@ -8,14 +8,13 @@ public class User implements Cloneable, Comparable<User>, Serializable {
     private Address address;
     private int userID;
     // private ArrayList<InsurancePolicy> policies;
-    HashMap<Integer, InsurancePolicy> policies;
+    private HashMap<Integer, InsurancePolicy> policies;
 
     // Auto-generates userID incrementally (overload)
+
+    // ============ Assignment2 changes(handles duplication)
     public User(String name, Address address) {
-        this.userID = ++count;
-        this.name = name;
-        this.address = address;
-        this.policies = new HashMap<>();
+        this(name, getNextUserID(), address);
     }
 
     // manual ID assignments still work
@@ -55,12 +54,16 @@ public class User implements Cloneable, Comparable<User>, Serializable {
         return policies;
     }
 
+    public static int getCount() {
+        return count;
+    }
+
     // setters
     public void setAddress(Address address) {
         this.address = address;
     }
 
-        // public InsurancePolicy findPolicy(int policyID) {
+    // public InsurancePolicy findPolicy(int policyID) {
     // for (InsurancePolicy policy : policies) {
     // if (policy.getID() == policyID) {
     // return policy;
@@ -69,7 +72,7 @@ public class User implements Cloneable, Comparable<User>, Serializable {
     // return null;
     // }
 
-        // public boolean addPolicy(InsurancePolicy policy) {
+    // public boolean addPolicy(InsurancePolicy policy) {
     // if (policy != null && findPolicy(policy.getID()) == null) {
     // policies.add(policy);
     // return true;
@@ -77,20 +80,20 @@ public class User implements Cloneable, Comparable<User>, Serializable {
     // return false;
     // }
 
-        // public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
-    // if (this.policies == null) {
-    // return null;
-    // }
-    // return InsurancePolicy.filterByCarModel(this.policies, carModel);
-    // }
+    public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
+    if (this.policies == null) {
+    return null;
+    }
+    return InsurancePolicy.filterByCarModel(this.policies, carModel);
+    }
 
-        // // Filters policies expired by the given date
-    // public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
-    // if (this.policies == null) {
-    // return null;
-    // }
-    // return InsurancePolicy.filterByExpiryDate(this.policies, date);
-    // }
+    // // Filters policies expired by the given date
+    public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
+    if (this.policies == null) {
+    return null;
+    }
+    return InsurancePolicy.filterByExpiryDate(this.policies, date);
+    }
 
     // // Remove a policy by policyID
     // public boolean removePolicy(int policyID) {
@@ -102,7 +105,7 @@ public class User implements Cloneable, Comparable<User>, Serializable {
     // return false;
     // }
 
-        // // Populate distinct car models across this user's policies
+    // // Populate distinct car models across this user's policies
     // public ArrayList<String> populateDistinctCarModels() {
     // ArrayList<String> models = new ArrayList<String>();
     // for (InsurancePolicy policy : policies) {
@@ -143,7 +146,6 @@ public class User implements Cloneable, Comparable<User>, Serializable {
     // }
     // return total;
     // }
-
 
     public void setCity(String city) {
         address.setCity(city);
@@ -202,23 +204,20 @@ public class User implements Cloneable, Comparable<User>, Serializable {
     }
 
     public boolean createThirdPartyPolicy(String policyHolderName, int id, Car car, int numberOfClaims,
-            MyDate expiryDate, String comments) throws PolicyException {
+            MyDate expiryDate, String comments) throws PolicyException, PolicyHolderNameException {
         ThirdPartyPolicy policy = new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
         return addPolicy(policy);
     }
 
     public boolean createComprehensivePolicy(String policyHolderName, int id, Car car, int numberOfClaims,
-            MyDate expiryDate, int driverAge, int level) throws PolicyException {
+            MyDate expiryDate, int driverAge, int level) throws PolicyException, PolicyHolderNameException {
         ComprehensivePolicy policy = new ComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate,
                 driverAge, level);
         return addPolicy(policy);
     }
 
-    // Static counter for auto-generating user IDs
-    private static int userCount = 0;
-
     public static int getNextUserID() {
-        return ++userCount;
+        return ++count;
     }
 
     // Count per model for a list of car models
@@ -258,17 +257,17 @@ public class User implements Cloneable, Comparable<User>, Serializable {
     // -------------------------------------------lab4
     // copy constructor
     public User(User user) {
-        name = user.name;
-        userID = user.userID;
-        address = new Address(user.address);
-        // policies = new ArrayList<>();
-        policies = new HashMap<>();
+        if (user == null) {
+            throw new IllegalArgumentException("Cannot copy from a null User object.");
+        }
+        this.name = user.name;
+        this.userID = user.userID;
+        this.address = new Address(user.address);
+        this.policies = new HashMap<>();
         for (InsurancePolicy policy : user.policies.values()) {
-            if (policy instanceof ThirdPartyPolicy) {
-                policies.put(policy.getID(), new ThirdPartyPolicy((ThirdPartyPolicy) policy));
-            } else if (policy instanceof ComprehensivePolicy) {
-                policies.put(policy.getID(), new ComprehensivePolicy((ComprehensivePolicy) policy));
-            }
+            this.policies.put(policy.getID(), policy instanceof ThirdPartyPolicy
+                    ? new ThirdPartyPolicy((ThirdPartyPolicy) policy)
+                    : new ComprehensivePolicy((ComprehensivePolicy) policy));
         }
     }
 
@@ -315,18 +314,18 @@ public class User implements Cloneable, Comparable<User>, Serializable {
     }
 
     // lab4
-    public int compareTo1(User other) {
-        double total = InsurancePolicy.calcTotalPayments(this.policies, 20);
-        double otherTotal = InsurancePolicy.calcTotalPayments(other.policies, 20);
-        // return total - OtherTotal
-        if (total < otherTotal) {
-            return -1;
-        }
-        if (total > otherTotal) {
-            return 1;
-        }
-        return 0;
-    }
+    // public int compareTo1(User other) {
+    //     double total = InsurancePolicy.calcTotalPayments(this.policies, 20);
+    //     double otherTotal = InsurancePolicy.calcTotalPayments(other.policies, 20);
+    //     // return total - OtherTotal
+    //     if (total < otherTotal) {
+    //         return -1;
+    //     }
+    //     if (total > otherTotal) {
+    //         return 1;
+    //     }
+    //     return 0;
+    // }
 
     // lab4
     public ArrayList<InsurancePolicy> sortPoliciesByDate() {
@@ -336,21 +335,6 @@ public class User implements Cloneable, Comparable<User>, Serializable {
     }
 
     // -------------------------------------------lab5
-
-    public HashMap<Integer, InsurancePolicy> filterByCarModel(String carModel) {
-        if (this.policies == null) {
-            return null;
-        }
-        return InsurancePolicy.filterByCarModel(this.policies, carModel);
-    }
-
-    // Filters policies expired by the given date
-    public HashMap<Integer, InsurancePolicy> filterByExpiryDate(MyDate date) {
-        if (this.policies == null) {
-            return null;
-        }
-        return InsurancePolicy.filterByExpiryDate(this.policies, date);
-    }
 
     // Remove a policy by policyID
     public boolean removePolicy(int policyID) {
@@ -487,6 +471,10 @@ public class User implements Cloneable, Comparable<User>, Serializable {
         return total;
     }
 
+    public HashMap<String, Double> getTotalPremiumPerCarModel() {
+        return getTotalPremiumPerCarModel(20); // Uses default flatRate when none is passed
+    }
+
     public void reportPaymentsPerCarModel(HashMap<String, Integer> counts, HashMap<String, Double> premiums) {
         System.out.println("==========================================================================");
         System.out.printf("%-30s %-30s %-25s%n", "Car Model", "Total Premium Payment", "Average Premium Payment");
@@ -524,16 +512,21 @@ public class User implements Cloneable, Comparable<User>, Serializable {
         reportPaymentsPerCarModel(counts, premiums);
     }
 
+    public void reportPremiumCarModel(HashMap<String, Integer> counts, HashMap<String, Double> totals) {
+        reportPaymentsPerCarModel(counts, totals);
+    }
+
     // -----------------------------------------------------------------------
     // lab6
 
-    public static HashMap<Integer, User> load(String fileName) throws IOException, ClassNotFoundException {
-        try (FileInputStream file = new FileInputStream(fileName);
-                ObjectInputStream inputSt = new ObjectInputStream(file)) {
-            HashMap<Integer, User> users = (HashMap<Integer, User>) inputSt.readObject();
-            return users;
-        }
-    }
+    // public static HashMap<Integer, User> load(String fileName) throws
+    // IOException, ClassNotFoundException {
+    // try (FileInputStream file = new FileInputStream(fileName);
+    // ObjectInputStream inputSt = new ObjectInputStream(file)) {
+    // HashMap<Integer, User> users = (HashMap<Integer, User>) inputSt.readObject();
+    // return users;
+    // }
+    // }
 
     public static Boolean save(HashMap<Integer, User> users, String fileName) throws IOException {
         try (FileOutputStream file = new FileOutputStream(fileName);
@@ -543,32 +536,33 @@ public class User implements Cloneable, Comparable<User>, Serializable {
         return true;
     }
 
-    // public static HashMap<Integer, User> load(String fileName) throws IOException, ClassNotFoundException {
-    //     HashMap<Integer, User> users = new HashMap<>();
-    //     try (FileInputStream file = new FileInputStream(fileName);
-    //             ObjectInputStream inputSt = new ObjectInputStream(file)) {
-    //         try {
-    //             while (true) {
-    //                 User user = (User) inputSt.readObject();
-    //                 users.put(user.getUserID(), user);
-    //             }
-    //         } catch (EOFException e) {
+    // public static HashMap<Integer, User> load(String fileName) throws
+    // IOException, ClassNotFoundException {
+    // HashMap<Integer, User> users = new HashMap<>();
+    // try (FileInputStream file = new FileInputStream(fileName);
+    // ObjectInputStream inputSt = new ObjectInputStream(file)) {
+    // try {
+    // while (true) {
+    // User user = (User) inputSt.readObject();
+    // users.put(user.getUserID(), user);
+    // }
+    // } catch (EOFException e) {
 
-    //         }
-    //         System.out.println("End of file reached: no more users to load.");
-    //     }
-    //     return users;
+    // }
+    // System.out.println("End of file reached: no more users to load.");
+    // }
+    // return users;
     // }
 
     // public static Boolean save(HashMap<Integer, User> users, String fileName)
-    //         throws IOException {
-    //     try (FileOutputStream file = new FileOutputStream(fileName);
-    //             ObjectOutputStream obj = new ObjectOutputStream(file)) {
-    //         for (User user : users.values()) {
-    //             obj.writeObject(user);
-    //         }
-    //     }
-    //     return true;
+    // throws IOException {
+    // try (FileOutputStream file = new FileOutputStream(fileName);
+    // ObjectOutputStream obj = new ObjectOutputStream(file)) {
+    // for (User user : users.values()) {
+    // obj.writeObject(user);
+    // }
+    // }
+    // return true;
     // }
 
     public String toDelimitedString() {
@@ -579,55 +573,39 @@ public class User implements Cloneable, Comparable<User>, Serializable {
         return result;
     }
 
-    public static HashMap<Integer, User> loadTextFile(String fileName)
-            throws IOException, PolicyException {
-        HashMap<Integer, User> users = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-                int index = 0;
-                String name = parts[index++];
-                int userID = Integer.parseInt(parts[index++]);
-                int streetNum = Integer.parseInt(parts[index++]);
-                String street = parts[index++];
-                String suburb = parts[index++];
-                String city = parts[index++];
-                Address address = new Address(streetNum, street, suburb, city);
-                int numPolicies = Integer.parseInt(parts[index++]);
-                User user = new User(name, userID, address);
-                for (int i = 0; i < numPolicies; i++) {
-                    String policyType = parts[index++];
-                    String policyHolderName = parts[index++];
-                    int id = Integer.parseInt(parts[index++]);
-                    int numberOfClaims = Integer.parseInt(parts[index++]);
-                    int year = Integer.parseInt(parts[index++]);
-                    int month = Integer.parseInt(parts[index++]);
-                    int day = Integer.parseInt(parts[index++]);
-                    int manufacturingYear = Integer.parseInt(parts[index++]);
-                    double price = Double.parseDouble(parts[index++]);
-                    String model = parts[index++];
-                    Car.CarType type = Car.CarType.valueOf(parts[index++]);
-                    Car car = new Car(manufacturingYear, price, model, type);
-                    MyDate expiryDate = new MyDate(year, month, day);
-                    InsurancePolicy policy;
-                    if (policyType.equals("TP")) {
-                        String comments = parts[index++];
-                        policy = new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
-                    } else if (policyType.equals("CP")) {
-                        int driverAge = Integer.parseInt(parts[index++]);
-                        int level = Integer.parseInt(parts[index++]);
-                        policy = new ComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate,
-                                driverAge, level);
-                    } else {
-                        throw new IOException("Unknown policy type: " + policyType);
-                    }
-                    user.addPolicy(policy);
-                }
-                users.put(userID, user);
+    public static HashMap<Integer, User> loadTextFile(String fileName) throws IOException, PolicyException, PolicyHolderNameException {
+        HashMap<Integer, User> users = new HashMap<Integer, User>();
+        try (BufferedReader in = new BufferedReader(new FileReader(fileName))) {
+            String line = in.readLine();
+            while (line != null) {
+                String[] field = line.trim().split(",");
+                User user = loadOneUser(field, 0);
+                users.put(user.getUserID(), user);
+                line = in.readLine();
             }
         }
         return users;
+    }
+
+    public static User loadOneUser(String[] field, int counter) throws PolicyException, PolicyHolderNameException {
+        String name = field[counter++];
+        int userID = Integer.parseInt(field[counter++]);
+        int streetNum = Integer.parseInt(field[counter++]);
+        String street = field[counter++];
+        String suburb = field[counter++];
+        String city = field[counter++];
+        Address address = new Address(streetNum, street, suburb, city);
+
+        int numPolicies = Integer.parseInt(field[counter++]);
+        User user = new User(name, userID, address);
+
+        for (int i = 0; i < numPolicies; i++) {
+            String type = field[counter];
+            user.addPolicy(InsurancePolicy.loadOnePolicy(field, counter));
+            // move past this policy's fields (13 for CP, 12 for TP)
+            counter += type.equals("CP") ? 13 : 12;
+        }
+        return user;
     }
 
     public static Boolean saveTextFile(HashMap<Integer, User> users, String fileName) throws IOException {
@@ -638,5 +616,22 @@ public class User implements Cloneable, Comparable<User>, Serializable {
             }
         }
         return true;
+    }
+
+    // ===================================== Assingment2
+
+    // duplicated IDs fixed
+    public static HashMap<Integer, User> load(String fileName) throws IOException, ClassNotFoundException {
+        try (FileInputStream file = new FileInputStream(fileName);
+                ObjectInputStream inputSt = new ObjectInputStream(file)) {
+            HashMap<Integer, User> users = (HashMap<Integer, User>) inputSt.readObject();
+
+            for (User user : users.values()) {
+                if (user.getUserID() > count) {
+                    count = user.getUserID();
+                }
+            }
+            return users;
+        }
     }
 }

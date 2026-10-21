@@ -46,8 +46,7 @@ public class InsuranceCompany implements Cloneable, Serializable {
         return flatRate;
     }
 
-
-        // // Finds a user by userID, returns null if not found
+    // // Finds a user by userID, returns null if not found
     // public User findUser(int userID) {
     // // for (User user : users) {
     // // if (user.getUserID() == userID) {
@@ -72,7 +71,7 @@ public class InsuranceCompany implements Cloneable, Serializable {
     // return false;
     // }
 
-     // // Prints all users and all of their policies with calculated premiums
+    // // Prints all users and all of their policies with calculated premiums
     // public void print() {
     // // for (User user : users) {
     // // System.out.println(
@@ -105,7 +104,7 @@ public class InsuranceCompany implements Cloneable, Serializable {
     // return result;
     // }
 
-     // // Calculates total premium payments across all users in the company
+    // // Calculates total premium payments across all users in the company
     // public double calcTotalPayments() {
     // double total = 0.0;
     // // for (User user : users) {
@@ -117,7 +116,7 @@ public class InsuranceCompany implements Cloneable, Serializable {
     // return total;
     // }
 
-     // // Increases car prices by risePercent across all users in the company
+    // // Increases car prices by risePercent across all users in the company
     // public void carPriceRise(double risePercent) {
     // // for (User user : users) {
     // // user.carPriceRiseAll(risePercent);
@@ -149,55 +148,30 @@ public class InsuranceCompany implements Cloneable, Serializable {
     // return allPolicies;
     // }
 
-    // // Filters policies by car model across all users in the company
-    // public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
-    // ArrayList<InsurancePolicy> filteredList = new ArrayList<InsurancePolicy>();
-    // for (User user : users) {
-    // ArrayList<InsurancePolicy> userMatchedPolicies =
-    // user.filterByCarModel(carModel);
-    // if (userMatchedPolicies != null) {
-    // for (InsurancePolicy policy : userMatchedPolicies) {
-    // filteredList.add(policy);
-    // }
-    // }
-    // }
-    // return filteredList;
-    // }
+    // Filters policies by expiry date for a specific user
+    public ArrayList<InsurancePolicy> filterByExpiryDate(int userID, MyDate date)
+    {
+    User user = findUser(userID);
+    if (user != null) {
+    return user.filterByExpiryDate(date);
+    }
+    return new ArrayList<InsurancePolicy>();
 
-    // // Overloaded method to filter policies by car model for a specific user
-    // public ArrayList<InsurancePolicy> filterByCarModel(int userID, String
-    // carModel) {
-    // User user = findUser(userID);
-    // if (user != null) {
-    // return user.filterByCarModel(carModel);
-    // }
-    // return new ArrayList<InsurancePolicy>();
-    // }
+    }
 
-    // // Filters policies by expiry date for a specific user
-    // public ArrayList<InsurancePolicy> filterByExpiryDate(int userID, MyDate date)
-    // {
-    // User user = findUser(userID);
-    // if (user != null) {
-    // return user.filterByExpiryDate(date);
-    // }
-    // return new ArrayList<InsurancePolicy>();
-
-    // }
-
-    // // Filters policies expired by the given date across all users in the company
-    // public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
-    // ArrayList<InsurancePolicy> filtered = new ArrayList<>();
-    // for (User user : users) {
-    // ArrayList<InsurancePolicy> expired = user.filterByExpiryDate(date);
-    // if (expired != null) {
-    // for (InsurancePolicy policy : expired) {
-    // filtered.add(policy);
-    // }
-    // }
-    // }
-    // return filtered;
-    // }
+    // Filters policies expired by the given date across all users in the company
+    public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
+    ArrayList<InsurancePolicy> filtered = new ArrayList<>();
+    for (User user : users.values()) {
+    ArrayList<InsurancePolicy> expired = user.filterByExpiryDate(date);
+    if (expired != null) {
+    for (InsurancePolicy policy : expired) {
+    filtered.add(policy);
+    }
+    }
+    }
+    return filtered;
+    }
 
     // // Goes through all users and populates a list of distinct city names
     // public ArrayList<String> populateDistinctCityNames() {
@@ -229,7 +203,7 @@ public class InsuranceCompany implements Cloneable, Serializable {
     // return total;
     // }
 
-        // // Remove a user by userID
+    // // Remove a user by userID
     // public boolean removeUser(int userID) {
     // User user = findUser(userID);
     // if (user != null) {
@@ -320,7 +294,7 @@ public class InsuranceCompany implements Cloneable, Serializable {
 
     // Creates and adds a Third-Party policy to the specified user
     public boolean createThirdPartyPolicy(int userID, String policyHolderName, int id, Car car, int numberOfClaims,
-            MyDate expiryDate, String comments) throws PolicyException {
+            MyDate expiryDate, String comments) throws PolicyException, PolicyHolderNameException {
         User user = findUser(userID);
         if (user != null) {
             return user.createThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
@@ -330,7 +304,7 @@ public class InsuranceCompany implements Cloneable, Serializable {
 
     // Creates and adds a Comprehensive policy to the specified user
     public boolean createComprehensivePolicy(int userID, String policyHolderName, int id, Car car, int numberOfClaims,
-            MyDate expiryDate, int driverAge, int level) throws PolicyException {
+            MyDate expiryDate, int driverAge, int level) throws PolicyException, PolicyHolderNameException {
         User user = findUser(userID);
         if (user != null) {
             return user.createComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate, driverAge,
@@ -460,6 +434,14 @@ public class InsuranceCompany implements Cloneable, Serializable {
         System.out.println("==========================================================================");
     }
 
+    public void reportPremiumCarModel(HashMap<String, Integer> counts, HashMap<String, Double> totals) {
+        reportPaymentsPerCarModel(counts, totals);
+    }
+
+    public void reportPremiumPerCity(HashMap<String, Double> totals) {
+        reportPaymentPerCity(totals);
+    }
+
     // lab4
     // copy constructor
     public InsuranceCompany(InsuranceCompany company) {
@@ -521,51 +503,25 @@ public class InsuranceCompany implements Cloneable, Serializable {
     }
 
     // Filters policies by car model across all users in the company
-    public HashMap<Integer, InsurancePolicy> filterByCarModel(String carModel) {
-        HashMap<Integer, InsurancePolicy> filteredMap = new HashMap<>();
+    public ArrayList< InsurancePolicy> filterByCarModel(String carModel) {
+        ArrayList< InsurancePolicy> filteredMap = new ArrayList<>();
 
         for (User user : users.values()) {
-            HashMap<Integer, InsurancePolicy> userMatchedPolicies = user.filterByCarModel(carModel);
+            ArrayList< InsurancePolicy> userMatchedPolicies = user.filterByCarModel(carModel);
             if (userMatchedPolicies != null) {
-                filteredMap.putAll(userMatchedPolicies);
+                filteredMap.addAll(userMatchedPolicies);
             }
         }
-
         return filteredMap;
     }
 
     // Overloaded method to filter policies by car model for a specific user
-    public HashMap<Integer, InsurancePolicy> filterByCarModel(int userID, String carModel) {
+    public ArrayList<InsurancePolicy> filterByCarModel(int userID, String carModel) {
         User user = findUser(userID);
         if (user != null) {
             return user.filterByCarModel(carModel);
         }
-        return new HashMap<>();
-    }
-
-    // Filters policies by expiry date for a specific user
-    public HashMap<Integer, InsurancePolicy> filterByExpiryDate(int userID, MyDate date) {
-        User user = findUser(userID);
-        if (user != null) {
-            return user.filterByExpiryDate(date);
-        }
-        return new HashMap<>();
-
-    }
-
-    // Filters policies expired by the given date across all users in the company
-    public HashMap<Integer, InsurancePolicy> filterByExpiryDate(MyDate date) {
-        HashMap<Integer, InsurancePolicy> filtered = new HashMap<>();
-
-        for (User user : users.values()) {
-            if (user != null) {
-                HashMap<Integer, InsurancePolicy> expired = user.filterByExpiryDate(date);
-                if (expired != null) {
-                    filtered.putAll(expired);
-                }
-            }
-        }
-        return filtered;
+        return new ArrayList<>();
     }
 
     // Goes through all users and populates a list of distinct city names
@@ -754,18 +710,19 @@ public class InsuranceCompany implements Cloneable, Serializable {
         this.users = new HashMap<>();
     }
 
-    public Boolean load(String fileName) throws IOException, ClassNotFoundException {
-        try (FileInputStream file = new FileInputStream(fileName);
-                ObjectInputStream obj = new ObjectInputStream(file)) {
-            InsuranceCompany loaded = (InsuranceCompany) obj.readObject();
-            this.name = loaded.name;
-            this.adminUsername = loaded.adminUsername;
-            this.adminPassword = loaded.adminPassword;
-            this.flatRate = loaded.flatRate;
-            this.users = loaded.users;
-        }
-        return true;
-    }
+    // public Boolean load(String fileName) throws IOException,
+    // ClassNotFoundException {
+    // try (FileInputStream file = new FileInputStream(fileName);
+    // ObjectInputStream obj = new ObjectInputStream(file)) {
+    // InsuranceCompany loaded = (InsuranceCompany) obj.readObject();
+    // this.name = loaded.name;
+    // this.adminUsername = loaded.adminUsername;
+    // this.adminPassword = loaded.adminPassword;
+    // this.flatRate = loaded.flatRate;
+    // this.users = loaded.users;
+    // }
+    // return true;
+    // }
 
     public Boolean save(String fileName) throws IOException {
         try (FileOutputStream file = new FileOutputStream(fileName);
@@ -775,40 +732,41 @@ public class InsuranceCompany implements Cloneable, Serializable {
         return true;
     }
 
-    // public Boolean load(String fileName) throws IOException, ClassNotFoundException {
-    //     try (FileInputStream file = new FileInputStream(fileName);
-    //             ObjectInputStream obj = new ObjectInputStream(file)) {
-    //         // company fields first, in the same order they were saved
-    //         this.name = (String) obj.readObject();
-    //         this.adminUsername = (String) obj.readObject();
-    //         this.adminPassword = (String) obj.readObject();
-    //         this.flatRate = obj.readInt();
-    //         this.users = new HashMap<>();
-    //         // then the users until the end of the file   
-    //         try {
-    //             while (true) {
-    //                 User user = (User) obj.readObject();
-    //                 this.users.put(user.getUserID(), user);
-    //             }
-    //         } catch (EOFException e) {
-    //             System.out.println("End of file reached: no more users to load.");
-    //         }
-    //     }
-    //     return true;
+    // public Boolean load(String fileName) throws IOException,
+    // ClassNotFoundException {
+    // try (FileInputStream file = new FileInputStream(fileName);
+    // ObjectInputStream obj = new ObjectInputStream(file)) {
+    // // company fields first, in the same order they were saved
+    // this.name = (String) obj.readObject();
+    // this.adminUsername = (String) obj.readObject();
+    // this.adminPassword = (String) obj.readObject();
+    // this.flatRate = obj.readInt();
+    // this.users = new HashMap<>();
+    // // then the users until the end of the file
+    // try {
+    // while (true) {
+    // User user = (User) obj.readObject();
+    // this.users.put(user.getUserID(), user);
+    // }
+    // } catch (EOFException e) {
+    // System.out.println("End of file reached: no more users to load.");
+    // }
+    // }
+    // return true;
     // }
 
     // public Boolean save(String fileName) throws IOException {
-    //     try (FileOutputStream file = new FileOutputStream(fileName);
-    //             ObjectOutputStream obj = new ObjectOutputStream(file)) {
-    //         obj.writeObject(name);
-    //         obj.writeObject(adminUsername);
-    //         obj.writeObject(adminPassword);
-    //         obj.writeInt(flatRate);
-    //         for (User user : users.values()) {
-    //             obj.writeObject(user);
-    //         }
-    //     }
-    //     return true;
+    // try (FileOutputStream file = new FileOutputStream(fileName);
+    // ObjectOutputStream obj = new ObjectOutputStream(file)) {
+    // obj.writeObject(name);
+    // obj.writeObject(adminUsername);
+    // obj.writeObject(adminPassword);
+    // obj.writeInt(flatRate);
+    // for (User user : users.values()) {
+    // obj.writeObject(user);
+    // }
+    // }
+    // return true;
     // }
 
     public String toDelimitedString() {
@@ -827,10 +785,75 @@ public class InsuranceCompany implements Cloneable, Serializable {
         return true;
     }
 
-    public Boolean loadTextFile(String fileName) throws IOException, PolicyException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            // read company line
-            String[] parts = reader.readLine().split(",");
+    // public Boolean loadTextFile(String fileName) throws IOException,
+    // PolicyException {
+    // try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+    // // read company line
+    // String[] parts = reader.readLine().split(",");
+    // this.name = parts[0];
+    // this.adminUsername = parts[1];
+    // this.adminPassword = parts[2];
+    // this.flatRate = Integer.parseInt(parts[3]);
+    // int numUsers = Integer.parseInt(parts[4]);
+    // this.users = new HashMap<>();
+
+    // for (int i = 0; i < numUsers; i++) {
+    // // read user line (user fields, number of policies, then the policies)
+    // String[] userParts = reader.readLine().split(",");
+    // int index = 0;
+    // String userName = userParts[index++];
+    // int userID = Integer.parseInt(userParts[index++]);
+    // int streetNum = Integer.parseInt(userParts[index++]);
+    // String street = userParts[index++];
+    // String suburb = userParts[index++];
+    // String city = userParts[index++];
+    // int numPolicies = Integer.parseInt(userParts[index++]);
+    // Address address = new Address(streetNum, street, suburb, city);
+    // User user = new User(userName, userID, address);
+
+    // for (int j = 0; j < numPolicies; j++) {
+    // String policyType = userParts[index++];
+    // String policyHolderName = userParts[index++];
+    // int id = Integer.parseInt(userParts[index++]);
+    // int numberOfClaims = Integer.parseInt(userParts[index++]);
+    // int year = Integer.parseInt(userParts[index++]);
+    // int month = Integer.parseInt(userParts[index++]);
+    // int day = Integer.parseInt(userParts[index++]);
+    // int manufacturingYear = Integer.parseInt(userParts[index++]);
+    // double price = Double.parseDouble(userParts[index++]);
+    // String model = userParts[index++];
+    // Car.CarType type = Car.CarType.valueOf(userParts[index++]);
+    // Car car = new Car(manufacturingYear, price, model, type);
+    // MyDate expiryDate = new MyDate(year, month, day);
+    // InsurancePolicy policy;
+    // if (policyType.equals("TP")) {
+    // String comments = userParts[index++];
+    // policy = new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims,
+    // expiryDate, comments);
+    // } else if (policyType.equals("CP")) {
+    // int driverAge = Integer.parseInt(userParts[index++]);
+    // int level = Integer.parseInt(userParts[index++]);
+    // policy = new ComprehensivePolicy(policyHolderName, id, car, numberOfClaims,
+    // expiryDate,
+    // driverAge, level);
+    // } else {
+    // throw new IOException("Unknown policy type: " + policyType);
+    // }
+    // user.addPolicy(policy);
+    // }
+    // this.users.put(userID, user);
+    // }
+    // }
+    // return true;
+    // }
+
+    // =========================================================== assignment 2
+
+    // fixed the redundency
+    public Boolean loadTextFile(String fileName) throws IOException, PolicyException, PolicyHolderNameException {
+        try (BufferedReader in = new BufferedReader(new FileReader(fileName))) {
+            // company header line
+            String[] parts = in.readLine().trim().split(",");
             this.name = parts[0];
             this.adminUsername = parts[1];
             this.adminPassword = parts[2];
@@ -839,50 +862,95 @@ public class InsuranceCompany implements Cloneable, Serializable {
             this.users = new HashMap<>();
 
             for (int i = 0; i < numUsers; i++) {
-                // read user line (user fields, number of policies, then the policies)
-                String[] userParts = reader.readLine().split(",");
-                int index = 0;
-                String userName = userParts[index++];
-                int userID = Integer.parseInt(userParts[index++]);
-                int streetNum = Integer.parseInt(userParts[index++]);
-                String street = userParts[index++];
-                String suburb = userParts[index++];
-                String city = userParts[index++];
-                int numPolicies = Integer.parseInt(userParts[index++]);
-                Address address = new Address(streetNum, street, suburb, city);
-                User user = new User(userName, userID, address);
-
-                for (int j = 0; j < numPolicies; j++) {
-                    String policyType = userParts[index++];
-                    String policyHolderName = userParts[index++];
-                    int id = Integer.parseInt(userParts[index++]);
-                    int numberOfClaims = Integer.parseInt(userParts[index++]);
-                    int year = Integer.parseInt(userParts[index++]);
-                    int month = Integer.parseInt(userParts[index++]);
-                    int day = Integer.parseInt(userParts[index++]);
-                    int manufacturingYear = Integer.parseInt(userParts[index++]);
-                    double price = Double.parseDouble(userParts[index++]);
-                    String model = userParts[index++];
-                    Car.CarType type = Car.CarType.valueOf(userParts[index++]);
-                    Car car = new Car(manufacturingYear, price, model, type);
-                    MyDate expiryDate = new MyDate(year, month, day);
-                    InsurancePolicy policy;
-                    if (policyType.equals("TP")) {
-                        String comments = userParts[index++];
-                        policy = new ThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments);
-                    } else if (policyType.equals("CP")) {
-                        int driverAge = Integer.parseInt(userParts[index++]);
-                        int level = Integer.parseInt(userParts[index++]);
-                        policy = new ComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate,
-                                driverAge, level);
-                    } else {
-                        throw new IOException("Unknown policy type: " + policyType);
-                    }
-                    user.addPolicy(policy);
-                }
-                this.users.put(userID, user);
+                User user = User.loadOneUser(in.readLine().trim().split(","), 0);
+                this.users.put(user.getUserID(), user);
             }
         }
         return true;
+    }
+
+    // fixed duplicated IDs
+    public Boolean load(String fileName) throws IOException, ClassNotFoundException {
+        try (FileInputStream file = new FileInputStream(fileName);
+                ObjectInputStream obj = new ObjectInputStream(file)) {
+            InsuranceCompany loaded = (InsuranceCompany) obj.readObject();
+            this.name = loaded.name;
+            this.adminUsername = loaded.adminUsername;
+            this.adminPassword = loaded.adminPassword;
+            this.flatRate = loaded.flatRate;
+            this.users = loaded.users;
+        }
+
+        for (User user : users.values()) {
+            if (user.getUserID() > User.getCount()) {
+                User.setCount(user.getUserID());
+            }
+        }
+        return true;
+    }
+
+    
+    public class UserPaymentComparator implements Comparator<User> {
+        @Override
+        public int compare(User u1, User u2) {
+            double total1 = InsurancePolicy.calcTotalPayments(u1.getPolicies(), flatRate);
+            double total2 = InsurancePolicy.calcTotalPayments(u2.getPolicies(), flatRate);
+            return Double.compare(total1, total2);
+        }
+    }
+
+    public ArrayList<User> sortUsersByPremium() {
+        ArrayList<User> userList = new ArrayList<>(users.values());
+        Collections.sort(userList, new UserPaymentComparator());
+        return userList;
+    }
+
+    public HashMap<String, ArrayList<User>> getUsersPerCity() {
+        HashMap<String, ArrayList<User>> cityUsers = new HashMap<>();
+        for (User user : users.values()) {
+            String city = user.getCity();
+            if (!cityUsers.containsKey(city)) {
+                cityUsers.put(city, new ArrayList<>());
+            }
+            cityUsers.get(city).add(user);
+        }
+        return cityUsers;
+    }
+
+    public HashMap<String, ArrayList<InsurancePolicy>> filterPoliciesByExpiryDate(MyDate expiryDate) {
+        HashMap<String, ArrayList<InsurancePolicy>> expiredPolicies = new HashMap<>();
+        for (User user : users.values()) {
+            ArrayList<InsurancePolicy> policies = user.filterByExpiryDate(expiryDate);
+            expiredPolicies.put(user.getName(), policies);
+        }
+        return expiredPolicies;
+    }
+
+
+    public InsurancePolicy findPolicy(int policyID) {
+        for (User user : users.values()) {
+            InsurancePolicy policy = user.findPolicy(policyID);
+            if (policy != null) {
+                return policy;
+            }
+        }
+        return null;
+    }
+
+    public InsurancePolicy findPolicyByUser(int policyID, int userID) {
+        User user = users.get(userID);
+        if (user != null) {
+            return user.findPolicy(policyID);
+        }
+        return null;
+    }
+
+    public Boolean printPolicy(int policyID, int userID) {
+        InsurancePolicy policy = findPolicyByUser(policyID, userID);
+        if (policy != null) {
+            policy.print(flatRate);
+            return true;
+        }
+        return false;
     }
 }

@@ -2,7 +2,7 @@ public class ThirdPartyPolicy extends InsurancePolicy {
     protected String comments;
 
     public ThirdPartyPolicy(String policyHolderName, int id, Car car, int numberOfClaims, MyDate expiryDate,
-            String comments) throws PolicyException {
+            String comments) throws PolicyException, PolicyHolderNameException {
         super(policyHolderName, id, car, numberOfClaims, expiryDate);
         this.comments = comments;
     }

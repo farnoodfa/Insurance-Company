@@ -3,7 +3,7 @@ public class ComprehensivePolicy extends InsurancePolicy {
     protected int level;
 
     public ComprehensivePolicy(String policyHolderName, int id, Car car, int numberOfClaims, MyDate expiryDate,
-            int driverAge, int level) throws PolicyException {
+            int driverAge, int level) throws PolicyException, PolicyHolderNameException {
         super(policyHolderName, id, car, numberOfClaims, expiryDate);
         this.driverAge = driverAge;
         this.level = level;

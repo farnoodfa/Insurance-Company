@@ -534,7 +534,7 @@ public class App {
      */
 
     public static void main(String[] args)
-            throws CloneNotSupportedException, PolicyException, IOException, ClassNotFoundException {
+            throws CloneNotSupportedException, PolicyException, IOException, ClassNotFoundException, PolicyHolderNameException {
         InsuranceCompany insuranceCompany = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(insuranceCompany);
         // testLab4(insuranceCompany);
@@ -545,7 +545,7 @@ public class App {
 
     }
 
-    public static void fillData(InsuranceCompany insuranceCompany) throws PolicyException {
+    public static void fillData(InsuranceCompany insuranceCompany) throws PolicyException, PolicyHolderNameException {
 
         // --- Addresses ---
         Address addr1 = new Address(12, "Crown St", "Gwynneville", "Wollongong");
@@ -674,7 +674,7 @@ public class App {
         testResult(true, company.findPolicy(1001, 9999) == null);
     }
 
-    public static void testAddPolicyDuplicate(InsuranceCompany company) throws PolicyException {
+    public static void testAddPolicyDuplicate(InsuranceCompany company) throws PolicyException, PolicyHolderNameException {
         System.out.println("TEST [8/43] addPolicy - duplicate policy ID 300101 for user 1001   expected: false");
         Car dupCar = new Car(2018, 10000.0, "Kia Rio", Car.CarType.HATCH);
         ThirdPartyPolicy dup = new ThirdPartyPolicy(
@@ -689,7 +689,7 @@ public class App {
     /**
      * ThirdParty: 25000/100 + 1*200 + 20 = 250 + 200 + 20 = 470.0
      */
-    public static void testThirdPartyCalcPayment() throws PolicyException {
+    public static void testThirdPartyCalcPayment() throws PolicyException, PolicyHolderNameException {
         System.out.println("TEST [9/43] ThirdPartyPolicy.calcPayment   expected: 470.0");
         Car testCar = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
         ThirdPartyPolicy tp = new ThirdPartyPolicy(
@@ -702,7 +702,7 @@ public class App {
      * Comprehensive - age 35 (> 30, no surcharge):
      * 52000/50 + 0*200 + 20 = 1040 + 0 + 20 = 1060.0
      */
-    public static void testComprehensiveCalcPaymentOlderDriver() throws PolicyException {
+    public static void testComprehensiveCalcPaymentOlderDriver() throws PolicyException, PolicyHolderNameException {
         System.out.println("TEST [10/43] ComprehensivePolicy.calcPayment - age 35   expected: 1060.0");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
@@ -715,7 +715,7 @@ public class App {
      * Comprehensive - age 28 (<= 30, surcharge applies):
      * 52000/50 + 0*200 + 20 + (30-28)*50 = 1040 + 20 + 100 = 1160.0
      */
-    public static void testComprehensiveCalcPaymentYoungDriver() throws PolicyException {
+    public static void testComprehensiveCalcPaymentYoungDriver() throws PolicyException, PolicyHolderNameException {
         System.out.println("TEST [11/43] ComprehensivePolicy.calcPayment - age 28   expected: 1160.0");
         Car testCar = new Car(2022, 52000.0, "BMW X5", Car.CarType.SUV);
         ComprehensivePolicy cp = new ComprehensivePolicy(
@@ -1084,7 +1084,7 @@ public class App {
     }
 
     public static void testCase()
-            throws CloneNotSupportedException, PolicyException, ClassNotFoundException, IOException {
+            throws CloneNotSupportedException, PolicyException, ClassNotFoundException, IOException, PolicyHolderNameException {
         // Build the company and populate it
         InsuranceCompany company = new InsuranceCompany("SafeGuard Insurance", "admin", "admin123", 20);
         fillData(company);
@@ -1188,7 +1188,7 @@ public class App {
     }
 
     // lab4
-    public static void testLab4(InsuranceCompany company) throws CloneNotSupportedException, PolicyException {
+    public static void testLab4(InsuranceCompany company) throws CloneNotSupportedException, PolicyException, PolicyHolderNameException {
         System.out.println("==============================  LAB-4 TEST ===============================");
 
         User user = company.findUser(1001);
@@ -1277,7 +1277,7 @@ public class App {
         System.out.println("============================  LAB-4 test completed =========================");
     }
 
-    public static void testLab5(InsuranceCompany company) {
+    public static void testLab5(InsuranceCompany company) throws PolicyHolderNameException {
         System.out.println("========================== LAB-5 Test ============================");
 
         System.out.println("TEST = PolicyException validation on invalid ID (101)");
@@ -1322,7 +1322,7 @@ public class App {
 
     // -------------------------------------------------------lab6
 
-    public static void testLab6(InsuranceCompany company) throws IOException, ClassNotFoundException, PolicyException {
+    public static void testLab6(InsuranceCompany company) throws IOException, ClassNotFoundException, PolicyException, PolicyHolderNameException {
         System.out.println("========================== LAB-6 Tests ============================");
 
         // File path constants

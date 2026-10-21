@@ -6,4 +6,3 @@ New Company User,1098,20,George St,CBD,Sydney,1,TP,New Company User,300997,0,202
 Charlie Brown,1003,78,Bourke St,Surry Hills,Shiraz,1,CP,Charlie Brown,300301,0,2043,8,20,2023,45000.0,Toyota RAV4,SUV,35,2
 Diana Prince,1004,90,King St,Newtown,Wollongong,1,TP,Diana Prince,300401,1,2025,6,30,2043,30000.0,Mazda 3,SED,Basic coverage
 Ethan Hunt,1005,34,Pitt St,CBD,Shiraz,0
-
