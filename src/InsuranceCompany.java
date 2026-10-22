@@ -148,29 +148,33 @@ public class InsuranceCompany implements Cloneable, Serializable {
     // return allPolicies;
     // }
 
-    // Filters policies by expiry date for a specific user
-    public ArrayList<InsurancePolicy> filterByExpiryDate(int userID, MyDate date)
-    {
-    User user = findUser(userID);
-    if (user != null) {
-    return user.filterByExpiryDate(date);
+    // Validates admin credentials against stored details
+    public boolean validateAdmin(String username, String password) {
+        return this.adminUsername.equals(username) && this.adminPassword.equals(password);
     }
-    return new ArrayList<InsurancePolicy>();
+
+    // Filters policies by expiry date for a specific user
+    public ArrayList<InsurancePolicy> filterByExpiryDate(int userID, MyDate date) {
+        User user = findUser(userID);
+        if (user != null) {
+            return user.filterByExpiryDate(date);
+        }
+        return new ArrayList<InsurancePolicy>();
 
     }
 
     // Filters policies expired by the given date across all users in the company
     public ArrayList<InsurancePolicy> filterByExpiryDate(MyDate date) {
-    ArrayList<InsurancePolicy> filtered = new ArrayList<>();
-    for (User user : users.values()) {
-    ArrayList<InsurancePolicy> expired = user.filterByExpiryDate(date);
-    if (expired != null) {
-    for (InsurancePolicy policy : expired) {
-    filtered.add(policy);
-    }
-    }
-    }
-    return filtered;
+        ArrayList<InsurancePolicy> filtered = new ArrayList<>();
+        for (User user : users.values()) {
+            ArrayList<InsurancePolicy> expired = user.filterByExpiryDate(date);
+            if (expired != null) {
+                for (InsurancePolicy policy : expired) {
+                    filtered.add(policy);
+                }
+            }
+        }
+        return filtered;
     }
 
     // // Goes through all users and populates a list of distinct city names
@@ -212,11 +216,6 @@ public class InsuranceCompany implements Cloneable, Serializable {
     // }
     // return false;
     // }
-
-    // Validates admin credentials against stored details
-    public boolean validateAdmin(String username, String password) {
-        return this.adminUsername.equals(username) && this.adminPassword.equals(password);
-    }
 
     // Remove a user by userID
     public boolean removeUser(int userID) {
@@ -503,11 +502,11 @@ public class InsuranceCompany implements Cloneable, Serializable {
     }
 
     // Filters policies by car model across all users in the company
-    public ArrayList< InsurancePolicy> filterByCarModel(String carModel) {
-        ArrayList< InsurancePolicy> filteredMap = new ArrayList<>();
+    public ArrayList<InsurancePolicy> filterByCarModel(String carModel) {
+        ArrayList<InsurancePolicy> filteredMap = new ArrayList<>();
 
         for (User user : users.values()) {
-            ArrayList< InsurancePolicy> userMatchedPolicies = user.filterByCarModel(carModel);
+            ArrayList<InsurancePolicy> userMatchedPolicies = user.filterByCarModel(carModel);
             if (userMatchedPolicies != null) {
                 filteredMap.addAll(userMatchedPolicies);
             }
@@ -889,7 +888,6 @@ public class InsuranceCompany implements Cloneable, Serializable {
         return true;
     }
 
-    
     public class UserPaymentComparator implements Comparator<User> {
         @Override
         public int compare(User u1, User u2) {
@@ -925,7 +923,6 @@ public class InsuranceCompany implements Cloneable, Serializable {
         }
         return expiredPolicies;
     }
-
 
     public InsurancePolicy findPolicy(int policyID) {
         for (User user : users.values()) {

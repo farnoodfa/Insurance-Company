@@ -188,18 +188,17 @@ abstract class InsurancePolicy implements Cloneable, Comparable<InsurancePolicy>
 
     // ----------------------------lab5
 
-    public static ArrayList< InsurancePolicy> filterByCarModel(HashMap<Integer, InsurancePolicy> policies,
+    public static ArrayList<InsurancePolicy> filterByCarModel(HashMap<Integer, InsurancePolicy> policies,
             String carModel) {
-        ArrayList< InsurancePolicy> filteredPolicies = new ArrayList<>();
+        ArrayList<InsurancePolicy> filteredPolicies = new ArrayList<>();
         for (InsurancePolicy policy : policies.values()) {
-            if (policy.car.getModel().contains(carModel)) {
-                filteredPolicies.add(policy.getID(), policy);
+            if (policy.car.getModel().toLowerCase().contains(carModel.toLowerCase())) {
+                filteredPolicies.add(policy);
             }
         }
         return filteredPolicies;
     }
-
-        public static ArrayList<InsurancePolicy> filterByExpiryDate(HashMap<Integer, InsurancePolicy> policies,
+    public static ArrayList<InsurancePolicy> filterByExpiryDate(HashMap<Integer, InsurancePolicy> policies,
             MyDate date) {
         ArrayList<InsurancePolicy> expiredPolicies = new ArrayList<>();
         if (policies == null || date == null) {
