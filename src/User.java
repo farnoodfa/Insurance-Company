@@ -56,8 +56,12 @@ public class User implements Cloneable, Comparable<User>, Serializable {
         return policies;
     }
 
-    public static int getCount() {
+    public static  int getCount() {
         return count;
+    }
+ 
+    public String getPassword(){
+        return password;
     }
 
     // setters
