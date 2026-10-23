@@ -1118,4 +1118,180 @@ public class InsuranceCompany implements Cloneable, Serializable {
         }
         return false;
     }
+
+    public boolean userExists(int userID, String username, String password) {
+        if (!validateAdmin(username, password)) {
+            return false;
+        }
+        if (findUser(userID, username, password) != null) {
+            return true;
+        }
+        return false;
+
+    }
+
+    public HashMap<String, Integer> getTotalCountPerCarModel(int userID, String username, String password) {
+        if (!validateAdmin(username, password)) {
+            return null;
+        }
+        User user = users.get(userID);
+        if (user == null) {
+            return null;
+        }
+        return user.getTotalCountPerCarModel(user.getUserID(), user.getPassword());
+    }
+
+    public HashMap<String, Double> getTotalPremiumPerCarModel(int userID, String username, String password) {
+        if (!validateAdmin(username, password)) {
+            return null;
+        }
+        User user = users.get(userID);
+        if (user == null) {
+            return null;
+        }
+        return user.getTotalPremiumPerCarModel(flatRate, user.getUserID(), user.getPassword());
+    }
+
+    public InsurancePolicy findPolicy(int userID, int policyID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return null;
+        }
+        User user = users.get(userID);
+        return user.findPolicy(policyID, userID, userPassword);
+    }
+
+    public boolean printPolicy(int userID, int policyID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return false;
+        }
+        InsurancePolicy policy = findPolicy(userID, policyID, userPassword);
+        if (policy != null) {
+            policy.print(flatRate);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean createThirdPartyPolicy(int userID, String policyHolderName, int id, Car car, int numberOfClaims,
+            MyDate expiryDate, String comments, String userPassword)
+            throws PolicyException, PolicyHolderNameException {
+        if (!validateUser(userID, userPassword)) {
+            return false;
+        }
+        User user = users.get(userID);
+        return user.createThirdPartyPolicy(policyHolderName, id, car, numberOfClaims, expiryDate, comments,
+                userID, userPassword);
+    }
+
+    public boolean createComprehensivePolicy(int userID, String policyHolderName, int id, Car car, int numberOfClaims,
+            MyDate expiryDate, int driverAge, int level, String userPassword)
+            throws PolicyException, PolicyHolderNameException {
+        if (!validateUser(userID, userPassword)) {
+            return false;
+        }
+        User user = users.get(userID);
+        return user.createComprehensivePolicy(policyHolderName, id, car, numberOfClaims, expiryDate, driverAge,
+                level, userID, userPassword);
+    }
+
+    public void printPolicies(int userID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return;
+        }
+        User user = users.get(userID);
+        user.printPolicies(flatRate, userID, userPassword);
+    }
+
+    public ArrayList<InsurancePolicy> filterByCarModel(int userID, String carModel, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return new ArrayList<>();
+        }
+        User user = users.get(userID);
+        return user.filterByCarModel(carModel, userID, userPassword);
+    }
+
+    public ArrayList<InsurancePolicy> filterByExpiryDate(int userID, MyDate date, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return new ArrayList<>();
+        }
+        User user = users.get(userID);
+        return user.filterByExpiryDate(date, userID, userPassword);
+    }
+
+    public String getUserAddress(int userID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return null;
+        }
+        User user = users.get(userID);
+        if (user.getAddress() != null) {
+            return user.getAddress().toString();
+        }
+        return null;
+    }
+
+    public boolean updateUserAddress(int userID, Address newAddress, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return false;
+        }
+        User user = users.get(userID);
+        user.setAddress(newAddress);
+        return true;
+    }
+
+    public double calcTotalPayments(int userID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return 0.0;
+        }
+        User user = users.get(userID);
+        return user.calcTotalPremiums(flatRate, userID, userPassword);
+    }
+
+    public HashMap<String, Integer> getTotalCountPerCarModel(int userID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return null;
+        }
+        User user = users.get(userID);
+        return user.getTotalCountPerCarModel(userID, userPassword);
+    }
+
+    public HashMap<String, Double> getTotalPremiumPerCarModel(int userID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return null;
+        }
+        User user = users.get(userID);
+        return user.getTotalPremiumPerCarModel(flatRate, userID, userPassword);
+    }
+
+    public boolean removePolicy(int userID, int policyID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return false;
+        }
+        User user = users.get(userID);
+        return user.removePolicy(policyID, userID, userPassword);
+    }
+
+    public ArrayList<InsurancePolicy> shallowCopyPolicies(int userID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return new ArrayList<>();
+        }
+        User user = users.get(userID);
+        return user.shallowCopyPolicies(userID, userPassword);
+    }
+
+    public ArrayList<InsurancePolicy> deepCopyPolicies(int userID, String userPassword)
+            throws CloneNotSupportedException {
+        if (!validateUser(userID, userPassword)) {
+            return new ArrayList<>();
+        }
+        User user = users.get(userID);
+        return user.deepCopyPolicies(userID, userPassword);
+    }
+
+    public ArrayList<InsurancePolicy> sortPoliciesByDate(int userID, String userPassword) {
+        if (!validateUser(userID, userPassword)) {
+            return new ArrayList<>();
+        }
+        User user = users.get(userID);
+        return user.sortPoliciesByDate(userID, userPassword);
+    }
 }

@@ -1182,6 +1182,8 @@ public class App {
 
         testLab6(company);
 
+        testAssignment2(company);
+
         System.out.println("=================================================================");
         System.out.println("                    ALL TESTS COMPLETE                          ");
         System.out.println("=================================================================");
@@ -1474,5 +1476,73 @@ public class App {
         System.out.println("========================== LAB-6 Tests Complete ============================");
     }
 
-    
+    // -------------------------------------------------------Assignment 2
+    public static void testAssignment2(InsuranceCompany company)
+            throws CloneNotSupportedException, PolicyException, PolicyHolderNameException {
+        System.out.println("======================= ASSIGNMENT-2 Tests =========================");
+
+        String adminUser = company.getAdminUsername();
+        String adminPass = company.getAdminPassword();
+
+        // 1. Test Comparable on InsurancePolicy (sortPoliciesByDate)
+        System.out.println("\n--- [1] Testing Comparable<InsurancePolicy>: sortPoliciesByDate (User 1001) ---");
+        User sampleUser = company.findUser(1001, adminUser, adminPass);
+        if (sampleUser != null) {
+            ArrayList<InsurancePolicy> sortedPolicies = sampleUser.sortPoliciesByDate(
+                    sampleUser.getUserID(), sampleUser.getPassword());
+            for (InsurancePolicy policy : sortedPolicies) {
+                System.out.println("Policy ID: " + policy.getID()
+                        + " | Expiry Date: " + policy.getExpiryDate().toDelimitedString()
+                        + " | Holder: " + policy.policyHolderName);
+            }
+        }
+
+        // 2. Test Comparable on User (sortUsers by City/Address)
+        System.out.println("\n--- [2] Testing Comparable<User>: sortUsers (Sorted by City) ---");
+        ArrayList<User> sortedByCity = company.sortUsers(adminUser, adminPass);
+        for (User u : sortedByCity) {
+            System.out.println("User ID: " + u.getUserID()
+                    + " | Name: " + u.getName()
+                    + " | City: " + u.getCity());
+        }
+
+        // 3. Test Comparator on User (sortUsersByPremium using UserPaymentComparator)
+        System.out.println("\n--- [3] Testing Comparator<User>: sortUsersByPremium (Sorted by Total Premium) ---");
+        ArrayList<User> sortedByPremium = company.sortUsersByPremium(adminUser, adminPass);
+        for (User u : sortedByPremium) {
+            double totalPremium = u.calcTotalPremiums(company.getFlatRate(), u.getUserID(), u.getPassword());
+            System.out.printf("User ID: %d | Name: %-18s | Total Premium: $%,.2f%n",
+                    u.getUserID(), u.getName(), totalPremium);
+        }
+
+        // 4. Test getUsersPerCity() Data Aggregation
+        System.out.println("\n--- [4] Testing getUsersPerCity() Aggregation ---");
+        HashMap<String, ArrayList<User>> usersPerCity = company.getUsersPerCity(adminUser, adminPass);
+        for (String city : usersPerCity.keySet()) {
+            System.out.println("City: " + city);
+            for (User u : usersPerCity.get(city)) {
+                System.out.println("   -> User ID: " + u.getUserID() + " | Name: " + u.getName());
+            }
+        }
+
+        // 5. Test filterPoliciesByExpiryDate() Data Aggregation
+        System.out.println("\n--- [5] Testing filterPoliciesByExpiryDate() Aggregation ---");
+        MyDate cutoffDate = new MyDate(2026, 1, 1);
+        HashMap<String, ArrayList<InsurancePolicy>> expiredByUser = company.filterPoliciesByExpiryDate(
+                cutoffDate, adminUser, adminPass);
+        for (String userName : expiredByUser.keySet()) {
+            System.out.println("User: " + userName);
+            ArrayList<InsurancePolicy> expiredList = expiredByUser.get(userName);
+            if (expiredList == null || expiredList.isEmpty()) {
+                System.out.println("   -> No expired policies.");
+            } else {
+                for (InsurancePolicy policy : expiredList) {
+                    System.out.println("   -> Policy ID: " + policy.getID()
+                            + " | Expiry: " + policy.getExpiryDate().toDelimitedString());
+                }
+            }
+        }
+
+        System.out.println("=================== ASSIGNMENT-2 Tests Complete ====================");
+    }
 }
