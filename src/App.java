@@ -555,17 +555,17 @@ public class App {
         Address addr5 = new Address(34, "Pitt St", "CBD", "Shiraz");
 
         // --- Users ---
-        User user1 = new User("Alice Smith", 1001, addr1);
-        User user2 = new User("Bob Johnson", 1002, addr2);
-        User user3 = new User("Charlie Brown", 1003, addr3);
-        User user4 = new User("Diana Prince", 1004, addr4);
-        User user5 = new User("Ethan Hunt", 1005, addr5);
+        User user1 = new User("Alice Smith", "pass123", 1001, addr1);
+        User user2 = new User("Bob Johnson", "pass123", 1002, addr2);
+        User user3 = new User("Charlie Brown", "pass123", 1003, addr3);
+        User user4 = new User("Diana Prince", "pass123", 1004, addr4);
+        User user5 = new User("Ethan Hunt", "pass123", 1005, addr5);
 
-        insuranceCompany.addUser(user1);
-        insuranceCompany.addUser(user2);
-        insuranceCompany.addUser(user3);
-        insuranceCompany.addUser(user4);
-        insuranceCompany.addUser(user5);
+        insuranceCompany.addUser(user1, "admin", "admin123");
+        insuranceCompany.addUser(user2, "admin", "admin123");
+        insuranceCompany.addUser(user3, "admin", "admin123");
+        insuranceCompany.addUser(user4, "admin", "admin123");
+        insuranceCompany.addUser(user5, "admin", "admin123");
 
         // --- Cars ---
         Car car1 = new Car(2020, 25000.0, "Toyota Camry", Car.CarType.SED);
@@ -590,11 +590,11 @@ public class App {
         InsurancePolicy policy5 = new ThirdPartyPolicy("Diana Prince", 300401, car5, 1, expDate1, "Basic coverage");
 
         // --- Attach policies to users ---
-        insuranceCompany.addPolicy(1001, policy1);
-        insuranceCompany.addPolicy(1001, policy2);
-        insuranceCompany.addPolicy(1002, policy3);
-        insuranceCompany.addPolicy(1003, policy4);
-        insuranceCompany.addPolicy(1004, policy5);
+        insuranceCompany.addPolicy(1001, policy1, "admin", "admin123");
+        insuranceCompany.addPolicy(1001, policy2, "admin", "admin123");
+        insuranceCompany.addPolicy(1002, policy3, "admin", "admin123");
+        insuranceCompany.addPolicy(1003, policy4, "admin", "admin123");
+        insuranceCompany.addPolicy(1004, policy5, "admin", "admin123");
         // user5 (Ethan) intentionally left with no policies
     }
 
@@ -603,11 +603,11 @@ public class App {
     // =================================================================
 
     public static void addPolicy(User user, InsurancePolicy policy) {
-        user.addPolicy(policy);
+        user.addPolicy(policy, user.getUserID(), user.getPassword());
     }
 
     public static void addPolicy(InsuranceCompany company, int userID, InsurancePolicy policy) {
-        company.addPolicy(userID, policy);
+        company.addPolicy(userID, policy, company.getAdminUsername(), company.getAdminPassword());
     }
 
     // =================================================================
@@ -645,19 +645,19 @@ public class App {
 
     public static void testAddUserDuplicate(InsuranceCompany company) {
         System.out.println("TEST [3/43] addUser - duplicate ID 1001 → expected: false");
-        User duplicate = new User("Alice Clone", 1001,
+        User duplicate = new User("Alice Clone", "pass123", 1001,
                 new Address(1, "Fake St", "Nowhere", "Wollongong"));
-        testResult(false, company.addUser(duplicate));
+        testResult(false, company.addUser(duplicate, "admin", "admin123"));
     }
 
     public static void testFindUserExists(InsuranceCompany company, User user1) {
         System.out.println("TEST [4/43] findUser - ID 1001 exists → expected: user1 object (true)");
-        testResult(user1, company.findUser(1001));
+        testResult(user1, company.findUser(1001, "admin", "admin123"));
     }
 
     public static void testFindUserNotFound(InsuranceCompany company) {
         System.out.println("TEST [5/43] findUser - ID 9999 does not exist → expected: null (true)");
-        testResult(true, company.findUser(9999) == null);
+        testResult(true, company.findUser(9999, "admin", "admin123") == null);
     }
 
     // =================================================================
@@ -666,12 +666,12 @@ public class App {
 
     public static void testFindPolicyExists(InsuranceCompany company) {
         System.out.println("TEST [6/43] findPolicy - policy ID 300101 for user 1001   expected: non-null (true)");
-        testResult(true, company.findPolicy(1001, 300101) != null);
+        testResult(true, company.findPolicy(1001, 300101, "admin", "admin123") != null);
     }
 
     public static void testFindPolicyNotFound(InsuranceCompany company) {
         System.out.println("TEST [7/43] findPolicy - policy ID 9999 for user 1001 → expected: null (true)");
-        testResult(true, company.findPolicy(1001, 9999) == null);
+        testResult(true, company.findPolicy(1001, 9999, "admin", "admin123") == null);
     }
 
     public static void testAddPolicyDuplicate(InsuranceCompany company) throws PolicyException, PolicyHolderNameException {
@@ -679,7 +679,7 @@ public class App {
         Car dupCar = new Car(2018, 10000.0, "Kia Rio", Car.CarType.HATCH);
         ThirdPartyPolicy dup = new ThirdPartyPolicy(
                 "Alice Smith", 300101, dupCar, 0, new MyDate(2025, 1, 1), "duplicate");
-        testResult(false, company.addPolicy(1001, dup));
+        testResult(false, company.addPolicy(1001, dup, "admin", "admin123"));
     }
 
     // =================================================================
@@ -740,7 +740,7 @@ public class App {
         double policy1 = (25000.0 / 100.0) + (1 * 200.0) + 20.0;
         double policy2 = (52000.0 / 50.0) + (0 * 200.0) + 20.0 + (30 - 28) * 50.0;
         double expected = policy1 + policy2;
-        testResult(expected, company.calcTotalPayments(1001));
+        testResult(expected, company.calcTotalPayments(1001, "admin", "admin123"));
     }
 
     /**
@@ -760,7 +760,7 @@ public class App {
         double policy4 = (45000.0 / 50.0) + (0 * 200.0) + 20.0;
         double policy5 = (30000.0 / 100.0) + (1 * 200.0) + 20.0;
         double expected = policy1 + policy2 + policy3 + policy4 + policy5;
-        testResult(expected, company.calcTotalPayments());
+        testResult(expected, company.calcTotalPayments("admin", "admin123"));
     }
 
     // =================================================================
@@ -770,12 +770,12 @@ public class App {
     public static void testFilterByCarModelFound(InsuranceCompany company) {
         System.out.println(
                 "TEST [14/43] filterByCarModel(\"Toyota\") - matches policy1 (Camry) + policy4 (RAV4) → expected size: 2");
-        testResult(2, company.filterByCarModel("Toyota").size());
+        testResult(2, company.filterByCarModel("Toyota", "admin", "admin123").size());
     }
 
     public static void testFilterByCarModelNotFound(InsuranceCompany company) {
         System.out.println("TEST [15/43] filterByCarModel(\"Tesla\") - no match → expected size: 0");
-        testResult(0, company.filterByCarModel("Tesla").size());
+        testResult(0, company.filterByCarModel("Tesla", "admin", "admin123").size());
     }
 
     /**
@@ -788,7 +788,7 @@ public class App {
     public static void testFilterByExpiryDate(InsuranceCompany company) {
         System.out.println(
                 "TEST [16/43] filterByExpiryDate(2025-07-01) - policy1, policy3, policy5 expired → expected size: 3");
-        testResult(3, company.filterByExpiryDate(new MyDate(2025, 7, 1)).size());
+        testResult(3, company.filterByExpiryDate(new MyDate(2025, 7, 1), "admin", "admin123").size());
     }
 
     // =================================================================
@@ -797,7 +797,7 @@ public class App {
 
     public static void testAllPoliciesCount(InsuranceCompany company) {
         System.out.println("TEST [17/43] allPolicies() - 5 policies added across all users → expected size: 5");
-        testResult(5, company.allPolicies().size());
+        testResult(5, company.allPolicies("admin", "admin123").size());
     }
 
     // =================================================================
@@ -812,12 +812,12 @@ public class App {
      */
     public static void testCarPriceRiseEffect(InsuranceCompany company) {
         System.out.println("TEST [18/43] carPriceRise(1001, 10%) - Camry $27500, BMW $57200   expected: 1759.0");
-        company.carPriceRise(0.10);
+        company.carPriceRise(0.10, "admin", "admin123");
         double newCar1 = 25000.0 * 1.10;
         double newCar2 = 52000.0 * 1.10;
         double expected = (newCar1 / 100.0 + 1 * 200.0 + 20.0)
                 + (newCar2 / 50.0 + 0 * 200.0 + 20.0 + (30 - 28) * 50.0);
-        testResult(expected, company.calcTotalPayments(1001));
+        testResult(expected, company.calcTotalPayments(1001, "admin", "admin123"));
     }
 
     // =================================================================
@@ -859,7 +859,7 @@ public class App {
         ArrayList<String> expected = new ArrayList<>();
         expected.add("Wollongong");
         expected.add("Shiraz");
-        testResult(expected, company.populateDistinctCityNames());
+        testResult(expected, company.populateDistinctCityNames("admin", "admin123"));
     }
 
     /**
@@ -874,7 +874,7 @@ public class App {
                 + ((52000.0 * 1.10) / 50.0 + 0 * 200.0 + 20.0 + (30 - 28) * 50.0);
         double dianaTotal = (30000.0 / 100.0) + (1 * 200.0) + 20.0;
         double expected = aliceTotal + dianaTotal;
-        testResult(expected, company.getTotalPaymentForCity("Wollongong"));
+        testResult(expected, company.getTotalPaymentForCity("Wollongong", "admin", "admin123"));
     }
 
     /**
@@ -889,7 +889,7 @@ public class App {
         double bobTotal = (18000.0 / 100.0) + (2 * 200.0) + 20.0;
         double charlieTotal = (45000.0 / 50.0) + (0 * 200.0) + 20.0;
         double expected = bobTotal + charlieTotal;
-        testResult(expected, company.getTotalPaymentForCity("Shiraz"));
+        testResult(expected, company.getTotalPaymentForCity("Shiraz", "admin", "admin123"));
     }
 
     /**
@@ -897,7 +897,7 @@ public class App {
      */
     public static void testGetTotalPaymentForCityNotFound(InsuranceCompany company) {
         System.out.println("TEST [25/43] getTotalPaymentForCity(\"Melbourne\") - no registered users   expected: 0.0");
-        testResult(0.0, company.getTotalPaymentForCity("Melbourne"));
+        testResult(0.0, company.getTotalPaymentForCity("Melbourne", "admin", "admin123"));
     }
 
     /**
@@ -915,7 +915,7 @@ public class App {
         ArrayList<Double> expected = new ArrayList<>();
         expected.add(expected1);
         expected.add(expected2);
-        testResult(expected, company.getTotalPaymentPerCity(cities));
+        testResult(expected, company.getTotalPaymentPerCity(cities, "admin", "admin123"));
     }
 
     // =================================================================
@@ -927,17 +927,17 @@ public class App {
 
     public static void testRemovePolicySuccess(InsuranceCompany company) {
         System.out.println("TEST [27/43] removePolicy - remove policy 300401 from user 1004   expected: true");
-        testResult(true, company.removePolicy(1004, 300401));
+        testResult(true, company.removePolicy(1004, 300401, "admin", "admin123"));
     }
 
     public static void testRemovePolicyAlreadyRemoved(InsuranceCompany company) {
         System.out.println("TEST [28/43] removePolicy - remove policy 300401 again   expected: false");
-        testResult(false, company.removePolicy(1004, 300401));
+        testResult(false, company.removePolicy(1004, 300401, "admin", "admin123"));
     }
 
     public static void testRemovePolicyInvalidUser(InsuranceCompany company) {
         System.out.println("TEST [29/43] removePolicy - user 9999 does not exist → expected: false");
-        testResult(false, company.removePolicy(9999, 101));
+        testResult(false, company.removePolicy(9999, 101, "admin", "admin123"));
     }
 
     // =================================================================
@@ -957,8 +957,8 @@ public class App {
         System.out.println(
                 "TEST [31/43] getNextUserID - new user added with auto ID, must not duplicate → expected: true");
         int autoID = User.getNextUserID();
-        User newUser = new User("Generated User", autoID, new Address(1, "Auto St", "GenSuburb", "Wollongong"));
-        testResult(true, company.addUser(newUser));
+        User newUser = new User("Generated User", "pass123", autoID, new Address(1, "Auto St", "GenSuburb", "Wollongong"));
+        testResult(true, company.addUser(newUser, "admin", "admin123"));
     }
 
     // =================================================================
@@ -977,7 +977,7 @@ public class App {
 
     public static void testRemoveUserConfirmGone(InsuranceCompany company) {
         System.out.println("TEST [34/43] findUser - user 1005 removed, findUser must return null → expected: true");
-        testResult(true, company.findUser(1005) == null);
+        testResult(true, company.findUser(1005, "admin", "admin123") == null);
     }
 
     // =================================================================
@@ -986,12 +986,12 @@ public class App {
 
     public static void testChangeAdminPasswordWrongOld(InsuranceCompany company) {
         System.out.println("TEST [35/43] changeAdminPassword - wrong old password → expected: false");
-        testResult(false, company.changeAdminPassword("wrongPassword", "newPass123"));
+        testResult(false, company.changeAdminPassword("wrongPassword", "newPass123", "admin", "admin123"));
     }
 
     public static void testChangeAdminPasswordSuccess(InsuranceCompany company) {
         System.out.println("TEST [36/43] changeAdminPassword - correct old password → expected: true");
-        testResult(true, company.changeAdminPassword("admin123", "newPass123"));
+        testResult(true, company.changeAdminPassword("admin123", "newPass123", "admin", "admin123"));
     }
 
     public static void testChangeAdminPasswordValidateNew(InsuranceCompany company) {
@@ -1016,8 +1016,8 @@ public class App {
      */
     public static void testPopulateDistinctCarModelsUser(InsuranceCompany company) {
         System.out.println("TEST [39/43] populateDistinctCarModels (User 1001) - Camry + BMW X5 → expected size: 2");
-        User alice = company.findUser(1001);
-        testResult(2, alice.populateDistinctCarModels().size());
+        User alice = company.findUser(1001, company.getAdminUsername(), company.getAdminPassword());
+        testResult(2, alice.populateDistinctCarModels(alice.getUserID(), alice.getPassword()).size());
     }
 
     /**
@@ -1028,8 +1028,8 @@ public class App {
      */
     public static void testGetTotalCountForCarModelUser(InsuranceCompany company) {
         System.out.println("TEST [40/43] getTotalCountForCarModel (User 1001, \"Toyota Camry\") → expected: 1.0");
-        User alice = company.findUser(1001);
-        testResult(1, alice.getTotalCountForCarModel("Toyota Camry"));
+        User alice = company.findUser(1001, company.getAdminUsername(), company.getAdminPassword());
+        testResult(1, alice.getTotalCountForCarModel("Toyota Camry", alice.getUserID(), alice.getPassword()));
     }
 
     /**
@@ -1039,9 +1039,9 @@ public class App {
     public static void testGetTotalPaymentForCarModelUser(InsuranceCompany company) {
         System.out.println(
                 "TEST [41/43] getTotalPaymentForCarModel (User 1001, \"Toyota Camry\", flatRate 20)   expected: 495.0");
-        User alice = company.findUser(1001);
+        User alice = company.findUser(1001, company.getAdminUsername(), company.getAdminPassword());
         double expected = ((25000.0 * 1.10) / 100.0) + (1 * 200.0) + 20.0;
-        testResult(expected, alice.getTotalPaymentForCarModel("Toyota Camry", 20));
+        testResult(expected, alice.getTotalPaymentForCarModel("Toyota Camry", 20, alice.getUserID(), alice.getPassword()));
     }
 
     // =================================================================
@@ -1060,7 +1060,7 @@ public class App {
     public static void testPopulateDistinctCarModelsCompany(InsuranceCompany company) {
         System.out.println(
                 "TEST [42/43] populateDistinctCarModels (Company) - Camry, BMW X5, Civic, RAV4 → expected size: 4");
-        testResult(4, company.populateDistinctCarModels().size());
+        testResult(4, company.populateDistinctCarModels(company.getAdminUsername(), company.getAdminPassword()).size());
     }
 
     /**
@@ -1075,8 +1075,8 @@ public class App {
     public static void testGetTotalCountPerCarModelCompany(InsuranceCompany company) {
         System.out.println(
                 "TEST [43/43] getTotalCountPerCarModel (Company) - 1 policy each for 4 models → expected sum: 4");
-        ArrayList<String> models = company.populateDistinctCarModels();
-        ArrayList<Integer> counts = company.getTotalCountPerCarModel(models);
+        ArrayList<String> models = company.populateDistinctCarModels(company.getAdminUsername(), company.getAdminPassword());
+        ArrayList<Integer> counts = company.getTotalCountPerCarModel(models, company.getAdminUsername(), company.getAdminPassword());
         int total = 0;
         for (int c : counts)
             total += c;
@@ -1090,7 +1090,7 @@ public class App {
         fillData(company);
 
         // Retrieve user1 from the company to pass into tests that need it
-        User user1 = company.findUser(1001);
+        User user1 = company.findUser(1001, "admin", "admin123");
 
         System.out.println("=================================================================");
         System.out.println("         SAFEGUARD INSURANCE - CORE TEST SUITE                  ");
@@ -1191,11 +1191,11 @@ public class App {
     public static void testLab4(InsuranceCompany company) throws CloneNotSupportedException, PolicyException, PolicyHolderNameException {
         System.out.println("==============================  LAB-4 TEST ===============================");
 
-        User user = company.findUser(1001);
+        User user = company.findUser(1001, company.getAdminUsername(), company.getAdminPassword());
 
         // 1. Make shallow and deep copies of user's policies
-        ArrayList<InsurancePolicy> shallowPolicies = user.shallowCopyPolicies();
-        ArrayList<InsurancePolicy> deepPolicies = user.deepCopyPolicies();
+        ArrayList<InsurancePolicy> shallowPolicies = user.shallowCopyPolicies(user.getUserID(), user.getPassword());
+        ArrayList<InsurancePolicy> deepPolicies = user.deepCopyPolicies(user.getUserID(), user.getPassword());
 
         // 2. Change user's city to "New York" and add a new policy
         user.setCity("New York");
@@ -1203,10 +1203,10 @@ public class App {
         MyDate newExp = new MyDate(2026, 5, 10);
         // Inside testLab4:
         InsurancePolicy newPolicy = new ThirdPartyPolicy("Alice Smith", 300501, newCar, 0, newExp, "New Policy");
-        user.addPolicy(newPolicy);
+        user.addPolicy(newPolicy, user.getUserID(), user.getPassword());
 
         // 3. Sort policies by expiry date
-        ArrayList<InsurancePolicy> sortedPolicies = user.sortPoliciesByDate();
+        ArrayList<InsurancePolicy> sortedPolicies = user.sortPoliciesByDate(user.getUserID(), user.getPassword());
 
         // 4. Print shallow, deep, and current policies to compare
         System.out.println("\n--- [1] Shallow Copy of Policies (Before Changes) ---");
@@ -1224,16 +1224,16 @@ public class App {
         // -------------------------------------------------------------------------
 
         // 1. Make shallow and deep copies of company's users
-        ArrayList<User> shallowUsers = company.shallowCopyUsers();
-        ArrayList<User> deepUsers = company.deepCopyUsers();
+        ArrayList<User> shallowUsers = company.shallowCopyUsers(company.getAdminUsername(), company.getAdminPassword());
+        ArrayList<User> deepUsers = company.deepCopyUsers(company.getAdminUsername(), company.getAdminPassword());
 
         // 2. Add a new user to the company
         Address newAddr = new Address(55, "Broadway", "Midtown", "New York");
-        User newUser = new User("Frank Castle", 1006, newAddr);
-        company.addUser(newUser);
+        User newUser = new User("Frank Castle", "pass123", 1006, newAddr);
+        company.addUser(newUser, company.getAdminUsername(), company.getAdminPassword());
 
         // 3. Sort company users by city
-        ArrayList<User> sortedUsers = company.sortUsers();
+        ArrayList<User> sortedUsers = company.sortUsers(company.getAdminUsername(), company.getAdminPassword());
 
         // 4. Print shallow, deep, current, and sorted users to compare
         System.out.println("\n--- [1] Shallow Copy of Users (Before Adding User) ---");
@@ -1262,12 +1262,12 @@ public class App {
         InsuranceCompany clonedCompany = company.clone();
 
         // Mutate an address inside the original company
-        company.findUser(1001).setCity("Los Angeles");
+        company.findUser(1001, company.getAdminUsername(), company.getAdminPassword()).setCity("Los Angeles");
 
         // Verify original updated
-        boolean originalUpdated = company.findUser(1001).getCity().equals("Los Angeles");
+        boolean originalUpdated = company.findUser(1001, company.getAdminUsername(), company.getAdminPassword()).getCity().equals("Los Angeles");
         // Verify clone remains unchanged at "New York"
-        boolean cloneUnchanged = clonedCompany.findUser(1001).getCity().equals("New York");
+        boolean cloneUnchanged = clonedCompany.findUser(1001, clonedCompany.getAdminUsername(), clonedCompany.getAdminPassword()).getCity().equals("New York");
 
         System.out.println("Original Company User 1001 City updated to Los Angeles: " + originalUpdated);
         System.out.println("Cloned Company User 1001 City remains New York: " + cloneUnchanged);
@@ -1300,21 +1300,21 @@ public class App {
 
         if (targetUser != null) {
             // Retrieve aggregation maps for the user
-            HashMap<String, Integer> userCounts = targetUser.getTotalCountPerCarModel();
-            HashMap<String, Double> userPremiums = targetUser.getTotalPremiumPerCarModel(company.getFlatRate());
+            HashMap<String, Integer> userCounts = targetUser.getTotalCountPerCarModel(targetUser.getUserID(), targetUser.getPassword());
+            HashMap<String, Double> userPremiums = targetUser.getTotalPremiumPerCarModel(company.getFlatRate(), targetUser.getUserID(), targetUser.getPassword());
 
             // Pass variables into the overloaded user report method to consume them
-            targetUser.reportPaymentsPerCarModel(userCounts, userPremiums);
+            targetUser.reportPaymentsPerCarModel(userCounts, userPremiums, targetUser.getUserID(), targetUser.getPassword());
         }
 
         // Retrieve and report city aggregation map
-        HashMap<String, Double> cityPremiums = company.getTotalPremiumPerCity();
-        company.reportPaymentPerCity(cityPremiums);
+        HashMap<String, Double> cityPremiums = company.getTotalPremiumPerCity(company.getAdminUsername(), company.getAdminPassword());
+        company.reportPaymentPerCity(cityPremiums, company.getAdminUsername(), company.getAdminPassword());
 
         // Retrieve and report company car model aggregation maps
-        HashMap<String, Integer> companyModelCounts = company.getTotalCountPerCarModel();
-        HashMap<String, Double> companyModelPremiums = company.getTotalPremiumPerCarModel();
-        company.reportPaymentsPerCarModel(companyModelCounts, companyModelPremiums);
+        HashMap<String, Integer> companyModelCounts = company.getTotalCountPerCarModel(company.getAdminUsername(), company.getAdminPassword());
+        HashMap<String, Double> companyModelPremiums = company.getTotalPremiumPerCarModel(company.getAdminUsername(), company.getAdminPassword());
+        company.reportPaymentsPerCarModel(companyModelCounts, companyModelPremiums, company.getAdminUsername(), company.getAdminPassword());
 
         System.out.println("All data aggregation tests executed successfully");
 
@@ -1341,9 +1341,8 @@ public class App {
         // ---------------------------------------------------------------
         System.out.println("\n--- [1] Binary File: HashMap of Policies ---");
 
-        User sampleUser = company.findUser(1001);
-        HashMap<Integer, InsurancePolicy> policyMap = new HashMap<>(sampleUser.getPolicies()); // fixed - copy not
-                                                                                               // reference
+        User sampleUser = company.findUser(1001, company.getAdminUsername(), company.getAdminPassword());
+        HashMap<Integer, InsurancePolicy> policyMap = new HashMap<>(sampleUser.getPolicies()); 
 
         InsurancePolicy.save(policyMap, BINARY_POLICIES_FILE);
         System.out.println("Policies saved to " + BINARY_POLICIES_FILE);
@@ -1364,16 +1363,16 @@ public class App {
         // ---------------------------------------------------------------
         System.out.println("\n--- [2] Binary File: HashMap of Users ---");
 
-        HashMap<Integer, User> userMap = new HashMap<>(company.getUsers()); // fixed - copy not reference
+        HashMap<Integer, User> userMap = new HashMap<>(company.getUsers()); 
 
         User.save(userMap, BINARY_USERS_FILE);
         System.out.println("Users saved to " + BINARY_USERS_FILE);
 
         Address binaryUserAddress = new Address(10, "Crown St", "Wollongong Suburb", "Wollongong");
-        User binaryTestUser = new User("Binary Test User", 1099, binaryUserAddress);
-        InsurancePolicy binaryUserPolicy = new ThirdPartyPolicy("Binary Test User", 300998, sampleCar, 1,
+        User binaryTestUser = new User("Binary User", "pass123", 1099, binaryUserAddress);
+        InsurancePolicy binaryUserPolicy = new ThirdPartyPolicy("Binary User", 300998, sampleCar, 1,
                 sampleExpiryDate, "Binary user policy");
-        binaryTestUser.addPolicy(binaryUserPolicy);
+        binaryTestUser.addPolicy(binaryUserPolicy, binaryTestUser.getUserID(), binaryTestUser.getPassword());
         userMap.put(binaryTestUser.getUserID(), binaryTestUser);
         User.save(userMap, BINARY_USERS_FILE);
         System.out.println("New user added and saved again.");
@@ -1390,18 +1389,18 @@ public class App {
         // ---------------------------------------------------------------
         System.out.println("\n--- [3] Binary File: InsuranceCompany Object ---");
 
-        company.save(BINARY_COMPANY_FILE);
+        company.save(BINARY_COMPANY_FILE, company.getAdminUsername(), company.getAdminPassword());
         System.out.println("Company saved to " + BINARY_COMPANY_FILE);
 
         Address binaryCompanyAddress = new Address(20, "George St", "CBD", "Sydney");
-        company.addUser(new User("New Company User", 1098, binaryCompanyAddress));
-        company.createThirdPartyPolicy(1098, "New Company User", 300997, sampleCar, 0, sampleExpiryDate,
-                "Company binary policy");
-        company.save(BINARY_COMPANY_FILE);
+        company.addUser(new User("Company User", "pass123", 1098, binaryCompanyAddress), company.getAdminUsername(), company.getAdminPassword());
+        company.createThirdPartyPolicy(1098, "Company User", 300997, sampleCar, 0, sampleExpiryDate,
+                "Company binary policy", company.getAdminUsername(), company.getAdminPassword());
+        company.save(BINARY_COMPANY_FILE, company.getAdminUsername(), company.getAdminPassword());
         System.out.println("New user and policy added, company saved again.");
 
         InsuranceCompany restoredBinaryCompany = new InsuranceCompany();
-        restoredBinaryCompany.load(BINARY_COMPANY_FILE);
+        restoredBinaryCompany.load(BINARY_COMPANY_FILE, restoredBinaryCompany.getAdminUsername(), restoredBinaryCompany.getAdminPassword());
         System.out.println("Company loaded from " + BINARY_COMPANY_FILE + ":");
         System.out.println(restoredBinaryCompany);
 
@@ -1409,8 +1408,8 @@ public class App {
         // ---------------------------------------------------------------
         System.out.println("\n--- [4] Text File: HashMap of Policies ---");
 
-        HashMap<Integer, InsurancePolicy> textPolicyMap = new HashMap<>(sampleUser.getPolicies()); // fixed - copy not
-                                                                                                   // reference
+        HashMap<Integer, InsurancePolicy> textPolicyMap = new HashMap<>(sampleUser.getPolicies()); 
+                                                                                                  
 
         InsurancePolicy.saveTextFile(textPolicyMap, TEXT_POLICIES_FILE);
         System.out.println("Policies saved to " + TEXT_POLICIES_FILE);
@@ -1431,16 +1430,16 @@ public class App {
         // ---------------------------------------------------------------
         System.out.println("\n--- [5] Text File: HashMap of Users ---");
 
-        HashMap<Integer, User> textUserMap = new HashMap<>(company.getUsers()); // fixed - copy not reference
+        HashMap<Integer, User> textUserMap = new HashMap<>(company.getUsers()); 
 
         User.saveTextFile(textUserMap, TEXT_USERS_FILE);
         System.out.println("Users saved to " + TEXT_USERS_FILE);
 
         Address textUserAddress = new Address(30, "Golestan St", "Sadra", "Shiraz");
-        User textTestUser = new User("Text Test User", 1097, textUserAddress);
-        InsurancePolicy textUserPolicy = new ThirdPartyPolicy("Text Test User", 300995, sampleCar, 0, sampleExpiryDate,
+        User textTestUser = new User("Text User", "pass123", 1097, textUserAddress);
+        InsurancePolicy textUserPolicy = new ThirdPartyPolicy("Text User", 300995, sampleCar, 0, sampleExpiryDate,
                 "Text user policy");
-        textTestUser.addPolicy(textUserPolicy);
+        textTestUser.addPolicy(textUserPolicy, textTestUser.getUserID(), textTestUser.getPassword());
         textUserMap.put(textTestUser.getUserID(), textTestUser);
         User.saveTextFile(textUserMap, TEXT_USERS_FILE);
         System.out.println("New user added and saved again.");
@@ -1457,21 +1456,23 @@ public class App {
         // ---------------------------------------------------------------
         System.out.println("\n--- [6] Text File: InsuranceCompany Object ---");
 
-        company.saveTextFile(TEXT_COMPANY_FILE);
+        company.saveTextFile(TEXT_COMPANY_FILE, company.getAdminUsername(), company.getAdminPassword());
         System.out.println("Company saved to " + TEXT_COMPANY_FILE);
 
         Address textCompanyAddress = new Address(40, "Golestan St", "Sadra Suburb", "Shiraz");
-        company.addUser(new User("Text Company User", 1096, textCompanyAddress));
-        company.createThirdPartyPolicy(1096, "Text Company User", 300994, sampleCar, 0, sampleExpiryDate,
-                "Text company policy");
-        company.saveTextFile(TEXT_COMPANY_FILE);
+        company.addUser(new User("Company User", "pass123", 1096, textCompanyAddress), company.getAdminUsername(), company.getAdminPassword());
+        company.createThirdPartyPolicy(1096, "Company User", 300994, sampleCar, 0, sampleExpiryDate,
+                "Text company policy", company.getAdminUsername(), company.getAdminPassword());
+        company.saveTextFile(TEXT_COMPANY_FILE, company.getAdminUsername(), company.getAdminPassword());
         System.out.println("New user and policy added, company saved again.");
 
         InsuranceCompany restoredTextCompany = new InsuranceCompany();
-        restoredTextCompany.loadTextFile(TEXT_COMPANY_FILE);
+        restoredTextCompany.loadTextFile(TEXT_COMPANY_FILE, restoredTextCompany.getAdminUsername(), restoredTextCompany.getAdminPassword());
         System.out.println("Company loaded from " + TEXT_COMPANY_FILE + ":");
         System.out.println(restoredTextCompany);
 
         System.out.println("========================== LAB-6 Tests Complete ============================");
     }
+
+    
 }

@@ -843,7 +843,7 @@ public class InsuranceCompany implements Cloneable, Serializable {
     public InsuranceCompany() {
         this.adminPassword = "";
         this.adminUsername = "";
-        this.flatRate = 100;
+        this.flatRate = 20;
         this.name = "";
         this.users = new HashMap<>();
     }
@@ -991,7 +991,7 @@ public class InsuranceCompany implements Cloneable, Serializable {
     // return true;
     // }
 
-    // =========================================================== assignment 2
+    // =========================================================== Assignment 2
 
     // fixed the redundency
     public Boolean loadTextFile(String fileName, String username, String password)
@@ -1087,37 +1087,33 @@ public class InsuranceCompany implements Cloneable, Serializable {
         return expiredPolicies;
     }
 
-    public InsurancePolicy findPolicy(int policyID, String username, String password) {
-        if (!validateAdmin(username, password)) {
-            return null;
-        }
-        for (User user : users.values()) {
-            InsurancePolicy policy = user.findPolicy(policyID, user.getUserID(), user.getPassword());
-            if (policy != null) {
-                return policy;
-            }
-        }
-        return null;
-    }
-
-    public InsurancePolicy findPolicyByUser(int policyID, int userID, String username, String password) {
-        if (!validateAdmin(username, password)) {
-            return null;
-        }
+    public boolean validateUser(int userID, String password) {
         User user = users.get(userID);
         if (user != null) {
-            return user.findPolicy(policyID, user.getUserID(), user.getPassword());
+            return user.userVaildate(userID, password);
+        }
+        return false;
+    }
+
+    // Returns the address string for a user via the company proxy
+    public String getUserAddress(int userID, String username, String password) {
+        if (!validateAdmin(username, password)) {
+            return null;
+        }
+        User user = findUser(userID, username, password);
+        if (user != null && user.getAddress() != null) {
+            return user.getAddress().toString();
         }
         return null;
     }
 
-    public Boolean printPolicy(int policyID, int userID, String username, String password) {
+    public boolean updateUserAddress(int userID, Address newAddress, String username, String password) {
         if (!validateAdmin(username, password)) {
             return false;
         }
-        InsurancePolicy policy = findPolicyByUser(policyID, userID, username, password);
-        if (policy != null) {
-            policy.print(flatRate);
+        User user = findUser(userID, username, password);
+        if (user != null) {
+            user.setAddress(newAddress);
             return true;
         }
         return false;
